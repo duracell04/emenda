@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Emenda">
+  <defs>
+    <linearGradient id="background" x1="128" y1="96" x2="896" y2="928" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#202D31"/>
+      <stop offset="1" stop-color="#11191C"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="286" y1="766" x2="798" y2="604" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B8D7C7"/>
+      <stop offset="1" stop-color="#E0B879"/>
+    </linearGradient>
+  </defs>
+  <rect x="48" y="48" width="928" height="928" rx="224" fill="url(#background)"/>
+  <path d="M318 244h430v126H456v86h258v120H456v94h302v126H318V244Z" fill="#F7F4EC"/>
+  <path d="M294 770c118 46 247 54 378 20 43-11 83-26 120-44" fill="none" stroke="url(#accent)" stroke-width="34" stroke-linecap="round"/>
+</svg>
