@@ -146,7 +146,7 @@ export function SettingsPanel({
         <div className="section-title-row">
           <div>
             <h2>OpenRouter API key</h2>
-            <p>Stored by the local Rust core, never in the web interface.</p>
+            <p>Persisted by the local Rust core, never written to frontend storage.</p>
           </div>
           <span className={`connection-pill ${settings.apiKeyConfigured ? "is-connected" : ""}`}>
             <span />
@@ -208,7 +208,7 @@ export function SettingsPanel({
         <div className="section-title-row">
           <div>
             <h2>AI model</h2>
-            <p>Free automatically is the reliable default.</p>
+            <p>Free automatically is the low-friction default.</p>
           </div>
         </div>
 
