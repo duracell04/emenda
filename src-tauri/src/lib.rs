@@ -141,13 +141,19 @@ fn public_settings(state: &ApplicationState) -> Result<PublicSettings, CoreError
 
 fn publish_workflow(app: &AppHandle, workflow_state: WorkflowState, focus_window: bool) {
     if focus_window {
-        if let Some(window) = app.get_webview_window("main") {
-            let _ = window.show();
-            let _ = window.unminimize();
-            let _ = window.set_focus();
-        }
+        restore_main_window(app);
     }
     let _ = app.emit(WORKFLOW_EVENT, workflow_state);
+}
+
+fn restore_main_window(app: &AppHandle) {
+    let Some(window) = app.get_webview_window("main") else {
+        return;
+    };
+
+    let _ = window.show();
+    let _ = window.unminimize();
+    let _ = window.set_focus();
 }
 
 fn initialise_state(app: &tauri::App) -> Result<ApplicationState, Box<dyn std::error::Error>> {
@@ -176,7 +182,18 @@ fn settings_path(config_dir: PathBuf) -> PathBuf {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let builder = tauri::Builder::default();
+
+    // This must remain the first desktop plugin so a second process exits
+    // before it can initialise settings or compete for the global shortcut.
+    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    let builder = builder.plugin(tauri_plugin_single_instance::init(
+        |app, _arguments, _working_directory| {
+            restore_main_window(app);
+        },
+    ));
+
+    builder
         .setup(|app| {
             app.manage(initialise_state(app)?);
 

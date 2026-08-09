@@ -11,6 +11,8 @@ Emenda is a restrained cross-platform writing assistant that corrects and refine
 3. Select text in another application and press `Ctrl+Alt+E`.
 4. Review the validated corrections. Card actions stage accepted changes; Emenda performs one final replacement so the source application's native undo remains useful.
 
+Apply or Dismiss may hide Emenda while its hotkey stays active. Launching Emenda again restores the existing window; closing it with X exits the application.
+
 V0.1 supports Swiss Standard German (`de-CH`), British and American English, French, Georgian, and Russian. Automatic mode defaults German to `de-CH` and English to `en-GB` while preserving clearly American usage.
 
 ## Security and correctness

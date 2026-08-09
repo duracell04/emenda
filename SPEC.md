@@ -174,6 +174,8 @@ Implement this complete workflow.
 26. Emenda restores clipboard state when clipboard transport is used.
 27. The user continues writing.
 
+Apply and Dismiss may hide the primary Emenda window while its global hotkey remains active. Launching Emenda again restores, unminimises and focuses that existing window rather than starting a competing process. Closing the window with X remains a real application exit.
+
 ---
 
 # 6. Text Capture and Replacement
