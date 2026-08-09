@@ -1,6 +1,6 @@
 # Emenda
 
-Emenda is a restrained Windows desktop writing assistant. Select text in another application, press a global shortcut, review structured OpenRouter corrections, and apply only the changes you want without losing your Duktus.
+Emenda is a restrained cross-platform writing assistant that corrects and refines text while preserving the author's Duktus. The current V0.1 native adapter is verified on Windows.
 
 > **Emenda corrects the text while preserving the author's Duktus.**
 
@@ -26,18 +26,24 @@ V0.1 supports Swiss Standard German (`de-CH`), British and American English, Fre
 ## Architecture
 
 ```text
-React 19 + strict TypeScript + Zod
-                  ↕ Tauri 2 commands/events
-Rust snapshots, validation, credentials, text transport
-                  ↕ HTTPS
-               OpenRouter
+Shared Emenda core
+├── React 19 + strict TypeScript + Zod
+├── Rust snapshots, validation, credentials and inference
+├── OpenRouter
+└── Text-surface adapters
+    ├── Windows
+    ├── macOS
+    ├── Linux
+    └── Browser / ChromeOS
 ```
 
-The privileged core is safe Rust (`#![forbid(unsafe_code)]`). The V0.1 native text adapter targets Windows; the provider and text-surface traits keep later platforms and inference backends replaceable.
+The privileged desktop core is safe Rust (`#![forbid(unsafe_code)]`). Platform-specific text access stays behind adapter boundaries, while correction workflow, inference contracts, snapshots, language profiles, settings semantics, and UX behaviour remain shared.
+
+Windows is the current development and runtime-verification environment. A platform is considered supported only after its adapter implements the common contract, the shared test suite passes, and platform-specific integration tests pass on that operating system.
 
 ## Development
 
-Prerequisites:
+Current Windows development prerequisites:
 
 - Windows 10 or 11 with WebView2
 - Node.js and npm
@@ -70,7 +76,7 @@ cargo test --manifest-path src-tauri/Cargo.toml
 npm run tauri build
 ```
 
-Opt-in live tests require a process-scoped key and network access:
+Opt-in live Windows tests require a process-scoped key and network access:
 
 ```powershell
 cargo test --manifest-path src-tauri/Cargo.toml live_openrouter_flow -- --ignored
@@ -86,11 +92,13 @@ The desktop test temporarily opens and focuses test-owned editor windows. On 202
 
 The optimized Tauri build also produced the Windows executable, MSI, and NSIS installer. Dynamic free-model routing can occasionally return incompatible content; Emenda rejects it as a typed structured-output error without touching source text.
 
-## V0.1 limits
+## Current platform status
 
-- Native selected-text transport is Windows-only.
-- Elevated, protected, or inaccessible surfaces are rejected rather than overwritten.
-- The original selection and source window must remain unchanged while suggestions are reviewed.
-- Broader application compatibility, history, dictionaries, tray behavior, and local inference remain later work.
+- **Windows:** first implemented and runtime-verified native adapter.
+- **macOS:** first-class target; adapter support is established only after native implementation and macOS integration tests pass.
+- **Linux:** first-class target; adapter support is established only after native implementation and Linux integration tests pass.
+- **Browser / ChromeOS:** first-class Emenda surface and primary ChromeOS path through the browser extension.
 
-See [SPEC.md](SPEC.md) for the engineering source of truth and [AGENTS.md](AGENTS.md) for repository governance.
+The current V0.1 native workflow is selected-text correction. Broader passive detection, inline suggestions, personal vocabulary, per-app behaviour, and richer Grammarly-like interaction build on the same shared contracts.
+
+See [SPEC.md](SPEC.md) for the engineering source of truth, [AGENTS.md](AGENTS.md) for repository governance, [UX.md](UX.md) for interaction principles, and [BRAND.md](BRAND.md) for the visual identity system.
