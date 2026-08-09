@@ -10,7 +10,13 @@
     "tauri": "tauri",
     "build:desktop-e2e:frontend": "npm run typecheck && vite build --mode desktop-e2e",
     "build:desktop-e2e": "node e2e/build-desktop-e2e.mjs",
+    "test:desktop-e2e": "npm run build:desktop-e2e && node e2e/run-desktop-e2e.mjs all",
+    "test:desktop-e2e:notepad": "npm run build:desktop-e2e && node e2e/run-desktop-e2e.mjs notepad",
+    "test:desktop-e2e:vscode": "npm run build:desktop-e2e && node e2e/run-desktop-e2e.mjs vscode",
     "check:production-exclusion": "node scripts/check-production-exclusion.mjs",
+    "test:openrouter:live": "node scripts/run-strict-live-test.mjs openrouter",
+    "test:desktop:native:notepad": "node scripts/run-strict-live-test.mjs notepad",
+    "test:desktop:native:vscode": "node scripts/run-strict-live-test.mjs vscode",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p e2e/tsconfig.json"
   },
   "dependencies": {
