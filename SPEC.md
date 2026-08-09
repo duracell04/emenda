@@ -1033,15 +1033,15 @@ two desktop integration targets
 
 This defines the complete V0.1 product.
 
-The architecture leaves clean future seams for:
+The architecture leaves clean future capability milestones for:
 
 ```text
 passive background observation
 Grammarly-style inline suggestions
 Windows accessibility integration
-macOS accessibility integration
-Linux AT-SPI integration
-browser extension / ChromeOS
+macOS text-surface implementation
+Linux text-surface implementation
+browser extension / ChromeOS surface
 personal dictionary
 accepted/rejected correction history
 local OpenAI-compatible inference
@@ -1049,7 +1049,7 @@ local LLMs
 additional writing profiles
 ```
 
-Each future capability can build on the same snapshot, correction and inference contracts.
+Each future capability can build on the same snapshot, correction, inference and platform-adapter contracts.
 
 ---
 
@@ -1117,7 +1117,140 @@ Runtime user credentials belong in Emenda's secure local credential storage.
 
 ---
 
-# 24. Final Engineering Principle
+# 24. Platform Foundation
+
+Emenda's shared core is operating-system independent.
+
+Windows is the current development and runtime-verification environment. macOS, Linux, and ChromeOS through the browser extension are first-class product targets.
+
+The shared product logic remains identical across platforms:
+
+- correction workflow
+- inference contracts
+- correction contracts
+- snapshots and revisions
+- language profiles
+- settings model
+- application state
+- UX semantics
+- personalisation logic
+
+Platform adapters implement the `TextSurfaceAdapter` contract:
+
+```text
+Shared Emenda Core
+├── Windows adapter
+├── macOS adapter
+├── Linux adapter
+└── Browser adapter
+```
+
+### Platform boundaries
+
+Keep platform-specific types, APIs, constants, capabilities, identifiers, and implementation details inside their respective adapter modules.
+
+Expose generic shared types and the common adapter contract to the rest of Emenda.
+
+Shared Rust modules and shared TypeScript modules depend on generic contracts rather than operating-system-specific representations.
+
+### Adapter contract
+
+Every platform adapter provides the same semantic operations and guarantees:
+
+```text
+detect / identify surface
+capture text
+identify source
+focus source
+apply replacement
+report capabilities
+return typed errors
+```
+
+Represent unavailable capabilities through typed `Unsupported` results.
+
+Provide a mock adapter that supports the complete shared workflow:
+
+```text
+detect
+→ indicate
+→ suggest
+→ apply
+```
+
+This keeps the correction core independently testable from native accessibility and windowing systems.
+
+### Platform support
+
+A platform becomes supported when:
+
+```text
+adapter implements the full contract
++
+shared platform-agnostic test suite passes
++
+platform-specific integration tests pass on that OS
+```
+
+Windows reaching this state first represents the first verified adapter rather than a Windows-specific product architecture.
+
+### Browser and ChromeOS
+
+The browser extension is a first-class Emenda surface and the primary ChromeOS path.
+
+It shares the same:
+
+- correction schema
+- inference contract
+- language profiles
+- snapshot and revision semantics
+- settings concepts
+- UX decision rules
+
+The browser adapter translates browser-specific text access into the same Emenda workflow used by desktop adapters.
+
+Desktop and browser releases may proceed on independent release cadences while preserving shared contracts.
+
+### Testing
+
+Test shared logic through mock adapters in every CI run.
+
+Keep native verification inside platform-specific test modules.
+
+Examples:
+
+```text
+Windows → Notepad / VS Code / supported Windows surfaces
+macOS   → host-appropriate native editors
+Linux   → host-appropriate native editors
+Browser → browser integration fixtures
+```
+
+CI compiles and runs the shared suite on Windows, macOS, and Linux hosts.
+
+### Capabilities and permissions
+
+Declare each desktop adapter's required native and Tauri capabilities explicitly.
+
+Declare browser-extension permissions through the browser adapter's extension configuration.
+
+Shared application state responds to adapter capability results through the common typed interface.
+
+### Packaging
+
+Treat installers, code signing, notarization, package formats, and store distribution as deployment concerns.
+
+Keep packaging configuration outside the shared correction, inference, state, and text-surface architecture.
+
+### Platform decision rule
+
+When an implementation choice remains open:
+
+> **Keep shared product behaviour platform-independent and place native operating-system behaviour behind the smallest appropriate adapter boundary.**
+
+---
+
+# 25. Final Engineering Principle
 
 Use this principle when an implementation choice remains ambiguous:
 
