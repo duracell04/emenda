@@ -90,6 +90,73 @@ Treat AI output as external untrusted data and validate it before it enters appl
 
 Keep text identity, revisions, security and source-text replacement deterministic in the local application.
 
+## Platform Foundation
+
+Emenda's shared core is platform-independent.
+
+Windows is the current development and runtime-verification environment. macOS, Linux, and ChromeOS through the browser extension are first-class product targets.
+
+Keep these shared across platforms:
+
+- correction workflow
+- inference and correction contracts
+- snapshots and revisions
+- language profiles
+- settings model
+- application state
+- UX semantics
+- personalisation logic
+
+Keep native behavior behind adapter modules implementing the common `TextSurfaceAdapter` contract.
+
+```text
+Shared Emenda Core
+├── Windows adapter
+├── macOS adapter
+├── Linux adapter
+└── Browser adapter
+```
+
+Keep platform-specific types, APIs, constants, capabilities, identifiers, and implementation details inside their adapter modules. Shared Rust and TypeScript code depend on generic contracts rather than operating-system-specific representations.
+
+Every adapter should provide the same semantic operations:
+
+```text
+detect / identify surface
+capture text
+identify source
+focus source
+apply replacement
+report capabilities
+return typed errors
+```
+
+Represent unavailable capabilities through typed `Unsupported` results.
+
+Maintain a mock adapter that exercises the complete shared workflow so correction logic remains independently testable from native accessibility and windowing systems.
+
+A platform becomes supported when:
+
+```text
+adapter implements the full contract
++
+shared platform-agnostic test suite passes
++
+platform-specific integration tests pass on that OS
+```
+
+Windows reaching this state first means Windows is the first verified adapter, not the architecture of the product.
+
+The browser extension is the primary ChromeOS path and shares Emenda's correction schema, inference contract, language profiles, snapshot/revision semantics, settings concepts, and UX decision rules.
+
+Scope Tauri capabilities and native permissions to desktop adapters. Declare browser-extension permissions through the browser adapter's extension configuration.
+
+Treat installers, signing, notarization, package formats, and store distribution as deployment concerns outside the shared correction, inference, state, and text-surface architecture.
+
+When a platform decision remains open:
+
+> **Keep shared product behaviour platform-independent and place native operating-system behaviour behind the smallest appropriate adapter boundary.**
+
 ## LLM Boundary and Failure Semantics
 
 Emenda is deterministic software around a narrow probabilistic component. Preserve this boundary in implementation and testing decisions.
