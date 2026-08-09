@@ -169,31 +169,35 @@ impl InferenceProvider for OpenRouterProvider {
             .map_err(network_error)?;
         let response = require_success(response).await?;
         let body = bounded_body(response).await?;
-        let raw: ChatCompletionResponse = serde_json::from_slice(&body).map_err(|_| {
+        parse_chat_completion(&request, &body)
+    }
+}
+
+fn parse_chat_completion(request: &CheckRequest, body: &[u8]) -> Result<CheckResult, CoreError> {
+    let raw: ChatCompletionResponse = serde_json::from_slice(body).map_err(|_| {
+        CoreError::StructuredOutputError(
+            "OpenRouter returned an invalid chat-completion envelope".to_owned(),
+        )
+    })?;
+    let message = raw.choices.into_iter().next().ok_or_else(|| {
+        CoreError::StructuredOutputError("OpenRouter returned no correction choice".to_owned())
+    })?;
+    if message.message.refusal.is_some() {
+        return Err(CoreError::InferenceError(
+            "The selected model declined the correction request".to_owned(),
+        ));
+    }
+    let content = message
+        .message
+        .content
+        .filter(|content| !content.trim().is_empty())
+        .ok_or_else(|| {
             CoreError::StructuredOutputError(
-                "OpenRouter returned an invalid chat-completion envelope".to_owned(),
+                "OpenRouter returned an empty correction result".to_owned(),
             )
         })?;
-        let message = raw.choices.into_iter().next().ok_or_else(|| {
-            CoreError::StructuredOutputError("OpenRouter returned no correction choice".to_owned())
-        })?;
-        if message.message.refusal.is_some() {
-            return Err(CoreError::InferenceError(
-                "The selected model declined the correction request".to_owned(),
-            ));
-        }
-        let content = message
-            .message
-            .content
-            .filter(|content| !content.trim().is_empty())
-            .ok_or_else(|| {
-                CoreError::StructuredOutputError(
-                    "OpenRouter returned an empty correction result".to_owned(),
-                )
-            })?;
 
-        validate_output(&request, &content)
-    }
+    validate_output(request, &content)
 }
 
 #[derive(Serialize)]
@@ -353,20 +357,24 @@ async fn require_success(response: Response) -> Result<Response, CoreError> {
     // Consume at most the content-length guard and then discard provider text;
     // provider bodies are untrusted and might echo source content.
     let _ = bounded_body(response).await;
+    Err(http_status_error(status))
+}
+
+fn http_status_error(status: StatusCode) -> CoreError {
     match status {
-        StatusCode::UNAUTHORIZED | StatusCode::FORBIDDEN => Err(CoreError::AuthenticationError(
-            "OpenRouter rejected the API key".to_owned(),
-        )),
-        StatusCode::TOO_MANY_REQUESTS => Err(CoreError::InferenceError(
-            "OpenRouter rate limit reached; try again shortly".to_owned(),
-        )),
-        status if status.is_server_error() => Err(CoreError::InferenceError(
-            "OpenRouter is temporarily unavailable".to_owned(),
-        )),
-        status => Err(CoreError::InferenceError(format!(
+        StatusCode::UNAUTHORIZED | StatusCode::FORBIDDEN => {
+            CoreError::AuthenticationError("OpenRouter rejected the API key".to_owned())
+        }
+        StatusCode::TOO_MANY_REQUESTS => {
+            CoreError::NetworkError("OpenRouter rate limit reached; try again shortly".to_owned())
+        }
+        status if status.is_server_error() => {
+            CoreError::NetworkError("OpenRouter is temporarily unavailable".to_owned())
+        }
+        status => CoreError::InferenceError(format!(
             "OpenRouter rejected the request (HTTP {})",
             status.as_u16()
-        ))),
+        )),
     }
 }
 
@@ -430,6 +438,13 @@ mod tests {
         CheckRequest::new(snapshot, DEFAULT_MODEL_ID, language_mode).unwrap()
     }
 
+    fn parse_response(body: &str) -> Result<CheckResult, CoreError> {
+        parse_chat_completion(
+            &request("I liek this sentence.", LanguageMode::Auto),
+            body.as_bytes(),
+        )
+    }
+
     #[test]
     fn parses_and_validates_structured_corrections() {
         let content = r#"{
@@ -468,6 +483,43 @@ mod tests {
     }
 
     #[test]
+    fn null_choices_are_a_typed_structured_output_error() {
+        let error = parse_response(r#"{"choices":null}"#)
+            .expect_err("null choices must not enter application state");
+
+        assert_eq!(error.kind(), crate::error::ErrorKind::StructuredOutputError);
+    }
+
+    #[test]
+    fn empty_choices_are_a_typed_structured_output_error() {
+        let error = parse_response(r#"{"choices":[]}"#)
+            .expect_err("empty choices must not enter application state");
+
+        assert_eq!(error.kind(), crate::error::ErrorKind::StructuredOutputError);
+    }
+
+    #[test]
+    fn null_and_blank_content_are_typed_structured_output_errors() {
+        for body in [
+            r#"{"choices":[{"message":{"content":null,"refusal":null}}]}"#,
+            r#"{"choices":[{"message":{"content":"  ","refusal":null}}]}"#,
+        ] {
+            let error =
+                parse_response(body).expect_err("empty content must not enter application state");
+            assert_eq!(error.kind(), crate::error::ErrorKind::StructuredOutputError);
+        }
+    }
+
+    #[test]
+    fn malformed_structured_content_is_a_typed_error() {
+        let error =
+            parse_response(r#"{"choices":[{"message":{"content":"not json","refusal":null}}]}"#)
+                .expect_err("malformed structured content must not enter application state");
+
+        assert_eq!(error.kind(), crate::error::ErrorKind::StructuredOutputError);
+    }
+
+    #[test]
     fn fixed_language_mismatch_is_rejected() {
         let content = r#"{
             "detectedLanguage": "en-US",
@@ -475,6 +527,32 @@ mod tests {
         }"#;
         let error = validate_output(&request("Colour", LanguageMode::EnGb), content).unwrap_err();
         assert_eq!(error.kind(), crate::error::ErrorKind::ValidationError);
+    }
+
+    #[test]
+    fn transient_http_statuses_are_network_errors() {
+        for status in [
+            StatusCode::TOO_MANY_REQUESTS,
+            StatusCode::INTERNAL_SERVER_ERROR,
+            StatusCode::SERVICE_UNAVAILABLE,
+        ] {
+            assert_eq!(
+                http_status_error(status).kind(),
+                crate::error::ErrorKind::NetworkError
+            );
+        }
+    }
+
+    #[test]
+    fn non_transient_http_statuses_keep_their_existing_categories() {
+        assert_eq!(
+            http_status_error(StatusCode::UNAUTHORIZED).kind(),
+            crate::error::ErrorKind::AuthenticationError
+        );
+        assert_eq!(
+            http_status_error(StatusCode::BAD_REQUEST).kind(),
+            crate::error::ErrorKind::InferenceError
+        );
     }
 
     #[test]

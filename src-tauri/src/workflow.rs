@@ -442,6 +442,7 @@ mod tests {
         correction::{validate_candidates, Confidence, CorrectionCandidate, CorrectionCategory},
         inference::{CheckResult, InferenceError, Model},
         language::LanguageProfile,
+        settings::DEFAULT_MODEL_ID,
         text::CapturedSelection,
     };
     use async_trait::async_trait;
@@ -535,6 +536,89 @@ mod tests {
     struct DelayedFirstProvider {
         first_started: Arc<Notify>,
         release_first: Arc<Notify>,
+    }
+
+    struct RecoveringProvider {
+        calls: Mutex<usize>,
+        model_ids: Mutex<Vec<String>>,
+        corrections: Vec<Correction>,
+    }
+
+    impl RecoveringProvider {
+        fn calls(&self) -> usize {
+            *lock(&self.calls)
+        }
+
+        fn model_ids(&self) -> Vec<String> {
+            lock(&self.model_ids).clone()
+        }
+    }
+
+    #[async_trait]
+    impl InferenceProvider for RecoveringProvider {
+        async fn list_models(&self) -> Result<Vec<Model>, InferenceError> {
+            Ok(Vec::new())
+        }
+
+        async fn check_text(&self, request: CheckRequest) -> Result<CheckResult, InferenceError> {
+            lock(&self.model_ids).push(request.model_id().to_owned());
+            let call = {
+                let mut calls = lock(&self.calls);
+                *calls += 1;
+                *calls
+            };
+            if call == 1 {
+                return Err(CoreError::StructuredOutputError(
+                    "The model response did not match the correction schema".to_owned(),
+                ));
+            }
+
+            Ok(CheckResult {
+                revision_id: request.snapshot().revision_id(),
+                detected_language: LanguageProfile::EnGb,
+                corrections: self.corrections.clone(),
+                non_applicable: Vec::new(),
+            })
+        }
+
+        async fn health_check(&self) -> Result<(), InferenceError> {
+            Ok(())
+        }
+    }
+
+    struct SemanticFailureProvider;
+
+    #[async_trait]
+    impl InferenceProvider for SemanticFailureProvider {
+        async fn list_models(&self) -> Result<Vec<Model>, InferenceError> {
+            Ok(Vec::new())
+        }
+
+        async fn check_text(&self, request: CheckRequest) -> Result<CheckResult, InferenceError> {
+            let report = validate_candidates(
+                request.snapshot().text(),
+                vec![CorrectionCandidate {
+                    start: 2,
+                    end: 6,
+                    original: "missing".to_owned(),
+                    replacement: "present".to_owned(),
+                    category: CorrectionCategory::Spelling,
+                    confidence: Confidence::High,
+                    explanation: Some("Invalid semantic fixture".to_owned()),
+                }],
+            );
+            let (corrections, non_applicable) = report.into_parts();
+            Ok(CheckResult {
+                revision_id: request.snapshot().revision_id(),
+                detected_language: LanguageProfile::EnGb,
+                corrections,
+                non_applicable,
+            })
+        }
+
+        async fn health_check(&self) -> Result<(), InferenceError> {
+            Ok(())
+        }
     }
 
     #[async_trait]
@@ -719,6 +803,90 @@ mod tests {
                 WorkflowState::Error {
                     error: WorkflowError {
                         kind: ErrorKind::TextReplacementError,
+                        ..
+                    }
+                }
+            ));
+            assert!(adapter.replacements().is_empty());
+        });
+    }
+
+    #[test]
+    fn structured_output_failure_is_fail_closed_until_an_explicit_new_invocation() {
+        tauri::async_runtime::block_on(async {
+            let text = "I liek this sentence.";
+            let adapter = Arc::new(MockTextSurface::with_captures([
+                captured(text),
+                captured(text),
+                captured(text),
+            ]));
+            let provider = Arc::new(RecoveringProvider {
+                calls: Mutex::new(0),
+                model_ids: Mutex::new(Vec::new()),
+                corrections: trusted_corrections(text, [(2, 6, "liek", "like")]),
+            });
+            let (controller, _settings_directory) = controller(adapter.clone(), provider.clone());
+
+            let failed = controller.check_current_selection(|_| {}).await;
+            assert!(matches!(
+                failed,
+                WorkflowState::Error {
+                    error: WorkflowError {
+                        kind: ErrorKind::StructuredOutputError,
+                        ..
+                    }
+                }
+            ));
+            assert_eq!(provider.calls(), 1, "production performs one provider call");
+            assert!(adapter.replacements().is_empty());
+
+            let recovered = controller.check_current_selection(|_| {}).await;
+            assert!(matches!(recovered, WorkflowState::Suggestions { .. }));
+            assert_eq!(
+                provider.calls(),
+                2,
+                "only the explicit second invocation may recover"
+            );
+            assert_eq!(
+                provider.model_ids(),
+                vec![DEFAULT_MODEL_ID.to_owned(), DEFAULT_MODEL_ID.to_owned()],
+                "both explicit invocations must keep the configured model"
+            );
+            assert!(adapter.replacements().is_empty());
+
+            let applied = controller.apply_correction(0, |_| {}).await;
+            assert!(matches!(
+                applied,
+                WorkflowState::Clean { applied: true, .. }
+            ));
+            assert_eq!(
+                provider.calls(),
+                2,
+                "Apply must not invoke a model fallback"
+            );
+            assert_eq!(
+                adapter.replacements(),
+                vec![(source(), "I like this sentence.".to_owned())]
+            );
+        });
+    }
+
+    #[test]
+    fn semantic_validation_failure_is_typed_and_never_replaces_source_text() {
+        tauri::async_runtime::block_on(async {
+            let adapter = Arc::new(MockTextSurface::with_captures([captured(
+                "I liek this sentence.",
+            )]));
+            let (controller, _settings_directory) =
+                controller(adapter.clone(), Arc::new(SemanticFailureProvider));
+
+            let state = controller.check_current_selection(|_| {}).await;
+
+            assert!(matches!(
+                state,
+                WorkflowState::Error {
+                    error: WorkflowError {
+                        kind: ErrorKind::ValidationError,
                         ..
                     }
                 }
