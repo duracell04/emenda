@@ -499,9 +499,10 @@ mod tests {
     }
 
     #[test]
-    fn null_and_blank_content_are_typed_structured_output_errors() {
+    fn null_empty_and_blank_content_are_typed_structured_output_errors() {
         for body in [
             r#"{"choices":[{"message":{"content":null,"refusal":null}}]}"#,
+            r#"{"choices":[{"message":{"content":"","refusal":null}}]}"#,
             r#"{"choices":[{"message":{"content":"  ","refusal":null}}]}"#,
         ] {
             let error =

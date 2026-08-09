@@ -778,6 +778,33 @@ mod tests {
     }
 
     #[test]
+    fn untouched_suggestions_are_dismissed_without_replacing_source_text() {
+        tauri::async_runtime::block_on(async {
+            let text = "I liek this sentence.";
+            let corrections = trusted_corrections(text, [(2, 6, "liek", "like")]);
+            let adapter = Arc::new(MockTextSurface::with_captures([captured(text)]));
+            let provider = Arc::new(StaticProvider::new(HashMap::from([(
+                text.to_owned(),
+                corrections,
+            )])));
+            let (controller, _settings_directory) = controller(adapter.clone(), provider);
+
+            assert!(matches!(
+                controller.check_current_selection(|_| {}).await,
+                WorkflowState::Suggestions {
+                    accepted_count: 0,
+                    ..
+                }
+            ));
+
+            let dismissed = controller.finish_or_dismiss(|_| {}).await;
+
+            assert_eq!(dismissed, WorkflowState::Idle);
+            assert!(adapter.replacements().is_empty());
+        });
+    }
+
+    #[test]
     fn changed_source_selection_returns_typed_replacement_error_without_pasting() {
         tauri::async_runtime::block_on(async {
             let text = "I liek this.";
