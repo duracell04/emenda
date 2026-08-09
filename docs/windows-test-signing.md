@@ -78,7 +78,9 @@ The signed build:
 5. Requires the expected signer and a DigiCert timestamp certificate carrying
    the Time Stamping EKU on every artifact.
 6. Temporarily imports only the public certificate into
-   `Cert:\CurrentUser\Root` and `Cert:\CurrentUser\TrustedPublisher`.
+   `Cert:\CurrentUser\Root` and `Cert:\CurrentUser\TrustedPublisher`, using
+   Microsoft-signed `certutil.exe -user -f` so the non-interactive runner never
+   stalls on Windows' Root-store security dialog.
 7. Requires `Get-AuthenticodeSignature` and `signtool verify /pa /all /v /tw`
    to validate every artifact, then proves a modified copy fails verification.
 8. Removes only the trust entries it added and deletes every temporary file in

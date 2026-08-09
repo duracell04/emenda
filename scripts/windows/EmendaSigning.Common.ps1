@@ -240,6 +240,96 @@ function Assert-EmendaTemporaryTrustAbsent {
   $trustPaths
 }
 
+function Get-EmendaCertUtilPath {
+  $certUtilPath = [IO.Path]::GetFullPath((Join-Path $env:SystemRoot 'System32\certutil.exe'))
+  if (-not (Test-Path -LiteralPath $certUtilPath -PathType Leaf)) {
+    throw "The Windows certificate utility is missing: $certUtilPath"
+  }
+
+  $versionInfo = [Diagnostics.FileVersionInfo]::GetVersionInfo($certUtilPath)
+  if ($versionInfo.CompanyName -cne 'Microsoft Corporation' -or
+      $versionInfo.OriginalFilename -notin @('CertUtil.exe', 'CertUtil.exe.mui')) {
+    throw "certutil.exe does not have the expected Microsoft file identity: $certUtilPath"
+  }
+
+  $signature = Get-AuthenticodeSignature -LiteralPath $certUtilPath
+  if ($signature.Status -ne [System.Management.Automation.SignatureStatus]::Valid -or
+      $null -eq $signature.SignerCertificate -or
+      $signature.SignerCertificate.Subject -notmatch '(^|,\s*)O=Microsoft Corporation(,|$)') {
+    throw "certutil.exe does not have a valid Microsoft Authenticode signature: $certUtilPath"
+  }
+
+  $certUtilPath
+}
+
+function Import-EmendaCurrentUserTrust {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string] $CertUtilPath,
+
+    [Parameter(Mandatory = $true)]
+    [string] $CertificatePath,
+
+    [Parameter(Mandatory = $true)]
+    [ValidateSet('Root', 'TrustedPublisher')]
+    [string] $StoreName,
+
+    [Parameter(Mandatory = $true)]
+    [string] $ExpectedThumbprint
+  )
+
+  $normalizedThumbprint = ConvertTo-EmendaCertificateThumbprint -Thumbprint $ExpectedThumbprint
+  $resolvedCertificatePath = [IO.Path]::GetFullPath($CertificatePath)
+  if (-not (Test-Path -LiteralPath $resolvedCertificatePath -PathType Leaf)) {
+    throw "The public certificate file does not exist: $resolvedCertificatePath"
+  }
+
+  $sourceCertificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 `
+    -ArgumentList $resolvedCertificatePath
+  try {
+    if ((ConvertTo-EmendaCertificateThumbprint -Thumbprint $sourceCertificate.Thumbprint) -cne $normalizedThumbprint) {
+      throw "The public certificate file does not match expected thumbprint $normalizedThumbprint."
+    }
+    if ($sourceCertificate.HasPrivateKey) {
+      throw 'The temporary trust import source unexpectedly contains a private key.'
+    }
+  } finally {
+    $sourceCertificate.Dispose()
+  }
+
+  $trustPaths = Get-EmendaTemporaryTrustPaths -Thumbprint $normalizedThumbprint
+  $destinationPath = if ($StoreName -ceq 'Root') {
+    $trustPaths.Root
+  } else {
+    $trustPaths.TrustedPublisher
+  }
+  if (Test-Path -LiteralPath $destinationPath -PathType Leaf) {
+    throw "The exact Emenda certificate already exists in CurrentUser\$StoreName."
+  }
+
+  # Import-Certificate opens Windows' interactive root security warning. The
+  # signed-release runners are deliberately non-interactive, so use Microsoft's
+  # system utility with both current-user and force/non-prompting switches.
+  $certUtilOutput = (& $CertUtilPath -user -f -addstore $StoreName $resolvedCertificatePath 2>&1 | Out-String)
+  $certUtilExitCode = $LASTEXITCODE
+  Write-Verbose $certUtilOutput
+  if ($certUtilExitCode -ne 0) {
+    throw "certutil.exe failed to import CurrentUser\$StoreName with exit code $certUtilExitCode."
+  }
+  if (-not (Test-Path -LiteralPath $destinationPath -PathType Leaf)) {
+    throw "The exact Emenda public certificate is absent from CurrentUser\$StoreName after import."
+  }
+
+  $importedCertificate = Get-Item -LiteralPath $destinationPath
+  if ((ConvertTo-EmendaCertificateThumbprint -Thumbprint $importedCertificate.Thumbprint) -cne $normalizedThumbprint -or
+      $importedCertificate.Subject -cne $script:EmendaSigningSubject -or
+      $importedCertificate.HasPrivateKey) {
+    throw "The imported CurrentUser\$StoreName certificate does not match the expected public Emenda identity."
+  }
+
+  $importedCertificate
+}
+
 function Assert-EmendaMicrosoftSignTool {
   param(
     [Parameter(Mandatory = $true)]

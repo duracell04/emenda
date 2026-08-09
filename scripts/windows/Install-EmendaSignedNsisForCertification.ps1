@@ -439,6 +439,7 @@ $normalizedThumbprint = ConvertTo-EmendaCertificateThumbprint -Thumbprint $Certi
 $certificate = Get-EmendaSigningCertificate -Thumbprint $normalizedThumbprint
 $signToolPath = Get-EmendaSignToolPath
 Assert-EmendaMicrosoftSignTool -Path $signToolPath
+$certUtilPath = Get-EmendaCertUtilPath
 $repositoryRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..\..')).Path
 $tauriConfigurationPath = Join-Path $repositoryRoot 'src-tauri\tauri.conf.json'
 $tauriConfiguration = Get-Content -Raw -LiteralPath $tauriConfigurationPath | ConvertFrom-Json
@@ -541,13 +542,11 @@ try {
     throw 'The exact Emenda certificate appeared in CurrentUser\Root before this script could import it.'
   }
   $rootTrustImportAttempted = $true
-  $rootImport = @(
-    Import-Certificate -FilePath $temporaryCertificatePath -CertStoreLocation 'Cert:\CurrentUser\Root'
-  )
-  if ($rootImport.Count -ne 1 -or
-      (ConvertTo-EmendaCertificateThumbprint -Thumbprint $rootImport[0].Thumbprint) -cne $normalizedThumbprint) {
-    throw 'The exact Emenda public certificate was not imported into CurrentUser\Root.'
-  }
+  [void] (Import-EmendaCurrentUserTrust `
+    -CertUtilPath $certUtilPath `
+    -CertificatePath $temporaryCertificatePath `
+    -StoreName 'Root' `
+    -ExpectedThumbprint $normalizedThumbprint)
   if (-not (Test-Path -LiteralPath $trustPaths.Root -PathType Leaf)) {
     throw 'The exact Emenda public certificate is absent from CurrentUser\Root after import.'
   }
@@ -556,13 +555,11 @@ try {
     throw 'The exact Emenda certificate appeared in CurrentUser\TrustedPublisher before this script could import it.'
   }
   $publisherTrustImportAttempted = $true
-  $publisherImport = @(
-    Import-Certificate -FilePath $temporaryCertificatePath -CertStoreLocation 'Cert:\CurrentUser\TrustedPublisher'
-  )
-  if ($publisherImport.Count -ne 1 -or
-      (ConvertTo-EmendaCertificateThumbprint -Thumbprint $publisherImport[0].Thumbprint) -cne $normalizedThumbprint) {
-    throw 'The exact Emenda public certificate was not imported into CurrentUser\TrustedPublisher.'
-  }
+  [void] (Import-EmendaCurrentUserTrust `
+    -CertUtilPath $certUtilPath `
+    -CertificatePath $temporaryCertificatePath `
+    -StoreName 'TrustedPublisher' `
+    -ExpectedThumbprint $normalizedThumbprint)
   if (-not (Test-Path -LiteralPath $trustPaths.TrustedPublisher -PathType Leaf)) {
     throw 'The exact Emenda public certificate is absent from CurrentUser\TrustedPublisher after import.'
   }

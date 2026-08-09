@@ -112,6 +112,7 @@ $normalizedThumbprint = ConvertTo-EmendaCertificateThumbprint -Thumbprint $Certi
 $certificate = Get-EmendaSigningCertificate -Thumbprint $normalizedThumbprint
 $signToolPath = Get-EmendaSignToolPath
 Assert-EmendaMicrosoftSignTool -Path $signToolPath
+$certUtilPath = Get-EmendaCertUtilPath
 $rustTarget = Get-EmendaRustTarget
 $trustPaths = Assert-EmendaTemporaryTrustAbsent -Thumbprint $normalizedThumbprint
 $rootTrustPath = $trustPaths.Root
@@ -128,6 +129,14 @@ if ($worktreeStatus.Count -ne 0) {
 $tauriCommand = Join-Path $repositoryRoot 'node_modules\.bin\tauri.cmd'
 if (-not (Test-Path -LiteralPath $tauriCommand -PathType Leaf)) {
   throw 'The local Tauri CLI is missing. Run npm install before the signed build.'
+}
+$tauriSignerPath = Join-Path $PSScriptRoot 'Invoke-EmendaTauriSign.ps1'
+$windowsPowerShellPath = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+if (-not (Test-Path -LiteralPath $tauriSignerPath -PathType Leaf)) {
+  throw "The audited Tauri signing helper is missing: $tauriSignerPath"
+}
+if (-not (Test-Path -LiteralPath $windowsPowerShellPath -PathType Leaf)) {
+  throw "Windows PowerShell 5.1 is missing: $windowsPowerShellPath"
 }
 
 if ($PreflightOnly) {
@@ -159,15 +168,6 @@ $manifestArtifacts = @()
 $operationError = $null
 $cleanupErrors = New-Object 'System.Collections.Generic.List[string]'
 $timestampUrl = 'http://timestamp.digicert.com'
-$tauriSignerPath = Join-Path $PSScriptRoot 'Invoke-EmendaTauriSign.ps1'
-$windowsPowerShellPath = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
-
-if (-not (Test-Path -LiteralPath $tauriSignerPath -PathType Leaf)) {
-  throw "The audited Tauri signing helper is missing: $tauriSignerPath"
-}
-if (-not (Test-Path -LiteralPath $windowsPowerShellPath -PathType Leaf)) {
-  throw "Windows PowerShell 5.1 is missing: $windowsPowerShellPath"
-}
 
 try {
   # A manifest describes one completely verified run. Invalidate an earlier run
@@ -276,13 +276,11 @@ try {
     throw 'The exact Emenda certificate appeared in CurrentUser\Root before this script could import it.'
   }
   $rootTrustImportAttempted = $true
-  $rootImport = @(
-    Import-Certificate -FilePath $temporaryCertificatePath -CertStoreLocation 'Cert:\CurrentUser\Root'
-  )
-  if ($rootImport.Count -ne 1 -or
-      (ConvertTo-EmendaCertificateThumbprint -Thumbprint $rootImport[0].Thumbprint) -cne $normalizedThumbprint) {
-    throw 'The exact Emenda public certificate was not imported into CurrentUser\Root.'
-  }
+  [void] (Import-EmendaCurrentUserTrust `
+    -CertUtilPath $certUtilPath `
+    -CertificatePath $temporaryCertificatePath `
+    -StoreName 'Root' `
+    -ExpectedThumbprint $normalizedThumbprint)
   if (-not (Test-Path -LiteralPath $rootTrustPath -PathType Leaf)) {
     throw 'The exact Emenda public certificate is absent from CurrentUser\Root after import.'
   }
@@ -290,13 +288,11 @@ try {
     throw 'The exact Emenda certificate appeared in CurrentUser\TrustedPublisher before this script could import it.'
   }
   $publisherTrustImportAttempted = $true
-  $publisherImport = @(
-    Import-Certificate -FilePath $temporaryCertificatePath -CertStoreLocation 'Cert:\CurrentUser\TrustedPublisher'
-  )
-  if ($publisherImport.Count -ne 1 -or
-      (ConvertTo-EmendaCertificateThumbprint -Thumbprint $publisherImport[0].Thumbprint) -cne $normalizedThumbprint) {
-    throw 'The exact Emenda public certificate was not imported into CurrentUser\TrustedPublisher.'
-  }
+  [void] (Import-EmendaCurrentUserTrust `
+    -CertUtilPath $certUtilPath `
+    -CertificatePath $temporaryCertificatePath `
+    -StoreName 'TrustedPublisher' `
+    -ExpectedThumbprint $normalizedThumbprint)
   if (-not (Test-Path -LiteralPath $publisherTrustPath -PathType Leaf)) {
     throw 'The exact Emenda public certificate is absent from CurrentUser\TrustedPublisher after import.'
   }
