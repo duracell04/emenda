@@ -1,178 +1,103 @@
 # Emenda Brand System
 
+> **Frozen brand system, version 1.0.0**
+
 > **Preserve your Duktus**
 
-Emenda is a minimal local writing assistant that corrects and refines text while preserving the author’s Duktus.
+Emenda is a quiet editorial instrument. It measures, corrects, and refines with precision while leaving authorship visibly with the writer.
 
----
+## 1. Brand idea
 
-## 1. Brand Idea
+Emenda should feel like:
 
-Emenda should feel like a precise editorial instrument rather than a generic AI product.
+```text
+precise
+restrained
+mechanical
+editorial
+quiet intelligence
+```
 
-The visual language combines the character of a typewriter, proofreader, measuring instrument, and mechanical drafting system. The brand is quiet, exact, tactile, and restrained.
+The visual language combines the character of a typewriter, proofreader, measuring instrument, and mechanical drafting system.
 
-### Brand keywords
+## 2. Product principle
 
-- precise
-- restrained
-- mechanical
-- editorial
-- quiet intelligence
+> **Emenda corrects the text while preserving the author's Duktus.**
 
-### Product principle
+## 3. Wordmark
 
-> **Emenda corrects the text while preserving the author’s Duktus.**
+Primary wordmark:
 
----
+```text
+Emenda
+```
 
-## 2. Wordmark
+Preferred tagline:
 
-The primary wordmark is:
+```text
+Preserve your Duktus
+```
 
-**Emenda**
-
-It uses a typewriter-inspired serif/monospaced character with visible human irregularity.
-
-The wordmark can appear:
-
-1. on its own;
-2. with the tagline **Preserve your Duktus**;
-3. as a ruled lockup with fine measurement lines;
-4. beside the Emenda monogram.
-
-### Preferred lockup
+Preferred lockup:
 
 ```text
 [ Emenda monogram ] | Emenda
                      Preserve your Duktus
 ```
 
-The lockup should feel balanced, editorial, and lightly engineered.
+## 4. Monogram
 
----
+The core symbol is a capital **E** inside an incomplete circular construction arc.
 
-## 3. Monogram
-
-The core Emenda symbol is a capital **E** held inside an incomplete circular construction arc.
-
-### Elements
-
-- capital `E`
-- incomplete circular arc
-- horizontal and vertical alignment marks
-- ruler / measurement ticks
-- one restrained oxblood accent
-- visible construction logic
-
-The mark should feel as though it has been measured and assembled rather than decorated.
-
-The circle remains open. Its incompleteness gives the mark movement and keeps it from feeling like a conventional badge.
-
-The `E` remains the visual anchor.
-
-### Character
-
-The monogram should communicate:
-
-- correction
-- measurement
-- editorial precision
-- mechanical alignment
-- authorship
-- restraint
-
----
-
-## 4. Logo Geometry & Construction
-
-Use the monogram as a measured construction, not as freely arranged decorative elements.
-
-### Coordinate system
-
-Define the monogram on a square construction field with the `E` placed on the central vertical axis.
+Elements:
 
 ```text
-              12 o'clock
-                  │
-                  │
-          ╭───────┼───
-       ╭──╯       │
-      │           │
-9 ────┼────── E ──┼────
-      │           │
-       ╰──╮       │
-          ╰───────┼──── ruler →
-                  │        │
-              6 o'clock    oxblood
+capital E
+incomplete circular arc
+fine alignment marks
+ruler / measurement ticks
+one restrained oxblood correction marker
+visible construction logic
 ```
+
+The mark feels measured and assembled.
+
+The right side remains open.
+
+The E remains the visual anchor.
+
+## 5. Logo geometry
 
 ### Circular arc
 
-- The primary construction is an **incomplete circle** around the `E`.
-- The circle is centred approximately on the optical centre of the `E`.
-- The arc covers roughly **three quarters of a full circle**.
-- The opening sits on the **right-hand side**, approximately between the 1–2 o'clock and 4 o'clock regions.
-- The arc crosses the principal construction axes at approximately:
-  - `12 o'clock`
-  - `9 o'clock`
-  - `6 o'clock`
-- The right side remains deliberately open.
-- The lower-right end transitions visually toward the ruler/measuring element.
-- The arc should read as a drafting stroke rather than a perfect digital ring.
+- approximately three quarters of a full circle;
+- opening on the right side;
+- strong primary drafting stroke;
+- lower-right termination transitions toward a ruler gesture.
 
-### `E`
+### E
 
-- The `E` sits centrally inside the circular construction.
-- It is vertically dominant and slightly narrower than the circle's inner diameter.
-- Its visual centre aligns with the vertical construction axis.
-- The typeform retains the irregular, inked/typewriter character visible in the reference.
-- The `E` should occupy roughly **45–50% of the circle diameter in width** and **50–55% in height**.
-- Optical centring takes precedence over mathematical centring.
+- centered optically inside the construction;
+- approximately 45–50% of circle diameter in width;
+- approximately 50–55% in height;
+- typewriter-inspired character with visible human irregularity.
 
-### Construction axes
+### Construction lines
 
-Use very fine secondary lines:
-
-- one vertical centre line through the `E`;
-- one horizontal centre line;
-- short perpendicular registration marks where the circle crosses the main axes.
-
-The construction lines are substantially lighter and thinner than the primary arc and `E`.
-
-### Registration points
-
-The visible registration points occur primarily at:
+Use very fine:
 
 ```text
-top    → circle / vertical-axis intersection
-left   → circle / horizontal-axis intersection
-bottom → circle / vertical-axis intersection
-right  → ruler / correction construction
+vertical center line
+horizontal center line
+registration marks
+ruler ticks
 ```
 
-Each should resemble a technical drafting registration mark rather than a decorative cross.
+### Oxblood marker
 
-### Ruler element
+Use one short vertical oxblood line crossing the ruler near the lower-right region.
 
-The lower-right ruler is a distinct geometric component.
-
-- It sits approximately on the horizontal level of the lower-right arc termination.
-- Its baseline extends horizontally to the right.
-- Fine perpendicular ticks run across it.
-- Tick lengths vary subtly in a ruler-like cadence.
-- It should remain materially thinner than the main arc.
-- The ruler visually completes the geometry without closing the circle.
-
-### Oxblood correction mark
-
-The oxblood line is the only strong colour accent.
-
-- It is a **short vertical stroke**.
-- It intersects the ruler near its right-hand portion.
-- It extends slightly above and below the ruler baseline.
-- It behaves like an editorial correction/alignment marker.
-- Its placement should feel exact rather than centred for symmetry.
+It behaves like a precise editorial correction mark.
 
 ### Stroke hierarchy
 
@@ -182,14 +107,14 @@ Relative visual weight:
 E                       100%
 main circular arc        75–85%
 outer app-icon border    70–80%
+oxblood marker           30–40%
 registration marks       20–30%
 ruler baseline           20–25%
 ruler ticks              15–20%
 construction axes        10–15%
-oxblood marker           30–40%
 ```
 
-This hierarchy is important. The eye should see:
+Visual reading order:
 
 ```text
 E
@@ -198,43 +123,22 @@ E
 → construction detail
 ```
 
-rather than seeing all lines with equal weight.
+## 6. App icon
 
-### Optical asymmetry
-
-The mark is deliberately **not geometrically closed or perfectly symmetrical**.
-
-The right-side opening, lower-right ruler and red marker create controlled imbalance. This gives the mark its editorial/mechanical character.
-
-Preserve this controlled asymmetry. In particular, preserve:
-
-- the incomplete circle;
-- the deliberate right-side opening;
-- the asymmetrical lower-right ruler gesture;
-- the off-centre oxblood correction mark;
-- the strong stroke hierarchy between primary and construction elements.
-
-A complete circle, perfectly symmetric `C`, centred red line, equally weighted construction lines, or generic target/crosshair treatment changes the identity of the mark.
-
-### App-icon geometry
-
-For the app icon:
-
-- centre the monogram inside a rounded square;
-- maintain generous internal clear space;
-- the rounded square should frame the monogram rather than tightly contain it;
-- the monogram should occupy roughly **60–65% of the icon width**;
-- retain the circle opening and oxblood marker at all normal icon sizes.
-
-At very small sizes, simplify in this order:
+Composition:
 
 ```text
-construction-axis detail
-→ minor ruler ticks
-→ minor registration lines
+Paper background
+black rounded-square outline
+central E
+incomplete circular arc
+fine measurement details
+small oxblood marker
 ```
 
-Preserve longest:
+The monogram occupies approximately 60–65% of icon width.
+
+At small sizes preserve:
 
 ```text
 E
@@ -243,390 +147,180 @@ E
 → oxblood marker
 ```
 
-### Clear space
+## 7. Canonical vector
 
-Use the width of the capital `E` stem as a practical minimum clear-space unit around the standalone monogram and wordmark lockup.
-
-### Canonical vector source
-
-> **The supplied brand boards define the visual geometry, but they are raster concept artwork rather than a production vector master. Exact Bézier coordinates, stroke widths, corner radii and spacing should therefore be reconstructed once as a canonical SVG and treated as the geometric source of truth thereafter.**
-
-Create and maintain one canonical production master as `emenda-mark.svg`. Derive favicons, tray icons, installer icons, animation assets and UI marks from that vector source rather than redrawing the symbol independently.
-
----
-
-## 5. Logo System
-
-### Wordmark
+Create one canonical production vector:
 
 ```text
-Emenda
-Preserve your Duktus
+emenda-mark.svg
 ```
 
-### Ruled lockup
+Use that vector as the source for:
 
-The wordmark sits between or alongside fine horizontal measurement rules and tick marks.
+```text
+app icon
+favicon
+tray/menu icon
+UI mark
+motion assets
+release assets
+```
 
-### Monogram
-
-The `E` appears inside the incomplete circular construction mark.
-
-### Horizontal lockup
-
-The monogram appears to the left of the wordmark, separated by generous whitespace or a subtle vertical rule.
-
-### Usage principle
-
-Typography leads. Mechanical details support the identity rather than competing with it.
-
----
-
-## 6. App Icon and Favicon
-
-The application icon uses the monogram inside a softly rounded square.
-
-### Icon composition
-
-- paper/off-white background
-- black rounded-square outline
-- central Emenda `E`
-- incomplete circular arc
-- fine construction/alignment marks
-- ruler ticks
-- small oxblood vertical accent
-
-### Scale targets
-
-Design and test the symbol at:
-
-- `32 × 32`
-- `16 × 16`
-- `8 × 8`
-
-At smaller sizes, preserve the recognisable `E` and circular construction gesture first. Secondary measurement details may simplify as required for clarity.
-
-### Icon character
-
-> **Precise · Mechanical · Editorial**
-
----
-
-## 7. Colour Palette
+## 8. Color palette
 
 | Name | Hex | Role |
 |---|---:|---|
-| **Ink Black** | `#0E0F10` | Primary typography, iconography, strong outlines |
-| **Graphite** | `#2B2D2F` | Secondary dark surfaces and UI details |
-| **Steel Gray** | `#7A7F85` | Secondary text, guides, construction lines |
-| **Paper** | `#F4F2EE` | Primary light background |
-| **Oxblood** | `#5A1A1F` | Rare functional accent |
+| **Ink Black** | `#0E0F10` | primary typography, iconography, strong outlines |
+| **Graphite** | `#2B2D2F` | secondary dark structure |
+| **Steel Gray** | `#7A7F85` | secondary text and guides |
+| **Paper** | `#F4F2EE` | primary light background |
+| **Oxblood** | `#5A1A1F` | rare correction/action accent |
 
-### Colour principle
+### Color principle
 
 The system is predominantly monochrome.
 
-**Oxblood is a precise functional cue.** Use it for meaningful correction, alignment, selection, or action details rather than general decoration.
+Oxblood communicates meaningful editorial action.
 
-Paper backgrounds should feel warm rather than pure white.
+Paper creates a warm writing surface.
 
----
+## 9. Typography
 
-## 8. Typography
-
-### Primary typeface
-
-**Special Elite Regular**
+### Special Elite Regular
 
 Use for:
 
-- Emenda wordmark
-- editorial display text
-- short labels where the mechanical/typewriter voice is desirable
-- brand-led headings
-- selected interface details
+```text
+wordmark
+short brand-led headings
+restrained editorial moments
+```
 
 Character:
 
-- monospaced / typewriter-inspired
-- tactile
-- editorial
-- mechanically expressive
-- deliberately imperfect
+```text
+typewriter-inspired
+tactile
+editorial
+mechanical
+human
+```
 
-### Secondary typeface
-
-**Inter Regular**
+### Inter Regular
 
 Use for:
 
-- application UI
-- body copy
-- settings
-- descriptions
-- long-form interface text
-- dense information
+```text
+functional UI
+body copy
+suggestion cards
+status
+descriptions
+```
 
 Character:
 
-- neutral
-- highly legible
-- contemporary
-- quiet
-- functional
+```text
+neutral
+highly legible
+quiet
+contemporary
+functional
+```
 
 ### Typography principle
 
-Use Special Elite to provide identity and Inter to provide clarity.
+Special Elite provides identity.
 
-The interface should remain easy to read even when the brand typography is expressive.
+Inter provides clarity.
 
----
+## 10. V0.1 UI style
 
-## 9. Motifs and Iconography
-
-The brand draws from editorial, mechanical, and typographic tools.
-
-Core motifs:
-
-- **Carriage return**
-- **Correction mark**
-- **Paper**
-- **Typebar**
-- **Ruler**
-- **Keycap**
-- **Margin**
-- **Mechanism / gear**
-- **Alignment crosshair**
-
-### Icon style
-
-Icons should use:
-
-- thin or restrained strokes
-- simple geometry
-- mechanical construction
-- editorial references
-- minimal ornament
-- clear functional meaning
-
----
-
-## 10. UI Style
-
-The interface should feel quiet, exact, and native to the act of writing.
-
-### General principles
-
-- generous whitespace
-- subtle borders
-- mechanical alignment details
-- restrained use of colour
-- typography-led hierarchy
-- compact controls
-- low visual noise
-- clear state transitions
-
-### Buttons
-
-#### Primary
-
-Dark Ink Black surface with light text.
-
-#### Secondary
-
-Paper/light surface with a fine dark border.
-
-#### Tertiary
-
-Minimal text treatment with little or no container.
-
-### Suggestion card
-
-A suggestion can follow this structure:
+The compact suggestion surface uses:
 
 ```text
-Suggestion
-
-Refined wording for clarity while
-preserving your style.
-
-                         Apply   Dismiss
+Paper background
+Ink Black text and primary control
+Graphite / Steel secondary detail
+Oxblood correction/action cue
+subtle precise borders
+compact spacing
+generous internal whitespace
 ```
 
-`Apply` may use the oxblood accent.
-
-### Settings card
-
-Example structure:
+Primary action:
 
 ```text
-⚙ Settings
-
-Model        [ selected model / provider ▼ ]
+Ink Black surface
+Paper text
 ```
 
-### Modes
-
-The visual system can distinguish compact writing modes such as:
+Secondary action:
 
 ```text
-[ Correct ]   [ Refine ]
+Paper surface
+fine Ink border
 ```
 
-### Sensitivity
-
-Sensitivity may be represented through a quiet stepped indicator using small circular marks, with the active point using oxblood.
-
-### Status
-
-A compact status element can communicate readiness:
+Suggestion structure:
 
 ```text
-● Ready
+Correct
+
+liek → like
+
+Spelling correction.
+
+Apply   Dismiss
 ```
 
-Status language should remain concise and functional.
+Refine suggestions use softer category emphasis.
 
----
-
-## 11. Brand Voice
-
-The brand voice follows the product philosophy:
-
-> We respect the writer.  
-> We refine with precision.  
-> We never overwrite voice.  
-> We preserve your Duktus.
-
-The voice should feel:
-
-- precise
-- calm
-- editorial
-- literate
-- restrained
-- confident
-- non-performative
+## 11. Brand voice
 
 Emenda speaks like a careful editor working beside the author.
 
----
+Voice:
 
-## 12. Usage Notes
+```text
+precise
+calm
+editorial
+literate
+restrained
+confident
+non-performative
+```
 
-- Use generous whitespace.
-- Prefer subtle borders and mechanical details.
-- Let typography lead.
-- Keep accents rare and meaningful.
-- Keep construction marks precise.
-- Preserve visual quiet.
-- Use the warm Paper background as the default brand canvas where appropriate.
+Core statements:
 
----
+> We respect the writer.  
+> We refine with precision.  
+> We preserve your Duktus.
 
-## 13. Animated Logo Concept
+## 12. Motion
 
-### Concept
+Motion is:
 
-A precise, mechanical build assembles the Emenda mark from technical elements.
+```text
+measured
+intentional
+engineered
+restrained
+```
 
-The motion should feel:
+A later logo animation may follow:
 
-- measured
-- intentional
-- engineered
-- restrained
+```text
+align
+→ draw arc
+→ measure
+→ reveal E
+→ settle
+→ reveal wordmark
+```
 
-### Sequence
-
-#### 01 — Align
-
-**Time:** `00:00`
-
-Alignment marks fade in.
-
-A baseline tick lands with precision.
-
-#### 02 — Draw
-
-**Time:** `00:06`
-
-The circular arc draws in with mechanical precision.
-
-#### 03 — Measure
-
-**Time:** `00:12`
-
-Ruler ticks slide into place.
-
-The mark locks to centre.
-
-#### 04 — Emerge
-
-**Time:** `00:18`
-
-The `E` resolves at the centre, anchored and exact.
-
-#### 05 — Finalize
-
-**Time:** `00:24`
-
-Details settle.
-
-The mark holds in stillness.
-
-#### 06 — Reveal
-
-**Time:** `00:30`
-
-The **Emenda** wordmark types on subtly.
-
-The tagline **Preserve your Duktus** fades in.
-
----
-
-## 14. Motion Principles
-
-### Precise
-
-Every movement is intentional and measured.
-
-### Mechanical
-
-Elements move with clean, engineered logic.
-
-### Restrained
-
-Motion remains minimal and controlled.
-
-### Subtle accent
-
-Oxblood appears only as a precise functional cue.
-
-### Timing
-
-- approximately `30 frames`
-- approximately `1.0 s`
-- smooth, consistent pacing
-
-### Loop behaviour
-
-The animation can:
-
-- run as a complete intro;
-- hold on the finalized monogram;
-- loop from the construction sequence where appropriate.
-
-### Background
-
-Best suited to light, Paper-like backgrounds.
-
----
-
-## 15. Visual Hierarchy
-
-The identity should generally follow this order:
+## 13. Visual hierarchy
 
 ```text
 Typography
@@ -636,13 +330,9 @@ Typography
 → oxblood accent
 ```
 
-The oxblood accent is the final cue, not the dominant visual element.
+## 14. Design decision function
 
----
-
-## 16. Design Decision Test
-
-When a visual or UI decision is ambiguous, prefer the option that feels:
+When a visual choice remains open, choose the option that feels:
 
 ```text
 more precise
@@ -652,37 +342,6 @@ more precise
 → quieter
 ```
 
-The interface should feel like a well-made editorial instrument.
+## 15. Brand essence
 
----
-
-## 17. Canonical Brand Elements
-
-```text
-Product:   Emenda
-Tagline:   Preserve your Duktus
-Keywords:  Precise · Restrained · Mechanical · Editorial · Quiet intelligence
-```
-
-### Canonical colours
-
-```text
-Ink Black   #0E0F10
-Graphite     #2B2D2F
-Steel Gray   #7A7F85
-Paper        #F4F2EE
-Oxblood      #5A1A1F
-```
-
-### Canonical typography
-
-```text
-Primary:    Special Elite Regular
-Secondary:  Inter Regular
-```
-
----
-
-## 18. Brand Essence
-
-> **Emenda is a quiet editorial instrument. It measures, corrects and refines with precision while leaving authorship visibly with the writer.**
+> **Emenda is a quiet editorial instrument. It measures, corrects, and refines with precision while leaving authorship visibly with the writer.**

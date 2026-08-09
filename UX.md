@@ -1,295 +1,160 @@
 # Emenda UX / UI Principles
 
+> **Frozen UX system, version 1.0.0**
+
 > **Emenda observes quietly, proposes precisely, and lets the writer decide.**
 
-## 1. Product UX Goal
+## 1. One product model
 
-### Decision
-Emenda stays inside the writer’s existing workflow and keeps the original application as the primary surface.
-
-### Why
-Writing remains the user’s main task. A separate editor adds context switching and weakens the feeling that Emenda is a lightweight editorial layer.
-
-### Deterministic behaviour
+V0.1 has one interaction model:
 
 ```text
 write
-→ detect
-→ indicate
-→ suggest
-→ decide
-→ apply
+→ pause
+→ Emenda checks
+→ exact suggestion appears
+→ Apply or Dismiss
 → continue writing
 ```
 
-Every UX feature should strengthen this loop.
+Platform bindings provide the same experience through different private mechanisms.
 
----
+V0.1 uses the ambient correction workflow exclusively. Additional interaction models belong to later evidence-driven milestones.
 
-## 2. Correct Before Refine
+## 2. Original context first
 
-### Decision
-Emenda separates **Correct** from **Refine**.
+The writer remains in the original application.
+
+Emenda appears only when it has a useful suggestion or a meaningful state to communicate.
+
+## 3. Passive observation
+
+Emenda observes eligible editable-text changes automatically.
+
+One short debounce waits for typing to settle.
+
+Initial value:
+
+```text
+500 ms
+```
+
+The value is one explicit product constant and changes only through measured evidence.
+
+## 4. Explicit application
+
+Every source edit follows an explicit writer action.
+
+```text
+suggestion
+→ Apply
+```
+
+Dismiss preserves the source.
+
+## 5. Smallest useful intervention
+
+Prefer:
+
+```text
+exact local correction
+→ sentence refinement when clearly useful
+→ broader rewrite only under a later explicit objective
+```
+
+The author's text remains the source of truth.
+
+## 6. One suggestion, one decision
+
+Each visible suggestion represents one understandable change:
+
+```text
+Correct or Refine
+original → replacement
+short explanation
+Apply   Dismiss
+```
+
+## 7. Correct and Refine
 
 ```text
 Correct
 → spelling
 → grammar
 → punctuation
-→ capitalization
-→ clear word misuse
 
 Refine
-→ clarity
-→ precision
-→ concision
-→ restrained stylistic improvement
+→ restrained style
 ```
 
-Correct receives the primary visual and interaction priority. Refine remains softer and secondary.
+Correct receives stronger visual priority.
 
-### Why
-Correctness is usually objective and low-risk. Style is contextual and more closely tied to the author’s Duktus. Separating them lets users trust automatic detection without feeling that Emenda is rewriting their voice.
+Refine remains softer and individually reviewable.
 
-### Deterministic behaviour
-A suggestion belongs to exactly one category: `Correct` or `Refine`.
+## 8. Compact presentation
 
----
+V0.1 uses one small suggestion surface.
 
-## 3. Passive Detection, Explicit Application
+When reliable `TextGeometry` exists, the surface may use it for quiet placement.
 
-### Decision
-Emenda analyses eligible text automatically after a short typing pause. Every edit is applied through an explicit user action.
+When geometry is absent, the same suggestion interaction remains available in a stable compact position. This is presentation placement, not a second product workflow.
 
-### Why
-Passive detection removes friction. Explicit application preserves authorship and gives the writer final editorial control.
+The interface remains subordinate to the writing application.
 
-### Deterministic behaviour
+## 9. State model
+
+Canonical states:
 
 ```text
-typing stops briefly
-→ snapshot current text
-→ analyse
-→ show suggestion
-→ user applies or dismisses
-```
-
-A newer text snapshot supersedes an older pending result.
-
----
-
-## 4. Three Levels of Visibility
-
-### Decision
-Emenda uses progressive disclosure.
-
-```text
-Level 1  Quiet status
-Level 2  Inline signal
-Level 3  Suggestion surface
-```
-
-### Why
-Most writing needs little attention. The interface should reveal detail only when a useful correction exists or the user asks for it.
-
-### Deterministic behaviour
-
-**Level 1 — Quiet status**
-
-```text
-Ready
+Quiet
 Checking…
-2 suggestions
+Suggestion
 Text looks good
-Paused
+Connection issue
+Invalid response
+Stale result
+Protected surface
+Replacement issue
 ```
 
-**Level 2 — Inline signal**
-
-Use a restrained underline or marker when exact text geometry is reliable.
-
-**Level 3 — Suggestion surface**
+Every exceptional state communicates:
 
 ```text
-original → replacement
-short reason
-
-Apply   Dismiss
+what happened
+→ what Emenda preserved
+→ next useful action
 ```
 
-Deeper explanation appears on request.
+## 10. Reversibility
 
----
+Apply requests one coherent host edit whenever supported.
 
-## 5. Smallest Reliable Surface
+Native Undo remains useful where the host provides it.
 
-### Decision
-Emenda selects the richest reliable interaction supported by the current text surface.
+## 11. Keyboard and accessibility
 
-### Why
-Desktop applications expose text differently. A consistent workflow matters more than identical rendering across every host application.
-
-### Deterministic capability ladder
+Primary actions have keyboard paths:
 
 ```text
-1. Inline anchored correction
-2. Floating anchored widget
-3. Compact review panel
-4. Selected-text correction
-5. Copy corrected text
+Apply
+Dismiss
+close suggestion
 ```
 
-Use the first reliable level available.
-
-This keeps the user-facing model constant across Windows, macOS, Linux, browsers, and ChromeOS while allowing platform adapters to differ internally.
-
----
-
-## 6. One Suggestion, One Decision
-
-### Decision
-Each suggestion represents one understandable change.
-
-### Why
-Small, attributable changes are easier to trust, review, apply, undo, test, and learn from than opaque whole-passage rewrites.
-
-### Deterministic card content
+Use:
 
 ```text
-category
-original → replacement
-short reason
-
-Apply   Dismiss
+visible focus
+screen-reader labels
+sufficient contrast
+reduced-motion preference
 ```
 
-Optional secondary actions appear only when relevant:
+Target WCAG 2.2 AA for Emenda-owned UI.
 
-```text
-Explain
-Add to vocabulary
-```
+## 12. Language behavior
 
----
-
-## 7. Preserve the Author’s Duktus
-
-### Decision
-Emenda proposes the smallest useful intervention.
-
-### Why
-The author’s existing text is the source of truth. Localised corrections improve quality while keeping wording, rhythm, register, terminology, and personality recognisably the writer’s own.
-
-### Deterministic behaviour
-
-Prefer:
-
-```text
-exact local correction
-```
-
-before:
-
-```text
-sentence rewrite
-```
-
-and prefer:
-
-```text
-sentence rewrite
-```
-
-before:
-
-```text
-passage rewrite
-```
-
-Use the smallest scope that solves the identified issue.
-
----
-
-## 8. Review All for Dense Text
-
-### Decision
-A compact **Review All** surface appears when several suggestions exist.
-
-### Why
-One-by-one review works well for normal writing, while longer passages benefit from a faster overview.
-
-### Deterministic behaviour
-
-```text
-multiple suggestions
-→ Review All
-→ Correct / Refine grouping
-→ inspect individually
-→ Apply selected
-```
-
-High-confidence Correct suggestions may support a batch action. Refine remains separately reviewable.
-
----
-
-## 9. Emenda Indicator
-
-### Decision
-A small Emenda indicator acts as the ambient control surface.
-
-### Why
-The user needs one predictable place to understand Emenda’s state without opening a full application window.
-
-### Deterministic behaviour
-
-The indicator may expose:
-
-```text
-current state
-suggestion count
-Review All
-Pause for this app
-Settings
-```
-
-It can anchor near the active writing surface, move to an edge, collapse, or remain hidden while inline suggestions stay active.
-
----
-
-## 10. Per-Application Control
-
-### Decision
-Emenda stores simple local preferences for each application.
-
-### Why
-Writing context changes by application. Email, messaging, word processing, and code editing can benefit from different levels of assistance.
-
-### Deterministic app preference
-
-```text
-AppPreference
-- app identity
-- active / paused
-- language override
-- Correct only / Correct + Refine
-```
-
-Default:
-
-```text
-Active
-Automatic language
-Correct
-```
-
-The current app can be changed quickly through the indicator or tray/menu-bar control.
-
----
-
-## 11. Language Behaviour
-
-### Decision
-Language detection stays automatic by default.
+Automatic language selection is the default.
 
 Supported profiles:
 
@@ -311,20 +176,11 @@ English → en-GB
 
 Clearly American English maps to `en-US`.
 
-### Why
-Language selection is infrastructure rather than the writing task. Automatic routing keeps the interface quiet while preserving the user’s preferred language varieties.
+Preserve names, quotations, terminology, and short embedded passages.
 
-### Deterministic behaviour
-Use the dominant language of the current text span. Preserve names, quotations, terminology, and short embedded passages in another language.
+## 13. Model behavior
 
-A manual override remains available in Settings and per-app preferences.
-
----
-
-## 12. Model Choice
-
-### Decision
-The normal writing surface stays model-agnostic.
+The normal writing experience stays model-agnostic.
 
 Default:
 
@@ -332,333 +188,65 @@ Default:
 openrouter/free
 ```
 
-A searchable model selector lives in Settings.
+Model configuration remains local infrastructure rather than a prominent writing control.
 
-### Why
-The user cares about correction quality, speed, and cost more than provider mechanics. OpenRouter keeps model choice flexible without turning model management into the product.
+## 14. Privacy visibility
 
-### Deterministic behaviour
+Protected or ineligible surfaces produce a clear quiet state.
 
-Normal writing:
+Emenda sends only the bounded context required for the current request.
 
-```text
-use configured default model
-```
+The UI never displays or receives native source identity.
 
-Important text:
-
-```text
-optionally choose a stronger model
-→ run check
-→ continue with configured default afterward
-```
-
-The exact model remains visible to advanced users.
-
----
-
-## 13. Personal Vocabulary
-
-### Decision
-Valid unfamiliar terms can be added directly from a suggestion.
-
-### Why
-Repeated names, organisations, Swiss vocabulary, legal terms, and technical expressions should become frictionless over time.
-
-### Deterministic behaviour
-
-```text
-Dismiss
-Add to vocabulary
-```
-
-Confirmation:
-
-```text
-Added “[term]” to vocabulary
-```
-
-Settings provides a simple searchable vocabulary list with removal and optional import/export.
-
----
-
-## 14. Settings
-
-### Decision
-Settings contains only controls that materially affect writing.
-
-### Why
-A compact settings surface keeps infrastructure subordinate to the product experience.
-
-### Deterministic information architecture
-
-```text
-Writing
-- automatic checking
-- Correct / Correct + Refine
-- hotkey
-
-Language
-- automatic / manual profile
-- per-app override
-
-AI
-- OpenRouter API key
-- connection test
-- model
-
-Apps
-- active / paused
-- per-app preferences
-
-Vocabulary
-- added terms
-```
-
-Diagnostics and version information remain secondary.
-
----
-
-## 15. First-Run Experience
-
-### Decision
-Onboarding teaches Emenda through one successful correction.
-
-### Why
-The interaction model becomes understandable faster through direct use than through explanatory screens.
-
-### Deterministic flow
-
-```text
-Launch
-→ enter OpenRouter API key
-→ test connection
-→ model = openrouter/free
-→ language = Automatic
-→ show hotkey
-→ optional sample correction
-→ Ready
-```
-
-Sample:
-
-```text
-I liek this sentence.
-→
-liek → like
-```
-
-After setup, Emenda enters its normal quiet state.
-
----
-
-## 16. System States
-
-### Decision
-Every meaningful state has one explicit user-facing representation.
-
-### Why
-A deterministic state model prevents failures from looking like successful “no correction” results and makes recovery understandable.
-
-### Canonical states
-
-```text
-Ready
-Checking…
-Suggestions found
-Text looks good
-Paused
-Protected field
-Connection error
-Authentication error
-Rate limited
-Model unavailable
-Invalid response
-Stale result
-Replacement issue
-```
-
-### Recovery rule
-
-Every exceptional state communicates:
-
-```text
-what happened
-→ what Emenda preserved
-→ next useful action
-```
-
-Example:
-
-```text
-The text changed while Emenda was checking it.
-
-Your current text remains unchanged.
-
-Check current text
-```
-
----
-
-## 17. Protected Surfaces
-
-### Decision
-Emenda recognises sensitive input surfaces and shows a clear protected state.
-
-### Why
-A writing assistant should make its operating boundary visible and predictable.
-
-### Deterministic behaviour
-
-Examples:
-
-```text
-password field
-payment field
-authentication prompt
-secure credential input
-```
-
-State:
-
-```text
-Protected field
-Emenda inactive here
-```
-
----
-
-## 18. Speed and Request Behaviour
-
-### Decision
-Local UI remains responsive while inference runs asynchronously.
-
-### Why
-Perceived speed depends on immediate interface feedback even when model latency varies.
-
-### Deterministic behaviour
-
-```text
-short debounce
-→ smallest sufficient text span
-→ asynchronous inference
-→ cancel stale request
-→ validate current snapshot
-→ show result
-```
-
-Use caching for identical recent checks where it reduces unnecessary API calls.
-
----
-
-## 19. Reversibility
-
-### Decision
-Applied corrections follow the host application’s normal undo expectations whenever the host supports them.
-
-### Why
-Easy reversibility increases trust and makes accepting a suggestion feel low-risk.
-
-### Deterministic behaviour
-
-```text
-Apply
-→ one coherent host edit
-→ native Undo restores previous text
-```
-
-When direct replacement is unavailable, present corrected text for explicit copy/use.
-
----
-
-## 20. Keyboard and Accessibility
-
-### Decision
-Every primary Emenda action has a keyboard-accessible path and Emenda-owned UI targets WCAG 2.2 AA.
-
-### Why
-Writing is keyboard-heavy, and accessibility benefits also improve speed, predictability, and clarity for all users.
-
-### Deterministic behaviour
-
-Support keyboard access to:
-
-```text
-open focused suggestion
-next / previous suggestion
-Apply
-Dismiss
-Review All
-close and return to writing
-Settings
-```
+## 15. Visual behavior
 
 Use:
-
-```text
-visible focus
-screen-reader labels
-sufficient contrast
-reduced-motion preference
-```
-
----
-
-## 21. Visual Behaviour
-
-### Decision
-The UX inherits the Emenda brand as a functional system.
-
-### Why
-Visual restraint supports the product’s low-interruption behaviour and makes the interface feel like one coherent editorial instrument.
-
-### Deterministic visual hierarchy
 
 ```text
 Paper          → primary background
 Ink Black      → primary structure
 Graphite/Steel → secondary information
-Oxblood        → rare meaningful action/correction cue
+Oxblood        → rare correction/action cue
 Inter          → functional UI
 Special Elite  → restrained brand moments
 ```
 
 Use generous whitespace, precise borders, compact controls, and quiet alignment.
 
----
+## 16. Cross-platform mental model
 
-## 22. Cross-Platform Rule
-
-### Decision
-The same user-facing mental model applies everywhere.
+Every binding preserves:
 
 ```text
-detect
-→ indicate
+observe
+→ understand current context
 → suggest
-→ apply
+→ apply safely
 ```
 
-### Why
-Platform-specific text access is an implementation detail. The writer should learn Emenda once.
+The writer learns Emenda once.
 
-### Deterministic behaviour
+Binding mechanics remain invisible.
+
+## 17. V0.1 UX boundary
+
+V0.1 proves the ambient correction loop.
+
+Richer interaction begins after measured evidence, for example:
 
 ```text
-Windows  → Windows adapter
-macOS    → macOS adapter
-Linux    → Linux adapter
-Browser  → browser adapter
-ChromeOS → browser extension
+inline indication
+richer anchoring
+Review All
+per-application behavior
+personal vocabulary
 ```
 
-Each adapter exposes the strongest reliable interaction from the capability ladder defined above.
+These are future milestones rather than prebuilt alternate paths.
 
----
+## 18. UX decision function
 
-## 23. UX Decision Function
-
-When an implementation detail remains open, choose the option that best satisfies this order:
+When an interaction choice remains open, optimize in this order:
 
 ```text
 1. Keep the writer in the original context.
@@ -667,26 +255,17 @@ When an implementation detail remains open, choose the option that best satisfie
 4. Preserve reversibility.
 5. Preserve authorship and Duktus.
 6. Keep state explicit and understandable.
-7. Reveal complexity only when useful.
+7. Reveal complexity only when it materially helps writing.
 8. Keep the interface visually quiet.
 ```
 
-### Why
-This gives future developers and AI coding agents a stable decision function for cases the specification does not enumerate.
-
----
-
-## 24. UX Definition of Done
-
-A core Emenda interaction succeeds when:
+## 19. UX Definition of Done
 
 ```text
 writer stays in the original application
-→ Emenda detects a useful issue
+→ Emenda detects a useful issue automatically
 → the exact proposed change is visible
 → one clear action applies or dismisses it
 → the result remains reversible
 → writing continues immediately
 ```
-
-This is the UX outcome every implementation step should protect.

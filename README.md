@@ -1,167 +1,127 @@
 # Emenda
 
-Emenda is a restrained cross-platform writing assistant that corrects and refines text while preserving the author's Duktus.
+> **Preserve your Duktus**
 
-> **Emenda corrects the text while preserving the author's Duktus.**
+Emenda is a quiet local writing assistant that observes editable text, delegates linguistic judgment to OpenRouter, validates every proposal locally, and lets the writer apply each change explicitly.
 
-## Current V0.1
+This package is the frozen clean-room constitution for rebuilding Emenda from an empty implementation context.
 
-V0.1 is Emenda's **personal and developer-validation milestone**.
-
-The current verified workflow is:
-
-1. Launch Emenda and open **Settings**.
-2. Enter an OpenRouter API key, keep `openrouter/free` or choose a current model, and select automatic or fixed language handling.
-3. Select text in another Windows application and press `Ctrl+Alt+E`.
-4. Review validated corrections.
-5. Apply the accepted changes back to the original source through one adapter-owned replacement operation.
-
-Apply or Dismiss may hide Emenda while its hotkey stays active. Launching Emenda again restores the existing window; closing it with X exits the application.
-
-V0.1 supports Swiss Standard German (`de-CH`), British and American English, French, Georgian, and Russian. Automatic mode defaults German to `de-CH` and English to `en-GB` while preserving clearly American usage.
-
-The next product direction builds from this proven selected-text loop toward passive observation, inline signals, richer per-application behaviour, and Grammarly-like ambient assistance.
-
-## Architecture
+## Product model
 
 ```text
-Shared Emenda product semantics
-├── correction schema
-├── inference contract
-├── snapshots and revisions
-├── language profiles
-├── settings concepts
-├── typed error meanings
-└── UX decision rules
-
-Desktop
-└── Rust TextSurfaceAdapter
-    ├── Windows implementation
-    ├── macOS implementation, when development begins
-    └── Linux implementation, when development begins
-
-Browser / ChromeOS
-└── TypeScript semantic equivalent
+editable text changes
+→ short debounce
+→ smallest useful context
+→ immutable revision
+→ OpenRouter
+→ structured corrections
+→ deterministic validation
+→ compact suggestion
+→ Apply or Dismiss
+→ safe current-source replacement
+→ continue writing
 ```
 
-The privileged desktop core is safe Rust (`#![forbid(unsafe_code)]`). React and strict TypeScript provide the desktop product UI. The browser extension uses strict TypeScript and implements equivalent text-surface semantics using browser-native concepts.
-
-Native source identity, focus, source revalidation, replacement mechanics, protection checks, and clipboard handling stay inside the active adapter. Shared workflow code handles revisions, correction validation, user decisions, and typed outcomes without interpreting platform-specific identifiers.
-
-OpenRouter provides linguistic intelligence through the `InferenceProvider` boundary.
-
-## Correctness model
-
-- Runtime API keys are stored through the operating-system credential manager on desktop.
-- `OPENROUTER_API_KEY` is an optional development fallback when no saved credential exists.
-- Selected text is sent only after the current V0.1 button or hotkey invocation.
-- OpenRouter output is treated as untrusted data and must pass strict schema, range, overlap, and source-text validation.
-- Every request is bound to an immutable revision; late responses cannot replace newer text.
-- Source replacement is adapter-owned and fail-closed: the active adapter replaces text only while it can verify that the captured source and expected text remain authoritative.
-- Dynamic free-model routing can occasionally return incompatible content; Emenda rejects it as a typed structured-output error without touching source text.
-
-## Platform status
-
-Use these terms consistently:
+Emenda keeps local intelligence deliberately small:
 
 ```text
-Architectural target
-= intended platform represented by shared product contracts and design decisions
-
-Compiles
-= repository builds successfully on that host
-
-Supported platform
-= adapter implemented
-+ shared platform-agnostic tests pass
-+ platform-specific integration tests pass on that OS
-
-Distribution-ready
-= supported platform
-+ packaging and platform trust requirements satisfied
+Did useful text change?
+Has typing settled?
+What is the smallest useful context?
+Is this revision still current?
+Is the model response valid?
+Can the exact change still be applied safely?
 ```
 
-Current status:
+OpenRouter handles linguistic judgment.
 
-- **Windows:** supported and runtime-verified native adapter.
-- **macOS:** first-class architectural target; native adapter implementation and macOS integration verification remain future work.
-- **Linux:** first-class architectural target; native adapter implementation and Linux integration verification remain future work.
-- **Browser / ChromeOS:** first-class architectural target and primary ChromeOS path; extension implementation and browser integration verification remain future work.
+## Hard architecture rule
 
-Windows reaching support first represents the first verified adapter rather than a Windows-specific product architecture.
+```text
+                         EMENDA
 
-## Development
-
-Current Windows development prerequisites:
-
-- Windows 10 or 11 with WebView2
-- Node.js and npm
-- Rust 1.88 or newer
-- MSVC Build Tools with a Windows SDK
-
-```powershell
-npm install
-npm run tauri dev
+                  OS-AGNOSTIC PRODUCT
+                            │
+                    semantic TextSurface
+                            │
+             ┌──────────────┼──────────────┐
+             ▼              ▼              ▼
+       native binding  native binding  browser binding
 ```
 
-You can configure the key in Settings. For process-scoped development instead:
+Shared code contains zero knowledge of:
 
-```powershell
-$env:OPENROUTER_API_KEY = "your-key"
-npm run tauri dev
+```text
+Windows
+macOS
+Linux
+HWND
+UI Automation
+AXUIElement
+AT-SPI
+clipboard shortcuts
+keyboard simulation
+DOM nodes
 ```
 
-MSVC, the Windows SDK, Xcode command-line tools, and Linux system packages are build infrastructure rather than additional Emenda application languages.
+Those mechanisms belong to replaceable leaf bindings.
 
-For machine-local Authenticode test signing, follow the
-[Windows local test-signing guide](docs/windows-test-signing.md). Self-signed
-artifacts prove local integrity but do not establish public publisher trust.
+The current host operating system is a runtime verification environment, not an architectural input.
 
-## Verification
+## Mock-first build model
 
-The local repository health gate is:
+The complete product is built and accepted first against:
 
-```powershell
-npm run typecheck
-cargo fmt --check --manifest-path src-tauri/Cargo.toml
-cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
-cargo test --manifest-path src-tauri/Cargo.toml
-npm run tauri build
+```text
+MockTextSurface
++
+MockInferenceProvider
 ```
 
-Opt-in live Windows tests require a process-scoped key and network access:
+Only after the mock product loop and architecture gate pass does the project add a binding for the available runtime host.
 
-```powershell
-cargo test --manifest-path src-tauri/Cargo.toml live_openrouter_flow -- --ignored
-cargo test --manifest-path src-tauri/Cargo.toml --test windows_desktop_smoke -- --ignored --test-threads=1
+In the owner's present environment, runtime evidence may be collected through a Windows binding. That environmental fact may appear only in binding-specific code, tests, and evidence.
+
+## Technology
+
+- Tauri 2
+- safe Rust
+- strict TypeScript
+- HTML and CSS
+- Serde
+- Zod
+- OpenRouter
+
+The stack is selected to make the compiler, type system, runtime schemas, and capability boundaries part of the correctness system.
+
+## V0.1 outcome
+
+V0.1 is complete when:
+
+```text
+writer types ordinary editable text
+→ Emenda observes the change automatically
+→ one current request is produced after debounce
+→ a valid correction is presented
+→ Apply changes the exact intended source safely
+→ Dismiss preserves the source
+→ stale work cannot affect newer text
 ```
 
-On 2026-08-09, the complete real text-surface and live OpenRouter correction flow (`I liek this sentence.` → `I like this sentence.`) passed in:
+The shared product must already satisfy that loop deterministically through mocks before native runtime verification begins.
 
-| Application | Version | Result |
-| --- | --- | --- |
-| Windows Notepad | 11.2606.15.0 x64 | Passed |
-| Visual Studio Code | 1.132.0, isolated profile | Passed |
+## Documentation map
 
-Cross-platform CI should compile and run the strongest applicable shared checks on Windows, macOS, and Linux. A successful build on a host establishes compilation evidence; runtime platform support additionally requires the native adapter and its platform-specific integration tests.
+1. [`PROMPT.md`](PROMPT.md): autonomous build objective
+2. [`AGENTS.md`](AGENTS.md): agent execution governance
+3. [`SPEC.md`](SPEC.md): product and engineering source of truth
+4. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): dependency direction and semantic contracts
+5. [`ROADMAP.md`](ROADMAP.md): product and platform milestone sequence
+6. [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md): commit-by-commit build plan
+7. [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md): evidence required for every gate
+8. [`docs/ENGINEERING.md`](docs/ENGINEERING.md): AI-native engineering standard
+9. [`UX.md`](UX.md): interaction rules and product north star
+10. [`BRAND.md`](BRAND.md): visual identity and brand system
+11. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md): freeze identity, contents, and checksums
 
-## Release status
-
-The current milestone is personal/developer validation, not public beta distribution.
-
-Public beta readiness is a separate release gate covering:
-
-- signing and platform trust
-- installer/package quality
-- update delivery
-- runtime compatibility breadth
-- platform-specific support verification
-
-Packaging remains a deployment concern outside Emenda's shared correction, inference, state, and text-surface architecture.
-
-## Documentation
-
-- [SPEC.md](SPEC.md) — engineering source of truth, architecture, contracts, rationale and implementation order
-- [AGENTS.md](AGENTS.md) — coding-agent governance and commit discipline
-- [UX.md](UX.md) — interaction principles and UX decision rules
-- [BRAND.md](BRAND.md) — visual identity and brand system
+Together these Markdown documents are sufficient to reconstruct the intended product without access to an earlier implementation.
