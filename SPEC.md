@@ -1,8 +1,8 @@
 # Emenda V0.1
 
-Build **Emenda**, a minimal desktop writing assistant that improves selected text while preserving the author's wording, voice, rhythm, register and Duktus.
+Build **Emenda**, a minimal writing assistant that improves text while preserving the author's wording, voice, rhythm, register and Duktus.
 
-Build the complete working V0.1 application from this specification in one implementation pass.
+Build the complete working V0.1 through a sequence of small, verified vertical increments.
 
 Work autonomously. Use the decision matrix and design rationale to resolve ordinary implementation details. Prioritise the complete correction loop first, then polish the implementation around that working loop.
 
@@ -10,9 +10,9 @@ Work autonomously. Use the decision matrix and design rationale to resolve ordin
 
 # 1. Product Goal
 
-Emenda runs locally as a lightweight Tauri desktop application.
+Emenda runs locally as a lightweight application and keeps the writer's original application as the primary writing surface.
 
-The user selects text in another desktop application, triggers Emenda with a global hotkey, receives concise corrections from OpenRouter, reviews them in a small suggestion interface, and applies selected corrections directly back to the original text.
+For the current V0.1 desktop workflow, the user selects text in another application, triggers Emenda with a global hotkey, receives concise corrections from OpenRouter, reviews them in a small suggestion interface, and applies selected corrections directly back to the original text.
 
 The application handles locally:
 
@@ -34,6 +34,12 @@ The central product principle is:
 Emenda treats the author's existing text as the source of truth.
 
 The UI therefore centres on **correction and refinement**, with every suggested change attributable to a specific part of the submitted text.
+
+### V0.1 audience
+
+V0.1 is Emenda's **personal and developer-validation milestone**. It is complete when the full correction loop is repeatedly runtime-verified on Windows for the owner.
+
+Public beta readiness is a separate release gate covering distribution trust, signing, packaging quality, update delivery and broader compatibility.
 
 ---
 
@@ -80,7 +86,7 @@ Rust compiler
 + strict TypeScript
 + Zod at frontend runtime boundaries
 + Serde at Rust data boundaries
-+ Tauri capability boundaries
++ Tauri capability boundaries for desktop surfaces
 + OpenRouter structured outputs
 + small modules
 + tests around the vertical slice
@@ -96,24 +102,26 @@ When a small implementation question remains open, prefer the choice that reinfo
 
 | Decision | Selected approach | Other reasonable direction | Why Emenda chooses this | V0.1 implication |
 |---|---|---|---|---|
-| Product form | **Desktop writing layer** | Browser extension first | The main product hypothesis is cross-application writing assistance. Desktop validation removes more uncertainty than browser-only validation. | Build Tauri desktop first. |
-| Trigger | **Explicit selection + global hotkey** | Passive observation while typing | Selection supplies a clear text scope and hotkey invocation supplies a deterministic moment for inference. | One deliberate user action starts each correction request. |
-| Desktop text transport | **Selected-text capture/replacement through the simplest reliable platform mechanism, with clipboard-assisted transport as the initial general path** | Full accessibility observation from day one | V0.1 needs to prove the cross-app loop before expanding text-surface sophistication. | Encapsulate capture/replacement behind one small adapter boundary. |
-| Application architecture | **Tauri modular monolith** | Web backend, Electron service architecture | Emenda is one local product with one privileged core and one product UI. | One repository, one application, one runtime. |
-| Privileged core | **Rust** | TypeScript-only system layer | OS interaction, secure storage and text replacement benefit from compiler-enforced correctness. | Rust owns privileged operations. |
+| Product form | **Cross-platform writing layer, desktop first** | Browser extension first | The main product hypothesis is writing assistance that follows the writer across applications. Desktop validation removes more uncertainty than browser-only validation. | Prove the desktop loop on Windows first while keeping shared contracts platform-neutral. |
+| Trigger | **Explicit selection + global hotkey** | Passive observation while typing | Selection supplies a clear text scope and hotkey invocation supplies a deterministic moment for inference. | One deliberate user action starts each V0.1 correction request. |
+| Desktop text transport | **Selected-text capture/replacement through the simplest reliable platform mechanism** | Full accessibility observation from day one | V0.1 needs to prove the cross-app loop before expanding text-surface sophistication. | Native mechanics remain inside the platform adapter. |
+| Application architecture | **Tauri modular monolith for desktop** | Web backend, Electron service architecture | Emenda is one local product with one privileged core and one product UI. | One desktop application, one runtime, small internal boundaries. |
+| Privileged core | **Safe Rust** | TypeScript-only system layer | OS interaction, secure storage and text replacement benefit from compiler-enforced correctness. | Rust owns privileged desktop operations. |
 | Product UI | **React + strict TypeScript** | Rust-native UI | Settings and suggestion UI benefit from fast iteration while keeping strong static checks. | React owns presentation and user interaction. |
 | Linguistic intelligence | **OpenRouter** | Local model in V0.1 | OpenRouter provides immediate access to many capable models through one API. | One API integration powers all languages. |
-| Default model | **`openrouter/free`** | Hardcoded individual model | Free model availability changes over time. The router keeps the default current while the model picker gives the user control. | V0.1 works immediately after API-key configuration. |
-| Provider architecture | **One tiny `InferenceProvider` seam** | Separate model/vendor service architecture | Model choice is configuration. Provider replacement is one useful future seam. | Implement exactly one provider: OpenRouter. |
+| Default model | **`openrouter/free`** | Hardcoded individual model | Free model availability changes over time. The router keeps the default current while the model picker gives the user control. | V0.1 works immediately after API-key configuration when the selected route satisfies Emenda's contract. |
+| Provider architecture | **One tiny `InferenceProvider` seam** | Separate model/vendor service architecture | Model choice is configuration. Provider replacement is one useful future seam. | Keep one provider implementation in V0.1: OpenRouter. |
 | Correction representation | **Individual structured corrections** | Return one rewritten paragraph | Exact corrections preserve authorship and support reviewable, attributable edits. | Each correction has range, original, replacement, category and confidence. |
 | Async state | **Immutable snapshot + authoritative latest revision** | Queue every request | A new invocation represents the user's newest intent. | Every new request supersedes previous pending revisions. |
+| Source identity | **Opaque adapter-owned reference + UI-safe display summary** | Shared process/window identifiers | Source identity differs fundamentally between native applications and browser surfaces. | Shared workflow stores identity but never interprets platform-specific identifiers. |
+| Source replacement | **Adapter-owned `replace_if_unchanged` semantic operation** | Shared focus/revalidate/paste sequence | Focus, source revalidation and replacement are platform strategies. | Shared workflow asks for the invariant; each adapter proves and performs it. |
 | Language handling | **AI-assisted detection inside the same correction request, guided by local defaults** | Separate language-detection service | The model already possesses the linguistic capability and six concise profiles fit naturally into the prompt. | One inference request detects language and produces corrections. |
 | German default | **Swiss Standard German** | Generic German detection | Emenda's German profile is deliberately Swiss. | German text follows `de-CH`, including `ss`. |
 | English default | **British English** | Generic English | `en-GB` is the default profile while strong American usage can select `en-US`. | The model preserves clearly American English. |
-| Model output | **Strict JSON Schema structured output** | Free-form JSON prompting | The application needs predictable data, rather than prose parsing. | Validate every response before it reaches correction state. |
-| V0.1 testing | **One simple native editor + one additional common desktop application** | Large compatibility matrix | Two successful real surfaces prove the architecture while keeping implementation focused. | Compatibility breadth becomes a later iteration. |
+| Model output | **Strict JSON Schema structured output where the selected route supports it** | Free-form prose parsing | The application needs predictable machine-readable data. | Validate every response before it reaches correction state. |
+| V0.1 testing | **Windows: one simple native editor + one additional common desktop application** | Large compatibility matrix | Two successful real surfaces prove the first native adapter while keeping implementation focused. | Compatibility breadth becomes a later milestone. |
 | Error UX | **Explicit typed states** | Generic failure message | Distinct failures produce clearer debugging and safer behaviour. | Connection, schema, stale-state and replacement errors remain distinguishable. |
-| Future extensibility | **Small stable seams** | Prebuilding future subsystems | The cleanest future architecture grows from proven requirements. | Create only the seams required by V0.1 plus the obvious provider/text-surface boundaries. |
+| Future extensibility | **Small stable seams** | Prebuilding future subsystems | The cleanest future architecture grows from proven requirements. | Create only seams required by the current workflow or an established cross-platform boundary. |
 
 ---
 
@@ -129,7 +137,7 @@ Selected-text correction gives Emenda:
 
 This lets V0.1 validate the full desktop hypothesis with a small amount of code.
 
-The long-term product can later expand toward:
+The long-term product expands toward:
 
 ```text
 passive observation
@@ -146,7 +154,7 @@ V0.1 establishes the reliable correction loop that those features can reuse.
 
 Implement this complete workflow.
 
-1. Emenda launches as a lightweight Tauri application.
+1. Emenda launches as a lightweight Tauri desktop application.
 2. The user opens Settings.
 3. The user enters an OpenRouter API key.
 4. Rust stores the API key through secure OS-appropriate credential storage.
@@ -155,24 +163,21 @@ Implement this complete workflow.
 7. The user opens another desktop application.
 8. The user selects text.
 9. The user presses the Emenda global hotkey.
-10. Emenda records the source application.
-11. Emenda captures the selected text.
-12. Emenda creates an immutable `TextSnapshot`.
-13. Emenda increments the current revision.
-14. Emenda sends the snapshot to OpenRouter.
-15. OpenRouter detects the appropriate supported language profile.
-16. OpenRouter returns structured corrections.
-17. Rust validates the structured response.
-18. Emenda confirms that the result belongs to the current revision.
-19. Emenda opens a compact suggestion window.
-20. The user reviews individual corrections.
-21. The user chooses **Apply** on a correction.
-22. Emenda updates the snapshot text deterministically.
-23. Emenda returns focus to the source application.
-24. Emenda replaces the original selected text with the updated text.
-25. The source application's native undo history remains useful through a single replacement operation.
-26. Emenda restores clipboard state when clipboard transport is used.
-27. The user continues writing.
+10. The native text adapter captures the selected text and creates an adapter-owned source reference plus a human-readable source summary.
+11. Emenda creates an immutable `TextSnapshot`.
+12. Emenda increments the current revision.
+13. Emenda sends the snapshot text and language context to OpenRouter.
+14. OpenRouter detects the appropriate supported language profile.
+15. OpenRouter returns structured corrections.
+16. Rust validates the structured response.
+17. Emenda confirms that the result belongs to the current revision.
+18. Emenda opens a compact suggestion window.
+19. The user reviews individual corrections.
+20. The user chooses **Apply** on a correction.
+21. Emenda updates the corrected working text deterministically.
+22. When source replacement is requested, the shared workflow asks the adapter to replace the captured selection only if the adapter can verify that the original source and expected text remain authoritative.
+23. The adapter performs its platform-specific verification and one coherent replacement operation.
+24. The user continues writing.
 
 Apply and Dismiss may hide the primary Emenda window while its global hotkey remains active. Launching Emenda again restores, unminimises and focuses that existing window rather than starting a competing process. Closing the window with X remains a real application exit.
 
@@ -180,46 +185,95 @@ Apply and Dismiss may hide the primary Emenda window while its global hotkey rem
 
 # 6. Text Capture and Replacement
 
-Create one small abstraction around desktop text interaction.
+The shared workflow expresses **semantic invariants**. Native desktop adapters own native source identity, focusing, selection revalidation and replacement mechanics.
 
-Conceptually:
+Use platform-neutral shared types conceptually equivalent to:
 
 ```rust
-trait TextSurfaceAdapter {
-    fn capture_selection(&self) -> Result<CapturedSelection, TextSurfaceError>;
-    fn focus_source(&self, source: &SourceApplication) -> Result<(), TextSurfaceError>;
-    fn replace_selection(
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SourceReference {
+    /// Interpreted only by the adapter that created it.
+    opaque_id: String,
+
+    /// Safe, human-readable information for UI presentation.
+    display: SourceDisplay,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SourceDisplay {
+    pub application_name: String,
+    pub context_label: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CapturedSelection {
+    pub text: String,
+    pub source: SourceReference,
+}
+```
+
+The native desktop contract should be conceptually equivalent to:
+
+```rust
+pub trait TextSurfaceAdapter: Send + Sync {
+    fn capture_selection(
         &self,
-        source: &SourceApplication,
+    ) -> Result<CapturedSelection, TextSurfaceError>;
+
+    /// Replace only while the adapter can verify that the original source
+    /// and selected text are still authoritative.
+    fn replace_if_unchanged(
+        &self,
+        source: &SourceReference,
+        expected_text: &str,
         replacement: &str,
     ) -> Result<(), TextSurfaceError>;
 }
 ```
 
-Keep the interface small.
-
-For V0.1, use the simplest reliable mechanism available on the host platform.
-
-A clipboard-assisted selected-text flow is an appropriate initial general implementation:
+The important boundary is responsibility:
 
 ```text
-save clipboard
-→ capture selected text
-→ restore clipboard
+Shared workflow owns:
+revision current?
+replacement validated?
+user accepted it?
 
-...
-
-prepare replacement
-→ focus source application
-→ replace selected text
-→ restore clipboard
+Adapter owns:
+how source identity works
+how focus works
+how selection is revalidated
+how replacement is performed
+clipboard preservation when relevant
+protected/elevated-surface handling
 ```
 
-Keep transport details inside the Rust text-surface module.
+Shared Rust modules must never compare process IDs, executable paths, native window handles, browser tab identifiers, DOM references or other adapter-specific source identifiers.
 
-This boundary allows later platform-specific implementations using Windows UI Automation, macOS accessibility APIs or Linux AT-SPI while the correction workflow remains unchanged.
+The frontend may receive `SourceDisplay`. It must not receive or interpret native source identity.
 
-The V0.1 goal is **reliable selected-text interaction**, rather than broad passive observation.
+### Windows V0.1
+
+The current Windows adapter may use clipboard-assisted capture/replacement, source-window tracking and Windows-specific verification internally. Preserve its proven fail-closed behaviour behind the adapter boundary.
+
+### Browser semantic equivalent
+
+The browser extension is not a Rust `target_os` adapter. It implements the **same semantic contract in TypeScript** using browser-native concepts such as tab, frame, editable element and selection state.
+
+Shared desktop and browser semantics are:
+
+```text
+capture current text/source
+→ retain opaque source identity inside the adapter
+→ analyse against an immutable revision
+→ replace only if the adapter can verify the original source/text remain authoritative
+→ return typed errors
+```
+
+A Rust `browser.rs` stub is not required.
+
+macOS and Linux adapter modules begin when their implementations begin, together with their contract tests and native verification.
 
 ---
 
@@ -236,7 +290,7 @@ struct TextSnapshot {
     revision_id: u64,
     text: String,
     created_at: SystemTime,
-    source: SourceApplication,
+    source: SourceReference,
 }
 ```
 
@@ -482,9 +536,9 @@ Default model:
 openrouter/free
 ```
 
-Use OpenRouter structured outputs with a strict JSON Schema matching the Emenda correction response.
+Use OpenRouter structured outputs with a strict JSON Schema matching the Emenda correction response where the selected model/provider path supports the required parameters.
 
-Request routing compatible with the required structured-output parameters.
+Keep production fail-closed when the returned content cannot satisfy the correction contract.
 
 Keep model choice as configuration.
 
@@ -507,7 +561,7 @@ V0.1 gains the benefit of that seam through one interface and one implementation
 
 # 12. Frontend and Local Core
 
-Use one Tauri application with two internal layers:
+Use one Tauri desktop application with two internal layers:
 
 ```text
 ┌────────────────────────────────────────────┐
@@ -519,7 +573,7 @@ Use one Tauri application with two internal layers:
 │   settings          →   secure storage     │
 │   model picker      →   OpenRouter         │
 │   suggestions       ←   snapshots          │
-│   apply action      →   text replacement   │
+│   apply action      →   workflow           │
 │   status            ←   typed errors       │
 │                                            │
 └────────────────────────────────────────────┘
@@ -536,16 +590,16 @@ Use React + strict TypeScript for:
 - Apply actions
 - visible application state
 - error presentation
+- displaying the UI-safe source summary
 
 ## Rust responsibilities
 
 Use Rust for:
 
 - global hotkey
-- active/source application tracking
+- native adapter orchestration
 - text capture
 - text replacement
-- clipboard preservation when used
 - revision state
 - snapshot state
 - OpenRouter communication
@@ -556,13 +610,15 @@ Use Rust for:
 
 ### Why this architecture
 
-Tauri keeps Emenda as one local application while creating a clear boundary between product UI and privileged operating-system functionality.
+Tauri keeps desktop Emenda as one local application while creating a clean boundary between product UI and privileged operating-system functionality.
 
 Rust owns the operations where correctness, state discipline and system access matter most.
 
 React and strict TypeScript keep the product surface fast to develop and easy to change.
 
-Platform-specific code remains concentrated behind the Rust text-surface boundary while the correction workflow and product behaviour stay shared.
+Native implementation details remain concentrated behind the Rust text-surface boundary while correction semantics and product behaviour stay shared.
+
+The browser extension implements equivalent semantics in TypeScript rather than becoming a Rust `target_os` branch.
 
 ---
 
@@ -582,9 +638,11 @@ apply_correction
 dismiss_suggestions
 ```
 
-Grant frontend windows only the Tauri capabilities required for their responsibilities.
+Grant desktop frontend windows only the Tauri capabilities required for their responsibilities.
 
-Keep secure credentials, external API communication and OS-level text operations inside the Rust core.
+Keep secure credentials, external API communication and native text operations inside the Rust core.
+
+Browser-extension permissions are declared separately through the extension configuration.
 
 ---
 
@@ -601,7 +659,7 @@ Provide:
 - connection test
 - clear success/error state
 
-Store the credential through secure OS-appropriate storage managed from Rust.
+Store the credential through secure OS-appropriate storage managed from Rust on desktop.
 
 ## AI Model
 
@@ -680,13 +738,13 @@ Replacement error
 
 After one correction is applied, update the local corrected snapshot so subsequent corrections refer to the new working text.
 
-When the final correction is applied, replace the original selected passage with the resulting corrected text.
+When the user commits the reviewed changes, ask the active text adapter to replace the original captured passage only if the adapter verifies that the source and expected source text are still authoritative.
 
 ---
 
 # 16. Error Model
 
-Use typed errors throughout the Rust core.
+Use typed errors throughout the core.
 
 Distinguish at least:
 
@@ -701,6 +759,7 @@ StaleRevisionError
 TextCaptureError
 TextReplacementError
 ProtectedSurfaceError
+Unsupported
 ```
 
 Map each category to a concise user-facing state.
@@ -714,6 +773,8 @@ The correction workflow should always resolve into a clear state that the UI can
 Use the stack as the primary correctness system.
 
 ## Rust
+
+Emenda desktop product logic uses safe Rust.
 
 At the crate root:
 
@@ -740,7 +801,7 @@ cargo test
 
 ## TypeScript
 
-Use strict TypeScript.
+Emenda frontend and browser product logic use strict TypeScript.
 
 ```json
 {
@@ -752,11 +813,17 @@ Use Zod for runtime validation of data crossing important frontend boundaries.
 
 Run the project's TypeScript type checker as part of verification.
 
+## Native build infrastructure
+
+MSVC, the Windows SDK, Xcode command-line tools and Linux system packages are compilation infrastructure rather than additional Emenda application languages.
+
+Adding another application language requires an explicit documented architecture decision.
+
 ## Tauri
 
-Use Tauri 2 capabilities to define the authority of each frontend surface.
+Use Tauri 2 capabilities to define the authority of desktop frontend surfaces.
 
-The Rust core owns privileged functions.
+The Rust core owns privileged desktop functions.
 
 ## Repository quality
 
@@ -769,13 +836,15 @@ Keep the repository:
 - easy to navigate
 - easy for another coding agent to understand in one pass
 
-Prefer direct code over framework layers whose value has not yet appeared in the V0.1 workflow.
+Prefer direct code over framework layers whose value has not yet appeared in the product workflow.
 
 ---
 
 # 18. Repository Structure
 
-Use a compact structure similar to:
+Keep one modular monolith and add platform modules when their real implementation begins.
+
+A compact desktop structure may look like:
 
 ```text
 emenda/
@@ -790,6 +859,8 @@ emenda/
 ├── src-tauri/
 │   └── src/
 │       ├── text/
+│       │   ├── mod.rs
+│       │   └── windows.rs
 │       ├── inference/
 │       ├── snapshot/
 │       ├── settings/
@@ -799,11 +870,15 @@ emenda/
 ├── tests/
 ├── package.json
 ├── README.md
-└── src-tauri/
-    └── tauri.conf.json
+├── SPEC.md
+├── AGENTS.md
+├── UX.md
+└── BRAND.md
 ```
 
-Adapt small details where Tauri conventions make another layout cleaner.
+Add `macos.rs` and `linux.rs` when implementation of those adapters begins. Empty stubs are not evidence of platform support.
+
+The browser extension may live in its own application directory when implementation begins and should implement the same semantic contracts in TypeScript.
 
 ---
 
@@ -815,10 +890,15 @@ The test suite follows the main sources of risk in the correction loop:
 external AI data
 asynchronous state
 text identity
-source-application replacement
+adapter-owned source verification
+source replacement
 ```
 
-V0.1 therefore uses a deliberately narrow test target.
+## Shared tests
+
+Exercise correction and workflow logic through a mock text-surface adapter in every normal test run.
+
+Use platform-neutral fixtures. Shared tests should not depend on process IDs, native window handles, executable paths, browser tab IDs or DOM references.
 
 ## Test 1: Structured correction parsing
 
@@ -864,9 +944,9 @@ health check
 → perform one structured correction request
 ```
 
-Verify successful deserialisation.
+Verify successful deserialisation or a correctly classified fail-closed contract failure.
 
-## Test 6: Desktop text loop
+## Test 6: Windows desktop text loop
 
 Validate manually or through host-appropriate integration tooling:
 
@@ -875,85 +955,71 @@ select text
 → invoke Emenda
 → receive suggestion
 → apply correction
+→ adapter verifies source/text
 → corrected text appears in source
 ```
 
 Run this in:
 
-1. one simple native text editor available on the host OS
-2. one additional ordinary desktop application with editable text
+1. one simple native Windows text editor
+2. one additional ordinary Windows desktop application with editable text
 
-Record the validated applications in the README.
+Record validated applications in the README.
+
+### Cross-platform CI
+
+CI should compile and run the strongest applicable shared checks on Windows, macOS and Linux runners.
+
+Native GUI smoke tests remain platform-specific and opt-in where CI cannot reliably exercise real desktop surfaces.
 
 ### Why the test target is small
 
 These tests cover the architecture's highest-risk boundaries while keeping V0.1 focused on one complete user outcome.
 
-The first integration target proves the text transport.
-
-The second demonstrates that the approach extends beyond a single controlled editor.
-
-Broader application compatibility can then expand from measured behaviour.
+The Windows integrations prove the first native adapter. Shared mock tests prove that correction workflow semantics are independent from native windowing mechanisms.
 
 ---
 
 # 20. Implementation Order
 
-Implement in this order.
+Implement through small, verified increments.
 
-## Step 1: Scaffold
-
-Create the Tauri 2 + React + strict TypeScript project.
-
-Add the Rust module structure and Tauri capabilities.
-
-Confirm the application builds.
-
-## Step 2: OpenRouter
-
-Implement:
+For each increment:
 
 ```text
-API-key storage
-health check
-model listing
-structured correction request
-typed response parsing
+inspect
+→ implement one independently verifiable architectural decision or product invariant
+→ run the smallest relevant checks
+→ review the diff
+→ commit with detailed rationale
+→ push
+→ verify the pushed state
+→ continue
 ```
 
-Test it independently.
+A realistic sequence for the current architecture is:
 
-## Step 3: Correction Core
+## Step 1: Verification foundation
 
-Implement:
+Establish a reliable automated verification path for the shared repository on Windows, macOS and Linux hosts.
 
-```text
-Correction
-TextSnapshot
-revision counter
-stale-result handling
-validation
-language profiles
-system prompt
-```
+Keep real desktop smoke tests separate and platform-specific.
 
-Add unit tests.
+## Step 2: Core contracts
 
-## Step 4: Desktop Text Transport
+Keep the correction schema, inference contract, snapshot/revision semantics and platform-neutral text-surface contract deterministic and tested.
 
-Implement:
+## Step 3: Provider implementation
 
-```text
-source application capture
-selected-text capture
-clipboard preservation where used
-source refocus
-replacement
-```
+Implement and verify `OpenRouterProvider` independently behind `InferenceProvider`.
 
-Validate in one simple native editor.
+## Step 4: Native adapter
 
-## Step 5: Vertical Slice
+Implement one native adapter behind the shared text-surface semantics and test its platform-specific behaviour.
+
+Windows is the first verified native adapter.
+
+## Step 5: Vertical slice
 
 Connect:
 
@@ -964,10 +1030,8 @@ hotkey
 → OpenRouter
 → suggestions
 → apply
-→ source replacement
+→ replace_if_unchanged
 ```
-
-Make this loop reliable before additional UI refinement.
 
 ## Step 6: Settings and Suggestion UI
 
@@ -982,34 +1046,19 @@ suggestion cards
 typed error states
 ```
 
-## Step 7: Second Application Test
+## Step 7: Real application verification
 
-Run the same complete flow in one additional common desktop application.
-
-Fix issues exposed by that test while preserving the small architecture.
+Run the complete flow in the two V0.1 Windows integration targets.
 
 ## Step 8: Verification
 
-Run:
-
-```text
-Rust formatting
-Rust Clippy
-Rust tests
-TypeScript type checking
-frontend build
-Tauri build
-core integration tests
-desktop smoke tests
-```
-
-Resolve errors until the repository reaches a clean final state.
+Run the strongest applicable repository checks and report precisely what compiled, ran and passed.
 
 ---
 
 # 21. V0.1 Scope
 
-V0.1 consists of:
+V0.1 consists of the personal/developer-validation path:
 
 ```text
 Tauri desktop application
@@ -1026,24 +1075,21 @@ structured corrections
 immutable snapshots
 revision handling
 suggestion review
-individual correction application
-source-text replacement
+adapter-owned safe source replacement
 secure API-key storage
 typed errors
-two desktop integration targets
+Windows runtime verification in two desktop integration targets
 ```
-
-This defines the complete V0.1 product.
 
 The architecture leaves clean future capability milestones for:
 
 ```text
 passive background observation
 Grammarly-style inline suggestions
-Windows accessibility integration
-macOS text-surface implementation
-Linux text-surface implementation
-browser extension / ChromeOS surface
+richer Windows accessibility integration
+macOS adapter implementation
+Linux adapter implementation
+browser extension / ChromeOS implementation
 personal dictionary
 accepted/rejected correction history
 local OpenAI-compatible inference
@@ -1051,13 +1097,15 @@ local LLMs
 additional writing profiles
 ```
 
-Each future capability can build on the same snapshot, correction, inference and platform-adapter contracts.
+Each future capability can build on the same correction, inference, revision, error and adapter semantics.
 
 ---
 
 # 22. Definition of Done
 
-Emenda V0.1 is complete when this real workflow succeeds reliably:
+V0.1 is Emenda's **personal and developer-validation milestone**.
+
+It is complete when this real workflow succeeds reliably for the owner on Windows:
 
 ```text
 Launch Emenda
@@ -1068,6 +1116,7 @@ Launch Emenda
 → receive validated structured corrections
 → review suggestions
 → apply a correction
+→ adapter verifies the original source/text
 → corrected text appears in the original application
 → continue writing
 ```
@@ -1075,9 +1124,9 @@ Launch Emenda
 Verify that workflow repeatedly in:
 
 ```text
-one simple native text editor
+one simple native Windows text editor
 +
-one additional ordinary desktop application
+one additional ordinary Windows desktop application
 ```
 
 Also verify:
@@ -1091,7 +1140,34 @@ text replacement failure → recognised
 zero corrections → clear success state
 ```
 
-The primary success criterion is a **small, understandable and reliable complete correction loop**.
+Public beta readiness is a separate release gate.
+
+### Platform terminology
+
+Use these terms consistently:
+
+```text
+Architectural target
+= intended platform represented by shared product contracts and design decisions
+
+Compiles
+= repository builds successfully on that host
+
+Supported platform
+= adapter implemented
++ shared platform-agnostic tests pass
++ platform-specific integration tests pass on that OS
+
+Distribution-ready
+= supported platform
++ packaging and platform trust requirements satisfied
+```
+
+Windows is currently the first supported and runtime-verified native adapter.
+
+macOS, Linux and Browser/ChromeOS remain first-class architectural targets until their adapters and platform-specific integration tests exist.
+
+The primary V0.1 success criterion is a **small, understandable and reliable complete correction loop**.
 
 ---
 
@@ -1121,55 +1197,97 @@ Runtime user credentials belong in Emenda's secure local credential storage.
 
 # 24. Platform Foundation
 
-Emenda's shared core is operating-system independent.
+Emenda's shared product semantics are platform-independent.
 
-Windows is the current development and runtime-verification environment. macOS, Linux, and ChromeOS through the browser extension are first-class product targets.
+Windows is the current development and runtime-verification environment. macOS, Linux, and Browser/ChromeOS are first-class architectural targets.
 
 The shared product logic remains identical across platforms:
 
 - correction workflow
-- inference contracts
-- correction contracts
+- inference contract
+- correction schema
 - snapshots and revisions
 - language profiles
-- settings model
-- application state
-- UX semantics
-- personalisation logic
+- settings concepts
+- application state semantics
+- typed error meanings
+- UX decision rules
+- personalisation logic when introduced
 
-Platform adapters implement the `TextSurfaceAdapter` contract:
+## Desktop native contract
 
-```text
-Shared Emenda Core
-├── Windows adapter
-├── macOS adapter
-├── Linux adapter
-└── Browser adapter
-```
-
-### Platform boundaries
-
-Keep platform-specific types, APIs, constants, capabilities, identifiers, and implementation details inside their respective adapter modules.
-
-Expose generic shared types and the common adapter contract to the rest of Emenda.
-
-Shared Rust modules and shared TypeScript modules depend on generic contracts rather than operating-system-specific representations.
-
-### Adapter contract
-
-Every platform adapter provides the same semantic operations and guarantees:
+Desktop Emenda uses the Rust `TextSurfaceAdapter` semantic boundary:
 
 ```text
-detect / identify surface
-capture text
-identify source
-focus source
-apply replacement
-report capabilities
-return typed errors
+Rust TextSurfaceAdapter
+├── Windows implementation
+├── macOS implementation, when development begins
+└── Linux implementation, when development begins
 ```
 
-Represent unavailable capabilities through typed `Unsupported` results.
+Native adapter modules own:
+
+- native source identity
+- focus mechanics
+- selection/text revalidation
+- replacement mechanics
+- native permission/protection checks
+- native clipboard handling where relevant
+
+Shared Rust code depends only on generic source references, UI-safe source summaries, typed errors and semantic adapter operations.
+
+## Browser and ChromeOS contract
+
+The browser extension is a first-class Emenda surface and the primary ChromeOS path.
+
+It implements the same **semantic text-surface contract in TypeScript**, rather than as a Rust `target_os` module.
+
+Desktop and browser share:
+
+- correction schema
+- inference contract
+- revision semantics
+- language profiles
+- settings concepts
+- typed error meanings
+- UX decision rules
+
+The browser implementation may retain an opaque adapter-owned token referring to tab, frame, element and selection state. Shared UI/product logic must not parse that representation.
+
+Desktop and browser releases may proceed on independent release cadences while preserving shared semantics.
+
+## Platform boundaries
+
+Keep platform-specific types, APIs, constants, capabilities, identifiers and implementation details inside their respective native or browser adapter modules.
+
+Expose generic shared types and semantic contracts to the rest of Emenda.
+
+Shared modules must not interpret:
+
+```text
+process IDs
+native window handles
+executable paths
+browser tab IDs
+frame IDs
+DOM node references
+selection handles
+other platform-specific source identity
+```
+
+## Adapter semantics
+
+Every text-surface implementation provides equivalent outcomes:
+
+```text
+capture current text and source
+retain source identity privately
+report user-safe source information
+replace only if original source/text remain authoritative
+return typed failures
+```
+
+Represent unavailable functionality through typed `Unsupported` results.
 
 Provide a mock adapter that supports the complete shared workflow:
 
@@ -1180,44 +1298,13 @@ detect
 → apply
 ```
 
-This keeps the correction core independently testable from native accessibility and windowing systems.
+This keeps correction and workflow logic independently testable from native accessibility, windowing and browser APIs.
 
-### Platform support
+## Testing
 
-A platform becomes supported when:
+Test shared logic through mock adapters in every normal CI run.
 
-```text
-adapter implements the full contract
-+
-shared platform-agnostic test suite passes
-+
-platform-specific integration tests pass on that OS
-```
-
-Windows reaching this state first represents the first verified adapter rather than a Windows-specific product architecture.
-
-### Browser and ChromeOS
-
-The browser extension is a first-class Emenda surface and the primary ChromeOS path.
-
-It shares the same:
-
-- correction schema
-- inference contract
-- language profiles
-- snapshot and revision semantics
-- settings concepts
-- UX decision rules
-
-The browser adapter translates browser-specific text access into the same Emenda workflow used by desktop adapters.
-
-Desktop and browser releases may proceed on independent release cadences while preserving shared contracts.
-
-### Testing
-
-Test shared logic through mock adapters in every CI run.
-
-Keep native verification inside platform-specific test modules.
+Keep native verification inside platform-specific tests.
 
 Examples:
 
@@ -1228,27 +1315,31 @@ Linux   → host-appropriate native editors
 Browser → browser integration fixtures
 ```
 
-CI compiles and runs the shared suite on Windows, macOS, and Linux hosts.
+CI compiles and runs the strongest applicable shared suite on Windows, macOS and Linux hosts.
 
-### Capabilities and permissions
+A passing cross-platform build establishes compilation evidence. It does not by itself establish runtime platform support.
+
+## Capabilities and permissions
 
 Declare each desktop adapter's required native and Tauri capabilities explicitly.
 
-Declare browser-extension permissions through the browser adapter's extension configuration.
+Declare browser-extension permissions through the browser extension configuration.
 
-Shared application state responds to adapter capability results through the common typed interface.
+Shared application state responds to adapter outcomes through the common typed semantic interface.
 
-### Packaging
+Introduce a richer capability model only when the UI must choose between materially different interaction modes such as selected-text correction, ambient observation, inline anchoring, read-only suggestions or copy fallback.
 
-Treat installers, code signing, notarization, package formats, and store distribution as deployment concerns.
+## Packaging
 
-Keep packaging configuration outside the shared correction, inference, state, and text-surface architecture.
+Treat installers, code signing, notarization, package formats, store distribution and publisher reputation as deployment concerns.
 
-### Platform decision rule
+Keep packaging configuration outside the shared correction, inference, state and text-surface architecture.
+
+## Platform decision rule
 
 When an implementation choice remains open:
 
-> **Keep shared product behaviour platform-independent and place native operating-system behaviour behind the smallest appropriate adapter boundary.**
+> **Keep shared product behaviour platform-independent and place native operating-system or browser behaviour behind the smallest appropriate adapter boundary.**
 
 ---
 
@@ -1264,4 +1355,4 @@ And use this product principle when a linguistic or UX choice remains ambiguous:
 
 Build the smallest coherent application that fully proves those two principles.
 
-Complete the vertical slice, run the checks, fix the failures, validate the two desktop targets, and leave the repository in a working state with concise setup instructions in the README.
+Complete the current vertical increment, run the relevant checks, fix the failures, commit and push the verified decision, then continue to the next increment.
