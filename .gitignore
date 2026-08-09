@@ -7,6 +7,9 @@ src-tauri/gen/schemas/
 .env.*
 !.env.example
 *.log
+*.p12
+*.pfx
+*.pvk
 .idea/
 .vscode/
 .DS_Store

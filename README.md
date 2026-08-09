@@ -66,6 +66,10 @@ npm run tauri dev
 
 Production installers are generated under `src-tauri/target/release/bundle/` by `npm run tauri build`.
 
+For machine-local Authenticode test signing, follow the
+[Windows local test-signing guide](docs/windows-test-signing.md). Self-signed
+artifacts prove local integrity but do not establish public publisher trust.
+
 ## Verification
 
 The repository health gate is:
