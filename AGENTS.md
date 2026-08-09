@@ -14,17 +14,38 @@ Work in small, coherent implementation steps that preserve a readable repository
 
 Use the project specification, existing architecture, type system, tests and repository state as the primary decision context.
 
-When an implementation detail remains open, prefer the smallest solution that completes the current vertical slice cleanly and preserves the established architectural boundaries.
+When an implementation detail remains open, prefer the smallest solution that completes the current vertical increment cleanly and preserves the established architectural boundaries.
 
 ## Commit Discipline
 
 Use small, atomic commits throughout development.
 
-Each commit should represent one coherent implementation step that can be understood, reviewed and reverted independently.
+**One commit represents one independently verifiable architectural decision or product invariant. Keep all code required to make that decision buildable and testable together. A commit is not defined by one file, class or function.**
 
-Commit as soon as a logical step is complete and its relevant checks pass.
+Realistic commit units include:
+
+- text-surface contract plus mock contract coverage;
+- one provider implementation plus provider tests;
+- one native adapter plus its adapter-level tests;
+- one workflow invariant plus deterministic regression coverage;
+- one canonical documentation decision.
+
+Commit as soon as that decision is complete and its relevant checks pass.
 
 Prefer several meaningful commits over one large implementation dump.
+
+For every commit:
+
+```text
+inspect
+→ implement one independently verifiable decision
+→ run the smallest relevant checks
+→ review the diff
+→ commit with detailed rationale
+→ push
+→ verify the pushed state
+→ continue
+```
 
 ## Commit Messages
 
@@ -69,9 +90,22 @@ cargo test --manifest-path src-tauri/Cargo.toml
 npm run tauri build
 ```
 
-During early scaffolding, run the subset that exists and applies to the current repository state.
+During early or platform-specific work, run the strongest subset that exists and applies to the current repository state.
+
+Report precisely which checks compiled, ran and passed. Distinguish source-code failures from unavailable host toolchains or test infrastructure.
 
 Record meaningful verification in the commit body when useful.
+
+## Implementation Language Boundary
+
+Emenda product logic uses:
+
+- **safe Rust** for the privileged desktop core and native adapters;
+- **strict TypeScript** for frontend product logic and the browser extension.
+
+Platform SDKs and native toolchains such as MSVC, Windows SDK, Xcode command-line tools and Linux system packages are compilation infrastructure rather than additional Emenda application languages.
+
+Adding another application language requires an explicit documented architecture decision.
 
 ## Architectural Discipline
 
@@ -80,21 +114,22 @@ Keep Emenda small enough to understand as a whole.
 Maintain the established responsibility split:
 
 - React + strict TypeScript for product UI and frontend application state
-- Tauri as the application boundary
-- Rust for privileged local operations, text transport, secure credentials, snapshots, validation and OpenRouter communication
+- Tauri as the desktop application boundary
+- Rust for privileged local desktop operations, native adapters, secure credentials, snapshots, validation and OpenRouter communication
+- TypeScript for the browser extension and browser-specific adapter semantics
 - OpenRouter for linguistic intelligence
 
 Keep abstractions proportional to demonstrated needs. Create small seams where they protect the current correction workflow or a clearly established future boundary.
 
 Treat AI output as external untrusted data and validate it before it enters application state.
 
-Keep text identity, revisions, security and source-text replacement deterministic in the local application.
+Keep text identity, revisions, security and source-text replacement deterministic in Emenda.
 
 ## Platform Foundation
 
-Emenda's shared core is platform-independent.
+Emenda's shared product semantics are platform-independent.
 
-Windows is the current development and runtime-verification environment. macOS, Linux, and ChromeOS through the browser extension are first-class product targets.
+Windows is the current development and runtime-verification environment. macOS, Linux, and Browser/ChromeOS are first-class architectural targets.
 
 Keep these shared across platforms:
 
@@ -102,60 +137,154 @@ Keep these shared across platforms:
 - inference and correction contracts
 - snapshots and revisions
 - language profiles
-- settings model
-- application state
-- UX semantics
-- personalisation logic
+- settings concepts
+- application-state semantics
+- typed error meanings
+- UX decision rules
+- personalisation logic when introduced
 
-Keep native behavior behind adapter modules implementing the common `TextSurfaceAdapter` contract.
+### Native desktop boundary
 
-```text
-Shared Emenda Core
-├── Windows adapter
-├── macOS adapter
-├── Linux adapter
-└── Browser adapter
-```
-
-Keep platform-specific types, APIs, constants, capabilities, identifiers, and implementation details inside their adapter modules. Shared Rust and TypeScript code depend on generic contracts rather than operating-system-specific representations.
-
-Every adapter should provide the same semantic operations:
+Keep native behaviour behind Rust adapter modules implementing the common `TextSurfaceAdapter` semantics.
 
 ```text
-detect / identify surface
-capture text
-identify source
-focus source
-apply replacement
-report capabilities
-return typed errors
+Rust TextSurfaceAdapter
+├── Windows implementation
+├── macOS implementation, when work begins
+└── Linux implementation, when work begins
 ```
 
-Represent unavailable capabilities through typed `Unsupported` results.
+Add macOS and Linux adapter modules when their implementation begins, together with contract tests and native verification. Empty platform stubs are not evidence of portability or support.
 
-Maintain a mock adapter that exercises the complete shared workflow so correction logic remains independently testable from native accessibility and windowing systems.
+Keep platform-specific types, APIs, constants, capabilities, identifiers, and implementation details inside their adapter modules.
 
-A platform becomes supported when:
+Shared Rust and TypeScript code depend on generic contracts rather than operating-system-specific representations.
+
+Shared code must not interpret:
 
 ```text
-adapter implements the full contract
-+
-shared platform-agnostic test suite passes
-+
-platform-specific integration tests pass on that OS
+process IDs
+native window handles
+executable paths
+browser tab IDs
+frame IDs
+DOM references
+selection handles
+other adapter-specific source identity
 ```
 
-Windows reaching this state first means Windows is the first verified adapter, not the architecture of the product.
+Use an opaque adapter-owned source reference plus a safe human-readable source summary.
 
-The browser extension is the primary ChromeOS path and shares Emenda's correction schema, inference contract, language profiles, snapshot/revision semantics, settings concepts, and UX decision rules.
+The UI may display the source summary. It must not parse native or browser-specific source identity.
 
-Scope Tauri capabilities and native permissions to desktop adapters. Declare browser-extension permissions through the browser adapter's extension configuration.
+### Adapter-owned replacement invariant
 
-Treat installers, signing, notarization, package formats, and store distribution as deployment concerns outside the shared correction, inference, state, and text-surface architecture.
+The shared workflow owns:
+
+```text
+revision current?
+correction valid?
+user accepted it?
+```
+
+The active adapter owns:
+
+```text
+how source identity works
+how focus works
+how source/selection is revalidated
+how replacement is performed
+native protection checks
+clipboard preservation where relevant
+```
+
+Express replacement through a semantic operation equivalent to:
+
+```text
+replace_if_unchanged(
+    source,
+    expected_text,
+    replacement
+)
+```
+
+The adapter returns a typed failure whenever it cannot verify that the original source and expected text remain authoritative.
+
+Shared workflow code must not reproduce Windows-style process/window comparisons or another platform's source-verification mechanics.
+
+### Browser and ChromeOS
+
+The browser extension is the primary ChromeOS path and implements the same semantic text-surface contract in **TypeScript**, rather than as a Rust `target_os` module.
+
+Desktop and browser share:
+
+- correction schema
+- inference contract
+- language profiles
+- snapshot/revision semantics
+- settings concepts
+- typed error meanings
+- UX decision rules
+
+The browser adapter may retain an opaque token for tab, frame, editable element and selection. Shared product logic does not parse that representation.
+
+Scope Tauri capabilities and native permissions to desktop surfaces. Declare browser-extension permissions through the extension configuration.
+
+### Mock adapter
+
+Maintain a mock adapter that exercises the complete shared workflow so correction logic remains independently testable from native accessibility, windowing and browser systems.
+
+Use platform-neutral fixtures in shared tests.
+
+### Platform terminology
+
+Use these terms consistently:
+
+```text
+Architectural target
+= intended platform represented by shared product contracts and design decisions
+
+Compiles
+= repository builds successfully on that host
+
+Supported platform
+= adapter implemented
++ shared platform-agnostic tests pass
++ platform-specific integration tests pass on that OS
+
+Distribution-ready
+= supported platform
++ packaging and platform trust requirements satisfied
+```
+
+Windows reaching support first means Windows is the first verified adapter, not the architecture of the product.
+
+### Testing
+
+Test shared logic through mock adapters in normal CI.
+
+Keep native verification inside platform-specific test modules.
+
+Examples:
+
+```text
+Windows → Notepad / VS Code / supported Windows surfaces
+macOS   → host-appropriate native editors
+Linux   → host-appropriate native editors
+Browser → browser integration fixtures
+```
+
+CI should compile and run the strongest applicable shared suite on Windows, macOS and Linux hosts.
+
+A passing cross-platform build establishes compilation evidence. It does not by itself establish runtime support.
+
+### Packaging
+
+Treat installers, code signing, notarization, package formats, store distribution and publisher reputation as deployment concerns outside the shared correction, inference, state and text-surface architecture.
 
 When a platform decision remains open:
 
-> **Keep shared product behaviour platform-independent and place native operating-system behaviour behind the smallest appropriate adapter boundary.**
+> **Keep shared product behaviour platform-independent and place native operating-system or browser behaviour behind the smallest appropriate adapter boundary.**
 
 ## LLM Boundary and Failure Semantics
 
@@ -234,7 +363,7 @@ Treat a passing test as useful evidence when the behavior it measures matches th
 
 ## Scope Discipline
 
-Complete the active vertical slice before expanding feature breadth.
+Complete the active vertical increment before expanding feature breadth.
 
 For V0.1, prioritise the full selected-text correction loop:
 
@@ -247,8 +376,10 @@ select text
 → validate
 → review
 → apply
-→ source application
+→ adapter-owned replace_if_unchanged
 ```
+
+V0.1 is Emenda's personal and developer-validation milestone. Public beta readiness is a separate release gate.
 
 Use the current specification and decision matrix to resolve scope questions.
 
@@ -259,6 +390,8 @@ Keep repository documentation aligned with implementation.
 - `README.md` remains a concise one-minute orientation page.
 - `SPEC.md` carries architecture, rationale, contracts, decision matrix, implementation order and test strategy.
 - `AGENTS.md` carries standing coding-agent governance.
+- `UX.md` carries interaction principles and UX decision rules.
+- `BRAND.md` carries visual identity and brand-system rules.
 
 Update the relevant document when an implemented architectural decision materially changes the source of truth.
 
