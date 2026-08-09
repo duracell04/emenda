@@ -92,7 +92,9 @@ fn run_surface_smoke(kind: EditorKind) {
         .wait_until_active()
         .unwrap_or_else(|error| panic!("{editor_name}: wait for editor window: {error}"));
     tauri::async_runtime::block_on(exercise_surface(&workflow, &editor, &file));
-    editor.close();
+    editor
+        .close_checked()
+        .unwrap_or_else(|error| panic!("{editor_name}: clean up owned editor session: {error}"));
 }
 
 async fn exercise_surface(workflow: &WorkflowController, editor: &EditorSession, file: &Path) {

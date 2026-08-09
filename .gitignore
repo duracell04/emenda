@@ -1,5 +1,6 @@
 node_modules/
 dist/
+dist-desktop-e2e/
 src-tauri/target/
 src-tauri/gen/schemas/
 .env

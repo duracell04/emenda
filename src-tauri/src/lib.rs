@@ -9,12 +9,16 @@ pub mod snapshot;
 pub mod text;
 pub mod workflow;
 
+#[cfg(feature = "desktop-e2e")]
+use crate::settings::ApiKey;
+#[cfg(not(feature = "desktop-e2e"))]
+use crate::settings::KeyringCredentialStore;
 use crate::{
     error::CoreError,
     inference::{InferenceProvider, Model, OpenRouterProvider},
     settings::{
-        api_key_available, CredentialStore, CredentialUpdate, KeyringCredentialStore,
-        PublicSettings, SaveSettingsInput, SettingsStore, DEFAULT_HOTKEY,
+        api_key_available, CredentialStore, CredentialUpdate, PublicSettings, SaveSettingsInput,
+        SettingsStore, DEFAULT_HOTKEY,
     },
     text::TextSurfaceAdapter,
     workflow::{WorkflowController, WorkflowState},
@@ -24,6 +28,34 @@ use tauri::{AppHandle, Emitter, Manager, State};
 use tauri_plugin_global_shortcut::{Builder as ShortcutBuilder, ShortcutState};
 
 const WORKFLOW_EVENT: &str = "emenda://workflow-state";
+#[cfg(feature = "desktop-e2e")]
+const E2E_CONFIG_DIR_ENV: &str = "EMENDA_E2E_CONFIG_DIR";
+#[cfg(feature = "desktop-e2e")]
+const E2E_WEBDRIVER_PORT_ENV: &str = "TAURI_WEBDRIVER_PORT";
+
+/// The desktop E2E binary must never read from or write to the OS keyring.
+/// `resolve_api_key` can still obtain the one-run key from OPENROUTER_API_KEY.
+#[cfg(feature = "desktop-e2e")]
+struct EnvironmentOnlyCredentialStore;
+
+#[cfg(feature = "desktop-e2e")]
+impl CredentialStore for EnvironmentOnlyCredentialStore {
+    fn get_api_key(&self) -> Result<Option<ApiKey>, CoreError> {
+        Ok(None)
+    }
+
+    fn set_api_key(&self, _api_key: &ApiKey) -> Result<(), CoreError> {
+        Err(CoreError::ConfigurationError(
+            "the desktop E2E build does not permit keyring writes".to_owned(),
+        ))
+    }
+
+    fn delete_api_key(&self) -> Result<(), CoreError> {
+        Err(CoreError::ConfigurationError(
+            "the desktop E2E build does not permit keyring writes".to_owned(),
+        ))
+    }
+}
 
 struct ApplicationState {
     settings: Arc<SettingsStore>,
@@ -157,9 +189,12 @@ fn restore_main_window(app: &AppHandle) {
 }
 
 fn initialise_state(app: &tauri::App) -> Result<ApplicationState, Box<dyn std::error::Error>> {
-    let config_dir = app.path().app_config_dir()?;
+    let config_dir = application_config_dir(app)?;
     let settings = Arc::new(SettingsStore::new(settings_path(config_dir)));
+    #[cfg(not(feature = "desktop-e2e"))]
     let credentials: Arc<dyn CredentialStore> = Arc::new(KeyringCredentialStore::new());
+    #[cfg(feature = "desktop-e2e")]
+    let credentials: Arc<dyn CredentialStore> = Arc::new(EnvironmentOnlyCredentialStore);
     let provider: Arc<dyn InferenceProvider> =
         Arc::new(OpenRouterProvider::new(Arc::clone(&credentials))?);
     let adapter: Arc<dyn TextSurfaceAdapter> = Arc::from(text::platform_adapter()?);
@@ -174,6 +209,36 @@ fn initialise_state(app: &tauri::App) -> Result<ApplicationState, Box<dyn std::e
         provider,
         workflow,
     })
+}
+
+#[cfg(not(feature = "desktop-e2e"))]
+fn application_config_dir(app: &tauri::App) -> Result<PathBuf, Box<dyn std::error::Error>> {
+    Ok(app.path().app_config_dir()?)
+}
+
+#[cfg(feature = "desktop-e2e")]
+fn application_config_dir(_app: &tauri::App) -> Result<PathBuf, Box<dyn std::error::Error>> {
+    let path = std::env::var_os(E2E_CONFIG_DIR_ENV)
+        .map(PathBuf::from)
+        .ok_or_else(|| format!("{E2E_CONFIG_DIR_ENV} is required for desktop E2E builds"))?;
+    if !path.is_absolute() || !path.is_dir() {
+        return Err(
+            format!("{E2E_CONFIG_DIR_ENV} must name an existing absolute directory").into(),
+        );
+    }
+    Ok(path)
+}
+
+#[cfg(feature = "desktop-e2e")]
+fn validate_desktop_e2e_port() {
+    let port = std::env::var(E2E_WEBDRIVER_PORT_ENV)
+        .ok()
+        .and_then(|value| value.parse::<u16>().ok())
+        .filter(|port| *port != 0);
+    assert!(
+        port.is_some(),
+        "{E2E_WEBDRIVER_PORT_ENV} must be a non-zero u16 for desktop E2E builds"
+    );
 }
 
 fn settings_path(config_dir: PathBuf) -> PathBuf {
@@ -192,6 +257,14 @@ pub fn run() {
             restore_main_window(app);
         },
     ));
+
+    #[cfg(feature = "desktop-e2e")]
+    let builder = {
+        validate_desktop_e2e_port();
+        builder
+            .plugin(tauri_plugin_wdio::init())
+            .plugin(tauri_plugin_wdio_webdriver::init())
+    };
 
     builder
         .setup(|app| {

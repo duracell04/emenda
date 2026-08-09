@@ -16,6 +16,7 @@ use std::{
 };
 
 const WINDOW_TIMEOUT: Duration = Duration::from_secs(30);
+const REFOCUS_TIMEOUT: Duration = Duration::from_secs(30);
 const SAVE_TIMEOUT: Duration = Duration::from_secs(10);
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 const WINDOW_MARKER_ENV: &str = "EMENDA_SMOKE_WINDOW_MARKER";
@@ -38,11 +39,13 @@ const FIND_AND_ACTIVATE_WINDOW_SCRIPT: &str = r#"
 $ErrorActionPreference = 'Stop'
 $marker = $env:EMENDA_SMOKE_WINDOW_MARKER
 $shell = New-Object -ComObject WScript.Shell
-$match = Get-Process | Where-Object {
+$windowMatches = @(Get-Process | Where-Object {
     $_.MainWindowTitle -and
     $_.MainWindowTitle.IndexOf($marker, [System.StringComparison]::OrdinalIgnoreCase) -ge 0
-} | Select-Object -First 1
-if ($null -eq $match) { exit 20 }
+})
+if ($windowMatches.Count -eq 0) { exit 20 }
+if ($windowMatches.Count -ne 1) { exit 22 }
+$match = $windowMatches[0]
 if (-not $shell.AppActivate([int]$match.Id)) { exit 21 }
 [Console]::Out.WriteLine("$($match.Id)|$($match.StartTime.Ticks)|$($match.ProcessName)")
 "#;
@@ -178,6 +181,13 @@ impl EditorKind {
             Self::VsCode => "vscode",
         }
     }
+
+    const fn process_name(self) -> &'static str {
+        match self {
+            Self::Notepad => "Notepad",
+            Self::VsCode => "Code",
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -308,25 +318,46 @@ impl EditorSession {
     pub(crate) fn wait_until_active(&mut self) -> Result<(), String> {
         let deadline = Instant::now() + WINDOW_TIMEOUT;
         while Instant::now() < deadline {
-            if let Ok(Some(window_process)) = find_and_activate_window(&self.title_marker) {
-                if self
-                    .baseline_process_ids
-                    .contains(&window_process.process_id)
-                {
+            match find_and_activate_window(&self.title_marker) {
+                Ok(Some(window_process)) => {
+                    if !window_process
+                        .process_name
+                        .eq_ignore_ascii_case(self.kind.process_name())
+                    {
+                        return Err(format!(
+                            "the marker-matched process was '{}', not the requested '{}'",
+                            window_process.process_name,
+                            self.kind.process_name()
+                        ));
+                    }
+                    if self
+                        .baseline_process_ids
+                        .contains(&window_process.process_id)
+                    {
+                        return Err(format!(
+                            "the marker-matched {} window belongs to a process that predated this test",
+                            self.kind.name()
+                        ));
+                    }
+                    thread::sleep(Duration::from_millis(100));
+                    if get_active_window().is_ok_and(|active| {
+                        active.process_id == window_process.process_id
+                            && title_matches(&active.title, &self.title_marker)
+                            && recorded_process_identity_matches(&window_process).unwrap_or(false)
+                    }) {
+                        // Modern Notepad can return a short-lived launcher PID.
+                        // Record the owner of the marker-matched window instead.
+                        self.window_process = Some(window_process);
+                        thread::sleep(Duration::from_millis(500));
+                        return Ok(());
+                    }
+                }
+                Ok(None) => {}
+                Err(error) => {
                     return Err(format!(
-                        "the marker-matched {} window belongs to a process that predated this test",
+                        "could not uniquely identify the marker-scoped {} window: {error}",
                         self.kind.name()
                     ));
-                }
-                thread::sleep(Duration::from_millis(100));
-                if get_active_window()
-                    .is_ok_and(|active| title_matches(&active.title, &self.title_marker))
-                {
-                    // Modern Notepad can return a short-lived launcher PID.
-                    // Record the owner of the marker-matched window instead.
-                    self.window_process = Some(window_process);
-                    thread::sleep(Duration::from_millis(500));
-                    return Ok(());
                 }
             }
             thread::sleep(Duration::from_millis(150));
@@ -380,15 +411,54 @@ impl EditorSession {
         wait_for_file_contents(file, expected)
     }
 
+    /// Waits for Emenda itself to return focus to the exact owned source.
+    /// This only observes foreground state; it never activates a window.
+    #[allow(dead_code)] // Used by the JSONL fixture, not by the integration-test crate.
+    pub(crate) fn wait_until_refocused(&self) -> Result<(), String> {
+        let process = self.window_process.as_ref().ok_or_else(|| {
+            format!(
+                "the '{}' editor window does not have a recorded process",
+                self.title_marker
+            )
+        })?;
+        let deadline = Instant::now() + REFOCUS_TIMEOUT;
+        let mut last_title = String::new();
+        while Instant::now() < deadline {
+            if let Ok(active) = get_active_window() {
+                last_title = active.title.clone();
+                if active.process_id == process.process_id
+                    && title_matches(&active.title, &self.title_marker)
+                    && recorded_process_identity_matches(process).unwrap_or(false)
+                {
+                    return Ok(());
+                }
+            }
+            thread::sleep(Duration::from_millis(100));
+        }
+        Err(format!(
+            "Emenda did not return focus to the exact '{}' source within {:?}; last foreground title was {:?}",
+            self.title_marker, REFOCUS_TIMEOUT, last_title
+        ))
+    }
+
     fn assert_still_active(&self) -> Result<(), String> {
+        let process = self.window_process.as_ref().ok_or_else(|| {
+            format!(
+                "the '{}' editor window does not have a recorded process",
+                self.title_marker
+            )
+        })?;
         let active = get_active_window()
             .map_err(|()| format!("no active window was available for '{}'", self.title_marker))?;
-        if title_matches(&active.title, &self.title_marker) {
+        if active.process_id == process.process_id
+            && title_matches(&active.title, &self.title_marker)
+            && recorded_process_identity_matches(process).unwrap_or(false)
+        {
             Ok(())
         } else {
             Err(format!(
-                "expected the '{}' editor window to be active, but the foreground title was '{}'",
-                self.title_marker, active.title
+                "expected the exact '{}' editor process {} to be active, but foreground process {} had title '{}'",
+                self.title_marker, process.process_id, active.process_id, active.title
             ))
         }
     }
@@ -416,21 +486,44 @@ impl EditorSession {
         }
     }
 
-    pub(crate) fn close(&mut self) {
+    pub(crate) fn close_checked(&mut self) -> Result<(), String> {
         if self.closed {
-            return;
+            return Ok(());
         }
 
+        let mut failures = Vec::new();
+
         if self.window_process.is_none() {
-            self.window_process = find_and_activate_window(&self.title_marker)
-                .ok()
-                .flatten()
-                .filter(|process| !self.baseline_process_ids.contains(&process.process_id));
+            match find_and_activate_window(&self.title_marker) {
+                Ok(Some(process))
+                    if !self.baseline_process_ids.contains(&process.process_id)
+                        && process
+                            .process_name
+                            .eq_ignore_ascii_case(self.kind.process_name()) =>
+                {
+                    self.window_process = Some(process);
+                }
+                Ok(Some(process)) => failures.push(format!(
+                    "cleanup found marker process {} named '{}', which is not the exact owned {} process",
+                    process.process_id,
+                    process.process_name,
+                    self.kind.name()
+                )),
+                Ok(None) => {}
+                Err(error) => failures.push(format!(
+                    "cleanup could not uniquely identify the marker-scoped {} window: {error}",
+                    self.kind.name()
+                )),
+            }
         }
         if let Some(process) = self.window_process.clone() {
             let activated = activate_recorded_window(&process, &self.title_marker).unwrap_or(false);
             if activated
-                && wait_for_matching_active_window(&self.title_marker, Duration::from_secs(3))
+                && wait_for_matching_active_window(
+                    &process,
+                    &self.title_marker,
+                    Duration::from_secs(3),
+                )
             {
                 if let Ok(mut input) = Enigo::new(&EnigoSettings::default()) {
                     let _ = match self.kind {
@@ -447,7 +540,23 @@ impl EditorSession {
             if !wait_for_recorded_process_to_exit(&process, Duration::from_secs(5)) {
                 // After Ctrl+W, modern Notepad may linger without its title.
                 // Revalidate immutable process identity before stopping it.
-                let _ = terminate_recorded_window_process(&process, &self.title_marker);
+                match terminate_recorded_window_process(&process, &self.title_marker) {
+                    Ok(true) => {}
+                    Ok(false) => failures.push(format!(
+                        "Windows refused to terminate the exact owned {} process",
+                        self.kind.name()
+                    )),
+                    Err(error) => failures.push(format!(
+                        "could not terminate the exact owned {} process: {error}",
+                        self.kind.name()
+                    )),
+                }
+                if !wait_for_recorded_process_to_exit(&process, Duration::from_secs(5)) {
+                    failures.push(format!(
+                        "the exact owned {} process remained alive after cleanup",
+                        self.kind.name()
+                    ));
+                }
             }
         }
 
@@ -456,16 +565,42 @@ impl EditorSession {
             match self.child.try_wait() {
                 Ok(Some(_)) => {
                     self.closed = true;
-                    return;
+                    return if failures.is_empty() {
+                        Ok(())
+                    } else {
+                        Err(failures.join("; "))
+                    };
                 }
-                Ok(None) | Err(_) => thread::sleep(Duration::from_millis(100)),
+                Ok(None) => thread::sleep(Duration::from_millis(100)),
+                Err(error) => {
+                    failures.push(format!(
+                        "could not inspect the owned editor launcher: {error}"
+                    ));
+                    break;
+                }
             }
         }
 
         // Reap or stop only the exact launcher handle created above.
-        let _ = self.child.kill();
-        let _ = self.child.wait();
-        self.closed = true;
+        if let Err(error) = self.child.kill() {
+            failures.push(format!(
+                "could not stop the exact editor launcher handle: {error}"
+            ));
+        }
+        match self.child.wait() {
+            Ok(_) => self.closed = failures.is_empty(),
+            Err(error) => failures.push(format!("could not reap the editor launcher: {error}")),
+        }
+        if failures.is_empty() {
+            self.closed = true;
+            Ok(())
+        } else {
+            Err(failures.join("; "))
+        }
+    }
+
+    pub(crate) fn close(&mut self) {
+        let _ = self.close_checked();
     }
 }
 
@@ -543,10 +678,18 @@ fn wait_for_file_contents(file: &Path, expected: &str) -> Result<(), String> {
     ))
 }
 
-fn wait_for_matching_active_window(marker: &str, timeout: Duration) -> bool {
+fn wait_for_matching_active_window(
+    process: &WindowProcessIdentity,
+    marker: &str,
+    timeout: Duration,
+) -> bool {
     let deadline = Instant::now() + timeout;
     while Instant::now() < deadline {
-        if get_active_window().is_ok_and(|active| title_matches(&active.title, marker)) {
+        if get_active_window().is_ok_and(|active| {
+            active.process_id == process.process_id
+                && title_matches(&active.title, marker)
+                && recorded_process_identity_matches(process).unwrap_or(false)
+        }) {
             return true;
         }
         thread::sleep(Duration::from_millis(100));
@@ -560,7 +703,19 @@ fn find_and_activate_window(marker: &str) -> io::Result<Option<WindowProcessIden
         .stdout(Stdio::piped())
         .output()?;
     if !output.status.success() {
-        return Ok(None);
+        return match output.status.code() {
+            Some(20) => Ok(None),
+            Some(22) => Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                "more than one window matched the unique fixture marker",
+            )),
+            Some(code) => Err(io::Error::other(format!(
+                "marker window activation failed with exit code {code}"
+            ))),
+            None => Err(io::Error::other(
+                "marker window activation was terminated without an exit code",
+            )),
+        };
     }
 
     let encoded = String::from_utf8(output.stdout)
