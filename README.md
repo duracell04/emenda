@@ -1,134 +1,100 @@
 # Emenda
 
+> **Frozen clean-room constitution, version 2.0.0**
+
 > **Preserve your Duktus**
 
-Emenda is a quiet local writing assistant that observes editable text, delegates linguistic judgment to OpenRouter, validates every proposal locally, and lets the writer apply each change explicitly.
+Emenda is a quiet personal writing assistant. V0.1 is one Chromium Manifest V3 extension backed by an OS-agnostic strict-TypeScript core. It observes eligible browser text, asks a user-configured OpenRouter model for zero or one structured correction, validates the response locally, and lets the writer apply the exact change explicitly.
 
-This package is the frozen clean-room constitution, version 1.0.1, for rebuilding Emenda from an empty implementation context.
-
-## Product model
+## V0.1 product model
 
 ```text
-editable text changes
-→ reserve a current RevisionId
-→ short debounce
-→ smallest useful context
-→ seal an immutable Revision
-→ OpenRouter
-→ zero or one structured correction
-→ deterministic validation
-├─ no correction → Clean → continue writing
-└─ one correction → compact suggestion
+eligible committed input
+→ reserve current revision immediately
+→ 600 ms trailing-edge debounce
+→ capture a DOM-free snapshot
+→ select sentence focus and bounded context
+→ fixed OpenRouter structured-output request
+→ strict local validation
+├─ zero corrections → Idle
+└─ one correction → fixed overlay
    → Apply or Dismiss
-   → safe current-source replacement or no edit
-   → continue writing
+   → verified one-step undo-aware edit or no mutation
 ```
 
-Emenda keeps local intelligence deliberately small:
+Emenda supports explicitly enabled top-level HTTP(S) pages with a visible, focused, writable light-DOM `<textarea>` or conventional `contenteditable` surface that maps losslessly. Unsupported or ambiguous surfaces fail closed.
+
+## Architecture
 
 ```text
-Did useful text change?
-Has typing settled?
-What is the smallest useful context?
-Is this revision still current?
-Is the model response valid?
-Can the exact change still be applied safely?
+core/                     strict TypeScript; no browser or runtime types
+extension/content/        controller, BrowserTextSurface, overlay
+extension/worker/         permissions, trusted settings, cancellation, fetch
+extension/options/        API-key and model configuration
+tests/                    deterministic and persistent-Chromium evidence
+scripts/build-extension.mjs
 ```
 
-OpenRouter handles linguistic judgment.
+The product uses one npm package. Zod is the only direct runtime dependency. Plain TypeScript and DOM APIs implement the overlay and options page.
 
-## Hard architecture rule
+## Privacy and permissions
+
+- Toolbar activation requests optional permission for the exact current origin.
+- One dynamic content-script registration covers enabled origins.
+- There is no static all-sites content script and no `<all_urls>` grant.
+- The API key and model stay in `chrome.storage.local`, restricted to trusted extension contexts.
+- Content scripts receive only `hasApiKey`; raw DOM data and source identity never enter worker messages.
+- Browser-profile storage is disclosed as local browser storage, not an operating-system secret vault.
+- There is no telemetry, analytics, or persistent text cache.
+
+## Canonical implementation sequence
 
 ```text
-          LANGUAGE-NEUTRAL EMENDA SEMANTICS
-          versioned schemas + conformance fixtures
-                        │
-            ┌───────────┴───────────┐
-            ▼                       ▼
-   safe-Rust desktop core   strict-TypeScript browser core
-            │                       │
-      semantic TextSurface      BrowserTextSurface
-            │                       │
-       mock or native leaf       browser-native leaf
+Documentation baseline + Documentation Gate
+→ strict-TypeScript domain and schemas
+→ TextSurface + MockTextSurface
+→ InferenceProvider + MockInferenceProvider
+→ controller, scheduler, context, and revision
+→ validator + presentation state
+→ complete mock product + Mock Product Gate
+→ Architecture Gate
+→ BrowserTextSurface
+→ MV3 worker, options, and overlay
+→ OpenRouterProvider + Provider Gate
+→ textarea runtime
+→ conventional contenteditable runtime
+→ Browser Integration + V0.1 Conformance Gate
+→ stop
 ```
 
-Platform-neutral desktop and browser product code contains zero knowledge of environment mechanisms:
+## Active gates
 
 ```text
-Windows
-macOS
-Linux
-HWND
-UI Automation
-AXUIElement
-AT-SPI
-clipboard shortcuts
-keyboard simulation
-DOM nodes
+Documentation
+→ Mock Product
+→ Architecture
+→ Provider
+→ Browser Integration
+→ V0.1 Conformance
 ```
-
-Those mechanisms belong to replaceable leaf bindings.
-
-The Rust desktop core runs unchanged against mock and native desktop bindings. A future browser product separately implements the same versioned semantic schemas in strict TypeScript and must pass the same language-neutral conformance fixtures; it is not the Rust executable coupled to a browser adapter.
-
-The current host operating system is a runtime verification environment, not an architectural input.
-
-## Mock-first build model
-
-The complete product is built and accepted first against:
-
-```text
-MockTextSurface
-+
-MockInferenceProvider
-```
-
-Only after the Mock Product, Provider, Presentation, and Architecture gates pass does the project add a binding for the available runtime host.
-
-In the owner's present environment, runtime evidence may be collected through a Windows binding. That environmental fact may appear only in binding-specific code, tests, and evidence.
-
-## Technology
-
-- Tauri 2
-- safe Rust
-- strict TypeScript
-- HTML and CSS
-- Serde
-- Zod
-- JSON Schema
-- OpenRouter
-
-The stack is selected to make the compiler, type system, runtime schemas, and capability boundaries part of the correctness system.
-
-## V0.1 outcome
-
-V0.1 is complete when:
-
-```text
-writer types ordinary editable text
-→ Emenda observes the change automatically
-→ one current request is produced after debounce
-→ a valid correction is presented
-→ Apply changes the exact intended source safely
-→ Dismiss preserves the source
-→ stale work cannot affect newer text
-```
-
-The shared product must already satisfy that loop deterministically through mocks before native runtime verification begins.
 
 ## Documentation map
 
-1. [`PROMPT.md`](PROMPT.md): autonomous build objective
-2. [`AGENTS.md`](AGENTS.md): agent execution governance
-3. [`SPEC.md`](SPEC.md): product and engineering source of truth
-4. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): dependency direction and semantic contracts
-5. [`ROADMAP.md`](ROADMAP.md): product and platform milestone sequence
-6. [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md): commit-by-commit build plan
-7. [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md): evidence required for every gate
-8. [`docs/ENGINEERING.md`](docs/ENGINEERING.md): AI-native engineering standard
-9. [`UX.md`](UX.md): interaction rules and product north star
-10. [`BRAND.md`](BRAND.md): visual identity and brand system
-11. [`docs/EVIDENCE.md`](docs/EVIDENCE.md): mutable implementation evidence ledger
-12. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md): freeze identity, contents, and checksums
+1. [`PROMPT.md`](PROMPT.md): autonomous V0.1 objective
+2. [`AGENTS.md`](AGENTS.md): agent governance
+3. [`SPEC.md`](SPEC.md): product and semantic contracts
+4. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): dependency direction and extension composition
+5. [`ROADMAP.md`](ROADMAP.md): milestone sequence and later horizons
+6. [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md): ordered build increments
+7. [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md): gate evidence and conformance criteria
+8. [`docs/ENGINEERING.md`](docs/ENGINEERING.md): engineering and verification standards
+9. [`UX.md`](UX.md): writer interaction and accessibility rules
+10. [`BRAND.md`](BRAND.md): visual identity and extension assets
+11. [`docs/EVIDENCE.md`](docs/EVIDENCE.md): mutable implementation ledger template
+12. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md): freeze identity, supersession, inventory, and checksums
 
-Together these Markdown documents are sufficient to reconstruct the intended product without access to an earlier implementation.
+Together these 13 Markdown files form freeze `emenda-clean-room-v2.0.0-2026-08-14`. Version 2.0.0 supersedes version 1.0.1 while preserving the earlier constitution at Git commit `d3192b7`.
+
+## Explicitly deferred
+
+Native hosts, Tauri, Rust, operating-system accessibility APIs, packaging, signing, Chrome Web Store publication, release automation, and native placeholders belong to later separately versioned objectives. Cross-OS runtime support is claimed only when independently evidenced.

@@ -1,21 +1,19 @@
 # Emenda V0.1 Specification
 
-> **Frozen product specification, version 1.0.1**
+> **Frozen product specification, version 2.0.0**
 
 ## 1. Product goal
 
-Emenda is a personal local writing assistant that improves text while preserving the author's meaning, voice, rhythm, register, terminology, and Duktus.
+Emenda is a personal writing assistant that improves browser text while preserving the author's meaning, voice, rhythm, register, terminology, and Duktus.
 
-The writer's existing application remains the primary writing surface.
-
-Emenda is a small deterministic control layer around OpenRouter:
+The writer's page remains the primary writing surface. Emenda is a small deterministic control layer around OpenRouter:
 
 ```text
 observe
-→ reserve revision ID
+→ reserve revision authority
 → debounce
-→ capture context
-→ seal immutable revision
+→ capture
+→ derive context
 → infer
 → validate
 → suggest
@@ -23,882 +21,364 @@ observe
 → apply safely
 ```
 
-OpenRouter performs linguistic judgment.
+OpenRouter performs linguistic judgment. Emenda owns observation policy, context selection, revision authority, strict validation, presentation, explicit consent, and safe application.
 
-Emenda performs observation policy, revision control, context selection, validation, presentation, and safe application.
+## 2. Active V0.1 runtime
 
-## 2. Hard operating-system invariant
+V0.1 has one OS-agnostic strict-TypeScript product core and one active runtime: a Chromium Manifest V3 extension requiring Chrome 102 or newer.
 
-> **Every shared domain type, state transition, interface, test, and presentation behavior is designed without reference to a particular operating system. Platform APIs exist exclusively in replaceable leaf bindings. The current host is a verification environment, not a design premise.**
+The core contains no DOM, Chrome, Node, React, or extension types. Browser APIs and nodes exist only in extension leaf code. This constitution makes no cross-OS runtime claim beyond separately recorded evidence.
 
-The Rust desktop core must operate unchanged against:
-
-```text
-MockTextSurface
-WindowsTextSurface
-MacTextSurface
-LinuxTextSurface
-```
-
-The Rust desktop application owns one semantic `TextSurface` port implemented by those desktop surfaces.
-
-The browser is a separate strict-TypeScript implementation. It implements the same versioned, language-neutral schemas and is verified with the same versioned conformance fixtures, but it does not implement the Rust trait or share desktop runtime code. Cross-environment compatibility means schema and fixture conformance, not a common binary.
-
-## 3. V0.1 user outcome
+## 3. User outcome
 
 ```text
-writer types ordinary editable text
-→ writer pauses briefly
-→ Emenda receives an ObservedChange
-→ Emenda immediately reserves a new RevisionId
-→ Emenda requests the smallest useful TextContext
-→ Emenda seals an immutable Revision from that ID and context
-→ Emenda sends that context to OpenRouter
-→ OpenRouter returns structured corrections
-→ Emenda validates the response
-→ Emenda presents one exact Suggestion
-→ writer chooses Apply or Dismiss
-→ Apply asks TextSurface to replace only if the source is still current
-→ writing continues
+writer edits an eligible browser surface
+→ committed input reserves a RevisionId immediately
+→ writer pauses for 600 ms
+→ Emenda captures the current logical text and caret
+→ Emenda derives a focus sentence and bounded context
+→ one current request is sent to OpenRouter
+→ zero corrections returns silently to Idle
+→ one exact valid correction creates a Suggestion
+→ writer applies or dismisses
+→ Apply mutates only the verified current surface in one undo step
 ```
 
-Observation is ambient.
+Observation is ambient after explicit per-origin enablement. Application is always explicit.
 
-Application is explicit.
-
-## 4. Local intelligence budget
-
-V0.1 local intelligence answers six questions:
-
-```text
-Did current nonempty context meaningfully change?
-Has typing settled?
-What is the smallest useful context?
-Is the result still current?
-Is the correction valid?
-Can the exact edit still be applied safely?
-```
-
-Linguistic judgment stays in OpenRouter.
-
-V0.1 does not add local language models, embeddings, local grammar engines, speculative rewrite heuristics, or parallel correction workflows.
-
-## 5. Canonical semantic types
-
-The names below describe product meaning. Exact field decomposition may remain minimal while preserving these semantics.
-
-### 5.1 `RevisionId`
-
-A monotonically increasing session identifier reserved synchronously on every `ObservedChange`. Reserving a newer ID immediately invalidates every older debounce, context request, inference result, suggestion, and Apply action.
-
-### 5.2 `Revision`
-
-An immutable value sealed only after the 500 ms debounce has settled and current context capture succeeds:
+## 4. Constants and scalar model
 
 ```ts
-type Revision = {
-  id: RevisionId;
-  context: TextContext;
+const DEBOUNCE_MS = 600;
+const MAX_CONTEXT_SCALARS = 1200;
+const PROVIDER_TIMEOUT_MS = 8000;
+const MAX_RESPONSE_BYTES = 32 * 1024;
+```
+
+All text ranges are half-open offsets over Unicode scalar values, not UTF-16 code units, bytes, grapheme clusters, or DOM offsets. Conversions at browser boundaries must be explicit and lossless.
+
+## 5. Semantic ports
+
+```ts
+interface TextSurface {
+  observe(sink: (signal: SurfaceSignal) => void): Disposable;
+  capture(change: ObservedChange): Promise<SurfaceSnapshot>;
+  replaceIfCurrent(request: ReplacementRequest): Promise<ReplacementResult>;
+}
+
+interface InferenceProvider {
+  check(request: CheckRequest): PendingCheck;
+}
+
+type PendingCheck = {
+  result: Promise<CheckResult>;
+  cancel(): void;
 };
 ```
 
-The ID is the one reserved by the originating `ObservedChange`; context capture never allocates a replacement ID. A sealed revision is the only input to inference and correction validation.
+The core also owns a minimal scheduler seam sufficient to schedule and cancel the debounce and to make fake-clock tests deterministic. It exposes time semantics rather than browser timer objects.
 
-### 5.3 `SourceReference`
+No geometry port, credential-store port, native host port, or accessibility port enters V0.1.
 
-An opaque token created and understood by the active `TextSurface` implementation.
+## 6. Shared types
 
-Shared code may store, compare for equality where required, and return the token to the same port. Shared code never parses native identity.
+The shared domain includes:
 
-### 5.4 `SourceDisplay`
+- `RevisionId`: monotonically increasing session authority reserved synchronously.
+- `Revision`: immutable current check input, including its ID, snapshot references, and derived context.
+- `SourceReference`: opaque equality-capable identity understood by the active `TextSurface`.
+- `SnapshotReference`: opaque identity for one captured document state.
+- `TextRange`: half-open Unicode scalar range.
+- `ObservedChange`: minimal semantic notification that eligible committed text may have changed.
+- `SurfaceSignal`: a committed change, composition invalidation/end signal, or typed unavailability.
+- `SurfaceSnapshot`: opaque source and snapshot references, exact logical text, and a focus range; never a DOM reference.
+- `TextContext`: bounded context text, focus text, language profile, and range mapping back to the snapshot.
+- `Correction`: one exact proposed replacement.
+- `SuggestionId`: opaque current-presentation capability.
+- `Suggestion`: current revision plus validated correction and display-safe fields.
+- `CheckRequest` and `CheckResult`: provider boundary values.
+- `ReplacementRequest` and `ReplacementResult`: application boundary values.
+- `Disposable`, scheduler handles, state values, and typed failures.
 
-Display-safe information such as:
+All public values are immutable. Opaque references are never serialized to the model and source identity never leaves the content script.
 
-```text
-application label
-optional context label
-```
+## 7. Observation, composition, and revision authority
 
-It contains no native handle, process identifier, executable path, DOM reference, or accessibility object.
+An eligible committed `input` event reserves the next `RevisionId` synchronously, clears any visible suggestion, invalidates every older timer or Apply capability, best-effort cancels older provider work, and starts one trailing-edge 600 ms debounce.
 
-### 5.5 `ObservedChange`
+Composition behavior is authoritative:
 
-A semantic notification that eligible editable text may have changed.
+1. `compositionstart` and composing input reserve a new revision and invalidate current work immediately.
+2. No inference request begins while composition is active.
+3. `compositionend` is treated as the committed change that starts the trailing-edge debounce.
 
-It identifies the opaque source and carries only the minimum generic information required to request current context.
+Each controller revision may produce at most one provider request. A newer revision always wins, even if cancellation is unavailable or races with completion. Stale completion and stale failure are silent and cannot alter state, presentation, or text.
 
-### 5.6 `SurfaceSignal`
+## 8. Capture and context selection
 
-The subscription signal delivered by `TextSurface`:
+After debounce, the current change is captured. Capture fails closed if the page, document, source, focus, writability, visibility, or mapping is no longer eligible.
 
-```text
-Changed(ObservedChange)
-or
-Unavailable { optional SourceDisplay, SurfaceError }
-```
+The post-edit caret determines focus:
 
-`Unavailable` communicates an ineligible, protected, or temporarily unsupported surface without exposing text or `SourceReference`. It gives the controller one typed path to invalidate an older suggestion and publish a safe error state.
+1. Select the sentence containing the caret as the focus.
+2. If its paragraph fits within 1,200 Unicode scalars, use that paragraph as surrounding context.
+3. Otherwise construct a 1,200-scalar window around the focus, dividing remaining capacity evenly before and after it, clamping at document edges, and backfilling from the available side.
+4. If the focus itself exceeds 1,200 scalars, return a typed context-limit failure and make no provider request.
 
-### 5.7 `ContextRequest`
+The focus range is expressed relative to both snapshot logical text and request context. Corrections must remain entirely inside the focus.
 
-A platform-neutral request describing the bounded context policy:
+Sentence and paragraph selection is deterministic and language-neutral at the core boundary. Line-break conventions are normalized only if the browser adapter can preserve exact bidirectional mapping. Empty, whitespace-only, or nonlinguistic focus produces no request and returns silently to `Idle`.
 
-```text
-maximum Unicode scalar length = MAX_CONTEXT_SCALARS
-preferred sentence or local-paragraph boundary
-change-centered selection
-```
+## 9. Language profiles
 
-The core owns this policy. V0.1 defines:
-
-```text
-MAX_CONTEXT_SCALARS = 2000
-```
-
-### 5.8 `TextContext`
-
-The current bounded text associated with an observed change.
-
-Conceptually:
+The configured profile is one of:
 
 ```text
-source reference
-source display
-text
-changed or focus range
-opaque surface version or verification token when useful
-```
-
-The active binding may include opaque verification material without exposing its mechanism.
-
-Once a `TextContext` is sealed into a `Revision`, it is immutable.
-
-### 5.9 `TextRange`
-
-A half-open Unicode scalar-value range inside `TextContext.text`.
-
-### 5.10 `TextGeometry`
-
-Optional platform-neutral screen geometry for a text range.
-
-Conceptually:
-
-```text
-x
-y
-width
-height
-```
-
-These four values are finite logical pixels relative to the active Emenda presentation root. `width` and `height` are non-negative; `x` and `y` may be negative for a valid multi-display desktop layout. A binding converts native coordinates before returning geometry. The root is implicit in the composed presentation, so no native coordinate system, monitor identifier, transform, scale factor, or coordinate-space token crosses the port.
-
-Geometry enriches placement. It does not create an alternate product workflow.
-
-### 5.11 `Correction`
-
-One exact proposed change:
-
-```ts
-type Correction = {
-  start: number;
-  end: number;
-  original: string;
-  replacement: string;
-  category: "spelling" | "grammar" | "punctuation" | "style";
-  confidence: "high" | "medium" | "low";
-  explanation?: string;
-};
-```
-
-### 5.12 `Suggestion`
-
-An internal current-revision proposal containing the validated correction and the product state required to apply it safely.
-
-The presentation receives a display DTO with a `SuggestionId`, `SourceDisplay`, exact before/after text, category, explanation, and optional geometry.
-
-Opaque source identity remains outside the frontend boundary.
-
-## 6. `TextSurface` semantic port
-
-The application-owned port expresses Emenda guarantees rather than platform mechanics.
-
-A conceptual shape is:
-
-```rust
-trait TextSurface: Send + Sync {
-    fn subscribe(
-        &self,
-        sink: SurfaceSink,
-    ) -> Result<Subscription, SurfaceError>;
-
-    async fn context(
-        &self,
-        change: &ObservedChange,
-        request: &ContextRequest,
-    ) -> Result<TextContext, SurfaceError>;
-
-    async fn geometry(
-        &self,
-        source: &SourceReference,
-        range: &TextRange,
-    ) -> Result<Option<TextGeometry>, SurfaceError>;
-
-    async fn replace_if_current(
-        &self,
-        source: &SourceReference,
-        expected: &TextContext,
-        range: &TextRange,
-        replacement: &str,
-    ) -> Result<(), SurfaceError>;
-}
-```
-
-`SurfaceSink` receives `SurfaceSignal`. The exact Rust representation may use channels, streams, callbacks, or async traits according to the smallest idiomatic implementation.
-
-Every public word describes Emenda semantics.
-
-### 6.1 Binding ownership
-
-A leaf binding owns:
-
-```text
-native event subscription
-native source identity
-text retrieval
-geometry retrieval
-focus when required
-current-source and current-text verification
-replacement
-native permission and protection checks
-```
-
-A binding emits an `ObservedChange` only when all three eligibility conditions hold:
-
-```text
-surface is editable
-+ access is permitted
-+ surface is not secure or protected
-```
-
-Ineligible surfaces emit `SurfaceSignal::Unavailable` with display-safe context where available and do not expose text or opaque identity to the core.
-
-### 6.2 Application ownership
-
-The shared product owns:
-
-```text
-meaningful-change policy after context capture
-context policy
-debounce
-revision authority
-inference orchestration
-correction validation
-suggestion state
-writer decisions
-```
-
-## 7. Mock-first product requirement
-
-`MockTextSurface` is the first `TextSurface` implementation.
-
-It deterministically supports:
-
-```text
-emit change
-return context
-return optional geometry
-record replacement requests
-simulate changed source
-simulate protected source
-simulate unsupported operation
-```
-
-`MockInferenceProvider` returns deterministic valid and invalid results.
-
-The complete product loop must pass against these mocks before any platform-specific dependency, module, target branch, API, identifier, or test enters the implementation.
-
-## 8. Observation and debounce
-
-The active binding emits `SurfaceSignal::Changed(ObservedChange)` only for editable, access-permitted, non-secure surfaces. It may emit `SurfaceSignal::Unavailable` to communicate a protected, ineligible, or temporarily unsupported surface without reading its text.
-
-On `Unavailable`, the controller reserves the next `RevisionId`, invalidates older work, publishes the corresponding `Error(ErrorKind)`, and performs no debounce, context request, or inference call.
-
-The controller:
-
-```text
-receives change
-→ synchronously reserves the next RevisionId
-→ immediately invalidates all older work and visible suggestions
-→ restarts one debounce timer
-→ requests current bounded context after 500 ms settles
-→ discards the capture if the reserved ID is no longer current
-→ seals immutable Revision { id, context }
-```
-
-V0.1 debounce:
-
-```text
-500 ms
-```
-
-Store it as one explicit constant.
-
-ID reservation and invalidation happen before debounce. Context capture and revision sealing happen after debounce. A newer change therefore becomes authoritative immediately even while older context or inference work is still in flight.
-
-After a current context is captured, the core classifies it as meaningful only when all three conditions hold:
-
-```text
-context is nonempty
-+ reserved RevisionId is still current
-+ TextContext differs from the last authoritative TextContext
-```
-
-Only meaningful current context proceeds to inference. Duplicate, empty, or stale captures do not call the provider.
-
-For this comparison, `TextContext` identity is its semantic source, text, and focus/change range. A changed binding-private verification token alone does not make unchanged text meaningful.
-
-## 9. Context selection
-
-The shared core owns the smallest-useful-context policy.
-
-V0.1 uses Unicode scalar positions and the constant:
-
-```text
-MAX_CONTEXT_SCALARS = 2000
-```
-
-Given the eligible source text and changed range, selection is deterministic:
-
-1. If the changed range itself exceeds 2000 Unicode scalars, return `ContextTooLarge` and do not call inference.
-2. Use the sentence enclosing the changed range when both sentence boundaries are reliable and the sentence is at most 2000 Unicode scalars.
-3. Otherwise use the local paragraph enclosing the changed range when both paragraph boundaries are reliable and the paragraph is at most 2000 Unicode scalars.
-4. Otherwise create a window containing the complete changed range. Divide the remaining scalar capacity evenly before and after the range, give an odd spare scalar to the trailing side, clamp at the document edges, and backfill unused capacity from the other side.
-
-No selected context exceeds `MAX_CONTEXT_SCALARS`.
-
-The policy remains one small pure component.
-
-The binding retrieves text according to the semantic request. Platform APIs do not decide linguistic context policy.
-
-## 10. Revision model
-
-Every `ObservedChange` synchronously reserves the next monotonically increasing `RevisionId`. This reservation is the authoritative freshness boundary; it invalidates older timers, captures, requests, results, suggestions, and pending Apply actions before the debounce runs.
-
-After debounce, context capture uses the already-reserved ID. If that ID is still current, the controller seals:
-
-```text
-Revision {
-  id: reserved RevisionId,
-  context: captured TextContext
-}
-```
-
-The sealed revision is immutable. Every inference request carries its `RevisionId`, and the provider wrapper correlates its result with that same ID.
-
-Core rule:
-
-```text
-result.revision_id == current_revision_id
-```
-
-Freshness is checked after every asynchronous boundary and again on Apply. An older result becomes `StaleRevision` and cannot enter visible suggestion state or trigger replacement.
-
-## 11. Correction validation
-
-A correction is applicable when:
-
-```text
-revision is current
-response contains exactly one correction
-range is within TextContext.text
-original matches the scalar range
-replacement is valid text
-category is valid
-confidence is valid
-```
-
-A unique exact-original recovery may resolve a model range mismatch when the original occurs exactly once in the context.
-
-Ambiguous identity produces a typed non-applicable result.
-
-A zero-width range is valid only for insertion: `start == end`, `original == ""`, and `replacement != ""`. A nonzero range requires a nonempty `original`; its `replacement` may be empty for deletion. Exact-original recovery is disabled for empty `original`, and an empty-to-empty change is always a no-op failure.
-
-A schema-valid result with zero corrections deterministically enters `Clean`. A schema-valid result with one correction enters `Suggestion` only after that correction passes every semantic check above. No other provider output enters either state.
-
-## 12. Correct and Refine
-
-User-facing mapping:
-
-```text
-Correct
-→ spelling
-→ grammar
-→ punctuation
-
-Refine
-→ style
-```
-
-Correct receives stronger visual priority.
-
-Refine remains restrained and individually reviewable.
-
-## 13. Language behavior
-
-Supported profiles:
-
-```text
+auto
 de-CH
 en-GB
 en-US
 fr-FR
 ka-GE
 ru-RU
+unsupported
 ```
 
-Default mode:
+`unsupported` fails closed and makes no inference request. `auto` asks the provider to identify one supported profile or return `unsupported`. Emenda never translates. It preserves names, quotations, specialist terms, and short embedded passages.
 
-```text
-auto
-```
-
-Defaults:
-
-```text
-German  → de-CH
-English → en-GB
-```
-
-Clearly American English maps to `en-US`.
-
-Preserve names, quotations, terminology, and short embedded passages.
-
-## 14. Linguistic system prompt
-
-Store the prompt as an easily editable local resource.
-
-```text
-You are Emenda, a restrained multilingual writing editor.
-
-Improve the submitted focus text through the smallest useful corrections.
-
-Preserve the author's:
-- meaning
-- voice
-- rhythm
-- register
-- effective sentence structure
-- terminology
-- names
-- intentional informality
-- language variety
-- domain-specific vocabulary
-
-Prioritize:
-1. spelling
-2. grammar
-3. punctuation
-4. clear word misuse
-5. restrained stylistic improvement
-
-Treat the submitted text as the source of truth.
-Keep effective wording unchanged.
-
-Offer style changes selectively when they clearly improve clarity, precision,
-or readability while preserving the author's Duktus.
-
-Identify the best matching supported profile:
-de-CH, en-GB, en-US, fr-FR, ka-GE, ru-RU.
-
-Use de-CH for German.
-Use en-GB as the default English profile.
-Preserve clearly American English as en-US.
-
-Return only data matching the provided structured-output schema.
-Each correction describes one specific change and includes the exact original text.
-Keep explanations concise and useful.
-```
-
-## 15. Inference boundary
-
-Use one narrow `InferenceProvider` port.
-
-The exact application-level contract is:
+## 10. Correction contract
 
 ```ts
-type CheckRequest = {
-  revision_id: RevisionId;
-  text: string;
-};
-
-type CheckResult = {
-  revision_id: RevisionId;
-  language_profile: "de-CH" | "en-GB" | "en-US" | "fr-FR" | "ka-GE" | "ru-RU";
-  corrections: Correction[]; // zero or one item
+type Correction = {
+  range: TextRange;
+  original: string;
+  replacement: string;
+  category: "spelling" | "grammar" | "punctuation" | "style";
+  explanation: string;
 };
 ```
 
-`CheckRequest.text` is exactly the bounded text from the immutable revision. It contains no `SourceReference`, `SourceDisplay`, geometry, native identity, or application metadata. The provider wrapper copies `CheckRequest.revision_id` into `CheckResult.revision_id`; the model does not author or echo revision identity.
+The style category is restrained. It may correct a clear local defect while preserving meaning and Duktus. Confidence is absent.
 
-Conceptually:
+A response contains:
 
-```rust
-trait InferenceProvider {
-    async fn check(
-        &self,
-        request: CheckRequest,
-    ) -> Result<CheckResult, InferenceError>;
-}
+```ts
+type ModelResult = {
+  languageProfile:
+    | "de-CH"
+    | "en-GB"
+    | "en-US"
+    | "fr-FR"
+    | "ka-GE"
+    | "ru-RU"
+    | "unsupported";
+  corrections: [] | [Correction];
+};
 ```
 
-The model-authored portion of `CheckResult` must validate against this exact minimal JSON Schema before semantic validation:
+Revision identity is never model-authored. The provider adapter copies the authoritative `RevisionId` from `CheckRequest` into `CheckResult`.
+
+## 11. Model request and response
+
+The user must configure a concrete OpenRouter model that supports structured output. There is no compiled model default, and `openrouter/free` is not a daily-product default.
+
+The service worker uses the fixed endpoint:
+
+```text
+POST https://openrouter.ai/api/v1/chat/completions
+```
+
+The request is non-streaming and minimal: configured model, one system instruction, the bounded context and focus/range data, the selected profile, `provider.require_parameters: true`, temperature only if required by the chosen model, and strict JSON Schema response formatting.
+
+The model instruction requires zero or one correction, exact scalar range and original text, a replacement, a category, a concise explanation, preservation of meaning and Duktus, no translation, and `unsupported` when the text cannot be handled safely.
+
+Use strict JSON Schema as documented by [OpenRouter structured outputs](https://openrouter.ai/docs/guides/features/structured-outputs), followed by local Zod validation. No response healing, extraction from prose, second-pass repair, retry, fallback model, or streaming is permitted.
+
+The service worker enforces an eight-second deadline and a 32 KiB response limit while reading the body. Cancellation is best-effort. Provider, transport, timeout, size, HTTP, parse, schema, and unsupported-language failures are typed and contain no key or raw request text.
+
+## 12. Local validation
+
+The validator accepts exactly one suggestion only when all conditions hold:
+
+- the result carries the current adapter-copied revision ID;
+- `languageProfile` is supported;
+- the schema is exact and has no extra properties;
+- `corrections` contains exactly one item;
+- scalar offsets are integers, ordered, in bounds, and fully inside focus;
+- `original` equals the exact substring at the range;
+- `replacement` differs from `original`;
+- category is allowed and explanation is concise and nonempty;
+- the operation is a replacement, insertion, or deletion that can map losslessly.
+
+Malformed, multiple-correction, unsupported-language, out-of-focus, mismatched-range, no-op, or stale results create no suggestion. Writer-triggered provider or surface failures may enter `Error`; stale failures remain silent.
+
+There is no fuzzy match, unique-match search, offset recovery, correction relocation, or confidence threshold.
+
+## 13. State machine
+
+```ts
+type State =
+  | { kind: "Idle" }
+  | { kind: "Debouncing"; revisionId: RevisionId }
+  | { kind: "Checking"; revisionId: RevisionId }
+  | { kind: "Suggestion"; suggestion: Suggestion }
+  | { kind: "Applying"; suggestionId: SuggestionId }
+  | { kind: "Error"; failure: WriterVisibleFailure };
+```
+
+There is no persistent `Clean` state or clean-success UI. Zero corrections returns silently to `Idle`.
+
+Dismiss accepts the current `SuggestionId`, invalidates that suggestion, and returns to `Idle` without mutation. Apply accepts only `SuggestionId`; presentation never supplies source, range, original, replacement, revision, or DOM data.
+
+## 14. Apply safety
+
+Immediately before mutation, `BrowserTextSurface` verifies:
+
+```text
+current revision
++ same connected writable source
++ same document and opaque snapshot
++ exact current logical text
++ lossless range mapping
++ exact original substring
+```
+
+Failure returns a typed refusal without mutation.
+
+The only V0.1 mutation leaf is a runtime-gated `document.execCommand("insertText")` call after restoring the verified selection or textarea range. Direct-value assignment, DOM rewriting, clipboard use, simulated keys, and alternative mutation fallbacks are forbidden.
+
+A surface is positively supported only when runtime integration evidence proves that one native browser Undo restores the exact original text after Apply.
+
+## 15. Supported browser surfaces
+
+V0.1 positively supports only:
+
+- top-level HTTP(S) pages;
+- origins explicitly enabled by the writer;
+- visible, focused, writable light-DOM `<textarea>`;
+- simple light-DOM `contenteditable="true"` or `contenteditable="plaintext-only"`;
+- surfaces whose complete logical text, focus, target range, selection, and replacement map losslessly.
+
+V0.1 excludes:
+
+- `<input>` elements;
+- iframes;
+- shadow DOM editors;
+- rich, virtualized, or canvas editors;
+- Google Docs-style surfaces;
+- restricted browser and extension pages;
+- file URLs and PDFs;
+- readonly or disabled surfaces;
+- incognito.
+
+Excluded surfaces are unsupported rather than partially supported.
+
+## 16. Extension permissions and activation
+
+The manifest requires Chrome 102 or newer and disables incognito. It declares only:
 
 ```json
 {
-  "type": "object",
-  "additionalProperties": false,
-  "required": ["language_profile", "corrections"],
-  "properties": {
-    "language_profile": {
-      "type": "string",
-      "enum": ["de-CH", "en-GB", "en-US", "fr-FR", "ka-GE", "ru-RU"]
-    },
-    "corrections": {
-      "type": "array",
-      "minItems": 0,
-      "maxItems": 1,
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "start",
-          "end",
-          "original",
-          "replacement",
-          "category",
-          "confidence"
-        ],
-        "properties": {
-          "start": { "type": "integer", "minimum": 0 },
-          "end": { "type": "integer", "minimum": 0 },
-          "original": { "type": "string" },
-          "replacement": { "type": "string" },
-          "category": {
-            "type": "string",
-            "enum": ["spelling", "grammar", "punctuation", "style"]
-          },
-          "confidence": {
-            "type": "string",
-            "enum": ["high", "medium", "low"]
-          },
-          "explanation": { "type": "string" }
-        }
-      }
-    }
-  }
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": ["https://openrouter.ai/*"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"]
 }
 ```
 
-`additionalProperties: false` applies at both object levels. `explanation` is optional; every other correction field is required. Provider-enforced structured output is used when supported, but Emenda always performs the same local schema validation.
+Toolbar activation requests persistent optional permission for the exact current origin. The worker then maintains one dynamic content-script registration whose matches equal the enabled-origin set. Revocation removes the origin and updates the registration. There is no static all-sites content script and no `<all_urls>` grant.
 
-Implementations:
+This follows Chrome's [optional-permission model](https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions) and [dynamic scripting API](https://developer.chrome.com/docs/extensions/reference/api/scripting).
 
-```text
-MockInferenceProvider
-OpenRouterProvider
-```
+## 17. Extension boundaries
 
-Default OpenRouter model:
+The content script owns:
 
-```text
-openrouter/free
-```
+- controller and scheduler composition;
+- revision lifetime and current suggestions;
+- `BrowserTextSurface` and all DOM references;
+- logical-text and scalar mapping;
+- fixed-position shadow-root overlay;
+- focus-neutral keyboard handling.
 
-Use structured output when the selected route supports the required schema.
+The ephemeral service worker owns only:
 
-Every response passes deterministic local parsing and semantic validation.
+- optional permission lifecycle and dynamic registration;
+- trusted settings access;
+- request cancellation;
+- the fixed OpenRouter fetch;
+- strictly validated versioned runtime messages.
 
-V0.1 performs one provider request per sealed revision. It uses no automatic retry, fallback model, or silent substitution. A transport, protocol, or semantic failure remains typed and observable; a later product version may add a measured retry policy without changing revision authority or validation.
+The options page writes the API key and model. `chrome.storage.local` is restricted to trusted extension contexts. Content scripts receive only `hasApiKey`, never the key or model. Chrome documents default content-script storage exposure and trusted-context restriction in the [storage API](https://developer.chrome.com/docs/extensions/reference/api/storage).
 
-State mapping is deterministic:
+Browser-profile storage is disclosed as browser storage and not represented as an operating-system secret vault.
 
-```text
-zero corrections            → Clean
-one semantically valid item → Suggestion
-schema or semantic failure  → Error(ErrorKind)
-```
+All executable code is bundled locally as required by [Manifest V3](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3). There is no remotely hosted script.
 
-## 16. Controller
+## 18. Presentation contract
 
-The controller is pure application orchestration.
+The overlay:
 
-It owns:
+- is fixed to the viewport and deliberately unanchored;
+- renders inside a content-script-owned shadow root;
+- appears only for a current suggestion or writer-triggered failure;
+- never autofocuses or steals page focus;
+- shows exact before and after text, category, and concise explanation;
+- provides Apply, Dismiss, Escape, and Alt+Enter;
+- uses accessible names, visible focus, reduced motion, and WCAG 2.2 AA styling.
 
-```text
-immediate RevisionId reservation
-debounce state
-context request
-immutable Revision sealing
-meaningful-change decision
-inference request
-stale-result rejection
-validated suggestion session
-Apply / Dismiss transitions
-```
+Escape dismisses the current suggestion. Alt+Enter applies it only when a current suggestion exists. Key handling must preserve composition and host editing behavior.
 
-It depends only on:
+## 19. Data, privacy, and observability
 
-```text
-TextSurface
-InferenceProvider
-validator
-presentation-state publisher
-```
+Only the bounded request context is sent to OpenRouter. There is no persistent text cache, telemetry, analytics, request logging, correction history, or source-identity export.
 
-It contains no platform names, native identifiers, accessibility APIs, clipboard logic, keyboard logic, focus strategy, or target-specific timing.
+Logs and typed failures redact the API key, authorization header, raw context, raw model body, and DOM data. Tests use synthetic domain-neutral fixtures.
 
-## 17. Presentation
+## 20. Package and dependencies
 
-V0.1 uses a tiny Tauri-owned suggestion surface built with:
+V0.1 is one npm package with this top-level implementation shape:
 
 ```text
-strict TypeScript
-HTML
-CSS
+core/
+extension/
+tests/
+scripts/build-extension.mjs
+package.json
+package-lock.json
 ```
 
-The product state enum is exactly:
+Direct dependencies are limited to Zod. Development dependencies are limited to TypeScript, esbuild, Vitest, Playwright, and Chrome/Node types.
+
+The extension uses plain TypeScript, HTML, and CSS. V0.1 contains no React, Vite, Tailwind, extension framework, OpenRouter SDK, monorepo tooling, backend, database, or code generation.
+
+## 21. Canonical implementation sequence
 
 ```text
-State =
-  Quiet
-  | Checking
-  | Suggestion
-  | Clean
-  | Error(ErrorKind)
+Documentation baseline + Documentation Gate
+→ strict-TypeScript domain and schemas
+→ TextSurface + MockTextSurface
+→ InferenceProvider + MockInferenceProvider
+→ controller, scheduler, context, and revision
+→ validator + presentation state
+→ complete mock product + Mock Product Gate
+→ Architecture Gate
+→ BrowserTextSurface
+→ MV3 worker, options, and overlay
+→ OpenRouterProvider + Provider Gate
+→ textarea runtime
+→ conventional contenteditable runtime
+→ Browser Integration + V0.1 Conformance Gate
+→ stop
 ```
 
-The `Suggestion` state carries the current `SuggestionView`; `SuggestionView` is data, not another state discriminant.
+## 22. Deferred scope
 
-Phrases such as `Text looks good`, `Connection issue`, `Invalid response`, `Stale result`, `Protected surface`, and `Replacement issue` are presentation copy derived from `Clean` or `Error(ErrorKind)`. They are not additional product states.
+Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, native packaging, signing, Chrome Web Store publication, release automation, native placeholders, and general cross-OS runtime claims are explicitly deferred.
 
-A stale background completion publishes no transition. `Error(StaleRevision)` is reserved for a writer-triggered Apply that loses a race with a newer authoritative revision; no replacement occurs.
+Native work begins only after real browser usage demonstrates a material unmet need and a separately versioned objective authorizes it.
 
-A suggestion displays:
+## 23. Definition of Done
 
-```text
-Correct or Refine
-original → replacement
-short explanation
-SourceDisplay label when useful
-Apply
-Dismiss
-```
+V0.1 is complete only when every gate in [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) passes, including deterministic mock behavior, core dependency isolation, provider conformance, persistent-Chromium browser integration, one-step Undo, live supported-profile evidence, and an unpacked-extension smoke on current Chrome Stable.
 
-When `Correction.explanation` is absent, the presentation derives concise deterministic copy from the category: `Spelling correction.`, `Grammar correction.`, `Punctuation correction.`, or `Style refinement.` The UI never asks the model for a second explanation.
-
-The presentation receives display-safe DTOs only.
-
-A current schema-valid result with no correction enters `Clean`. Exactly one current, schema-valid, semantically valid correction enters `Suggestion`. Validation never promotes any other shape into either state.
-
-Apply sends `SuggestionId`. The Rust controller resolves the internal source and context state.
-
-The presentation may use `TextGeometry` for placement when available. The product interaction remains the same when geometry is absent.
-
-## 18. Safe application
-
-Apply invokes one semantic operation:
-
-```text
-replace_if_current(
-    source,
-    expected_context,
-    correction_range,
-    replacement
-)
-```
-
-The active binding verifies the source and expected text immediately before one coherent edit.
-
-A verification failure leaves the current source unchanged and returns a typed result.
-
-Apply is reversible through native Undo only when the host and active binding support one coherent undoable replacement. Where that guarantee is unavailable, Emenda makes no reversibility claim; source-current verification and explicit writer approval remain mandatory.
-
-## 19. Configuration
-
-Personal V0.1 uses environment-based local configuration:
-
-```text
-OPENROUTER_API_KEY
-OPENROUTER_MODEL
-```
-
-Default:
-
-```text
-OPENROUTER_MODEL=openrouter/free
-```
-
-Track `.env.example` when implementation begins.
-
-The documentation package itself remains Markdown-only.
-
-## 20. Error model
-
-Use typed outcomes:
-
-```text
-Configuration
-Observation
-Context
-ContextTooLarge
-InferenceTransport
-InferenceProtocol
-InferenceSemantic
-Validation
-StaleRevision
-ProtectedSurface
-Replacement
-Unsupported
-```
-
-Every exceptional state communicates:
-
-```text
-what happened
-→ what Emenda preserved
-→ next useful action
-```
-
-## 21. Privacy and security
-
-- The active binding treats a surface as eligible only when it is editable, access is permitted, and it is not secure or protected.
-- Ineligible surfaces expose no text to the core and return typed binding outcomes where a state must be communicated.
-- Send only the bounded context required for the current correction request.
-- Keep API credentials outside presentation state and logs.
-- Treat OpenRouter data as untrusted until validation succeeds.
-- Keep opaque source identity outside the TypeScript UI boundary.
-- Apply no source edit without explicit writer action.
-
-## 22. Technology stack
-
-```text
-Tauri 2
-safe Rust
-strict TypeScript
-HTML
-CSS
-Serde
-Zod
-JSON Schema
-OpenRouter
-```
-
-Rust implements the desktop core and desktop `TextSurface` bindings. Strict TypeScript separately implements browser semantics against the same versioned language-neutral schemas and conformance fixtures; neither runtime imports the other's platform implementation.
-
-A UI framework becomes justified when measured presentation complexity makes the total repository simpler with it.
-
-## 23. Repository shape
-
-Keep one modular monolith.
-
-A likely implementation shape is:
-
-```text
-emenda/
-├── README.md
-├── PROMPT.md
-├── SPEC.md
-├── ROADMAP.md
-├── AGENTS.md
-├── UX.md
-├── BRAND.md
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── ENGINEERING.md
-│   ├── IMPLEMENTATION-PLAN.md
-│   └── ACCEPTANCE.md
-├── src-tauri/
-│   └── src/
-│       ├── controller.rs
-│       ├── correction.rs
-│       ├── context.rs
-│       ├── inference/
-│       ├── text_surface/
-│       │   ├── mod.rs
-│       │   ├── mock.rs
-│       │   └── <current-host-binding>.rs
-│       └── presentation.rs
-└── ui/
-    ├── index.html
-    ├── app.ts
-    └── app.css
-```
-
-The exact decomposition emerges from responsibility. Empty future-platform modules are unnecessary.
-
-## 24. V0.1 scope
-
-V0.1 includes:
-
-```text
-platform-neutral semantic domain
-TextSurface port
-MockTextSurface
-InferenceProvider
-MockInferenceProvider
-OpenRouterProvider
-meaningful change orchestration
-500 ms debounce
-MAX_CONTEXT_SCALARS = 2000 deterministic context policy
-immediate RevisionId reservation and immutable Revision sealing
-structured zero-or-one Correction[]
-deterministic validation
-tiny suggestion presentation
-Apply
-Dismiss
-safe replacement semantics
-one current-host native binding
-runtime verification in two editable applications on that host
-```
-
-The owner's present runtime verification environment is Windows. This fact affects only the leaf binding and binding-specific evidence.
-
-## 25. Deferred objectives
-
-Later separately authorized milestones may include:
-
-```text
-additional native bindings
-browser extension
-inline markers
-richer geometry and anchoring
-per-application behavior
-personal vocabulary
-local inference
-distribution packaging
-signing
-installers
-public release automation
-```
-
-Each begins from measured need and preserves the frozen shared contracts unless a new constitutional version explicitly changes them.
-
-## 26. Definition of Done
-
-V0.1 is complete when:
-
-```text
-Mock Product Gate passes completely
-→ live OpenRouter compatibility is evidenced
-→ compact presentation passes its state and accessibility checks
-→ architecture gate confirms zero OS mechanics in shared code
-→ one current-host binding observes real text changes
-→ the full loop succeeds in two ordinary editable applications
-→ Apply changes only the intended current source
-→ Dismiss preserves the source
-→ stale work cannot affect newer text
-→ dependency and documentation conformance pass
-```
-
-The final repository is compact, strongly typed, easy to understand, and causally aligned with this specification.
+Implementation then records the final evidence, commits, pushes, verifies remote identity and a clean worktree, and stops.

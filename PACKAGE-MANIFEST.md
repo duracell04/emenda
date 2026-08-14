@@ -1,26 +1,24 @@
 # Emenda Frozen Clean-Room Build Context
 
-> **Freeze ID: `emenda-clean-room-v1.0.1-2026-08-10`**
+> **Frozen package manifest, version 2.0.0**
 
-This documentation-only package is the canonical constitution for rebuilding Emenda from scratch with an AI coding agent.
+> **Freeze ID: `emenda-clean-room-v2.0.0-2026-08-14`**
 
-A frozen package is changed by creating a new version. Version 1.0.1 records the consistency correction to the supplied 1.0.0 baseline; these files are not silently reinterpreted in place.
+This documentation-only package is the canonical constitution for Emenda's browser-only TypeScript V0.1.
+
+Version 2.0.0 supersedes version 1.0.1. The historical v1.0.1 constitution remains preserved at Git commit `d3192b7`; its manifest hashes are historical and are not repaired in place. Archived implementation code remains outside `main`.
 
 ## Package objective
 
 ```text
-platform-neutral product semantics
+strict-TypeScript browser-independent product semantics
 → complete deterministic product through mocks
+→ architecture isolation
+→ Chromium MV3 leaf integration
 → OpenRouter provider conformance
-→ presentation conformance
-→ architecture conformance gate
-→ replaceable current-host binding
-→ V0.1 runtime conformance
+→ textarea and contenteditable runtime conformance
+→ unpacked V0.1 completion
 ```
-
-## Hard invariant
-
-> **The current host operating system is a runtime verification environment, not an architectural input. Shared types, state, interfaces, tests, and presentation behavior contain no operating-system mechanism.**
 
 ## Contents
 
@@ -38,7 +36,9 @@ platform-neutral product semantics
 - `README.md`
 - `PACKAGE-MANIFEST.md`
 
-Every file in the clean-room package is Markdown. The package contains no application source code, dependency manifest, executable configuration, binary asset, credential, or generated implementation artifact. All files except the explicitly mutable evidence ledger form the frozen constitution.
+All 13 files are Markdown. This freeze contains no application source, dependency manifest, executable configuration, binary asset, credential, generated implementation artifact, or implementation evidence.
+
+The 11 immutable constitutional documents are every listed file except this manifest and `docs/EVIDENCE.md`.
 
 ## Reading order
 
@@ -54,114 +54,98 @@ Every file in the clean-room package is Markdown. The package contains no applic
 10. `BRAND.md`
 11. `README.md`
 
-`docs/EVIDENCE.md` is initialized only after this reading order and baseline verification are complete.
+`docs/EVIDENCE.md` is initialized only after this reading order and the Documentation Gate are complete.
 
 ## Source-of-truth hierarchy
 
 ```text
-PROMPT.md
-→ autonomous objective and hard invariants
-
-AGENTS.md
-→ persistent coding-agent governance
-
-SPEC.md
-→ product behavior and semantic contracts
-
-docs/ARCHITECTURE.md
-→ dependency direction and ownership
-
-ROADMAP.md
-→ product milestone sequence
-
-docs/IMPLEMENTATION-PLAN.md
-→ exact increment-by-increment execution order
-
-docs/ACCEPTANCE.md
-→ evidence required to pass each gate
-
-docs/ENGINEERING.md
-→ AI-native engineering quality system
-
-UX.md
-→ writer interaction rules
-
-BRAND.md
-→ visual identity and voice
-
-README.md
-→ concise orientation
-
-docs/EVIDENCE.md
-→ mutable factual implementation ledger; never constitutional authority
+PROMPT.md                    autonomous objective and hard limits
+AGENTS.md                    persistent agent governance
+SPEC.md                      product and semantic contracts
+docs/ARCHITECTURE.md         dependency direction and runtime ownership
+ROADMAP.md                   milestone order
+docs/IMPLEMENTATION-PLAN.md  exact implementation increments
+docs/ACCEPTANCE.md           required gate evidence
+docs/ENGINEERING.md          engineering quality system
+UX.md                        writer interaction and accessibility
+BRAND.md                     visual identity and extension assets
+README.md                    concise orientation
+docs/EVIDENCE.md             mutable factual ledger only
 ```
 
-## Canonical product model
+## Canonical implementation sequence
 
 ```text
-ObservedChange
-→ reserve RevisionId
-→ debounce
-→ ContextRequest
-→ TextContext
-→ seal immutable Revision
-→ InferenceProvider
-→ corrections: [] | [Correction]
-→ deterministic validation
-├─ [] → Clean
-└─ [Correction] → Suggestion
-   → Apply or Dismiss
-   → TextSurface.replace_if_current(...) or no edit
-```
-
-## Canonical implementation order
-
-```text
-documentation baseline + Documentation Gate
-→ semantic domain
-→ TextSurface port
-→ MockTextSurface
+Documentation baseline + Documentation Gate
+→ strict-TypeScript domain and schemas
+→ TextSurface + MockTextSurface
 → InferenceProvider + MockInferenceProvider
-→ controller, debounce, context, and revision
+→ controller, scheduler, context, and revision
 → validator + presentation state
 → complete mock product + Mock Product Gate
-→ OpenRouterProvider + Provider Gate
-→ Tauri UI + Presentation Gate
 → Architecture Gate
-→ current-host leaf + Current-Host Binding Gate
-→ two-application runtime + V0.1 Conformance Gate
+→ BrowserTextSurface
+→ MV3 worker, options, and overlay
+→ OpenRouterProvider + Provider Gate
+→ textarea runtime
+→ conventional contenteditable runtime
+→ Browser Integration + V0.1 Conformance Gate
+→ stop
 ```
+
+## Active gates
+
+```text
+Documentation
+→ Mock Product
+→ Architecture
+→ Provider
+→ Browser Integration
+→ V0.1 Conformance
+```
+
+Presentation and accessibility evidence belongs to Browser Integration.
+
+## Active runtime and deferral
+
+The only active V0.1 runtime is an unpacked Chromium Manifest V3 extension backed by an OS-agnostic strict-TypeScript core.
+
+Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, packaging, signing, Chrome Web Store publication, release automation, native placeholders, and cross-OS runtime claims are deferred to separately versioned objectives.
 
 ## Freeze lifecycle
 
-These checksums establish the immutable constitution seed. During implementation, the builder initializes the supplied `docs/EVIDENCE.md` with the starting commit and appends factual status and gate evidence; that mutable ledger is not constitutional authority and is excluded from the freeze checksums.
+During implementation, the builder initializes and appends factual status to `docs/EVIDENCE.md`. The ledger may change without changing the constitution.
 
-Application source and mechanically justified project files enter only after the Documentation Gate passes. Their later presence does not alter the frozen seed. A change to product behavior, architecture, UX, brand, acceptance, execution, or agent governance requires a newly versioned package and updated checksums.
+A material change to product behavior, architecture, UX, brand, acceptance, implementation order, or agent governance requires a newly versioned package and newly staged checksums.
 
 ## Integrity checksums
 
-The checksums below cover every immutable constitutional document except this manifest. They intentionally exclude the mutable `docs/EVIDENCE.md` ledger.
+The SHA-256 values below cover the exact Git-blob bytes staged for the 11 immutable documents. They exclude this manifest and the mutable evidence ledger.
 
-- `AGENTS.md`: SHA-256 `2f61a1ff531a01a95c95bf754a4d638bd129e21ae0d1e7efd1907a0548a68e99`
-- `BRAND.md`: SHA-256 `ea4472665ec8844a536b34e183d988850158e0652c260df1505d8a94a84a1abe`
-- `PROMPT.md`: SHA-256 `e81d8cb1766bccf80f572c3ee85a962c69d9491404f14d3b29ba185dd0c0fdc3`
-- `README.md`: SHA-256 `0087e1a99bac38203b77fc27b923bf2250277d26b57fb8c5769bc580cead9881`
-- `ROADMAP.md`: SHA-256 `e484208512fc869ed434339ef7867a49da2ad6db4fd68b0920e0be51323eefa4`
-- `SPEC.md`: SHA-256 `ddff82563f60e3a6033b279df1466f5180f8af403ffc0316ed41107629647012`
-- `UX.md`: SHA-256 `b57756d66793b5806e18fe950a9c760c5dca36b0f58bccc0b5fc6528af0af558`
-- `docs/ACCEPTANCE.md`: SHA-256 `8a395955b7516dfc29a45daf9d483ab87a7e53c663a44fbdb81364853c87716c`
-- `docs/ARCHITECTURE.md`: SHA-256 `59a99761b69ef1f745890511a71e6fb0633f149c9d36ba44b5a1ab4b17fe9389`
-- `docs/ENGINEERING.md`: SHA-256 `b1464ee07a4c7692f3d1fb26d7c93a452c0bb9ab20033cdeb40298ded1d80b60`
-- `docs/IMPLEMENTATION-PLAN.md`: SHA-256 `3ae768d5e37a27b9f1f07fc0ed40d38eb2d892820c97c613edabf41babf55c1e`
+- `AGENTS.md`: SHA-256 `6c438956abee423718e7ab349e18f0a8739629e5fb301a8f984ebe4b4a98062c`
+- `BRAND.md`: SHA-256 `546bd7848e16c8a7f58e45f867d71987a6dceeb081647a2ac71a448e5389525a`
+- `PROMPT.md`: SHA-256 `17ac5454be674dc6379123adf929f20d8056653b2ddedc436266a300b632c991`
+- `README.md`: SHA-256 `850c5cfd439b0d1937821bdcb2a1ba8ed78f525701f8e174093c81bd16f0329d`
+- `ROADMAP.md`: SHA-256 `9bbaf656c75718b24c342216094f53bda9fcb914ba89fe8c3b47f597a16b2a2b`
+- `SPEC.md`: SHA-256 `1e7426d2714a30d246895d3869ea1c3589c0e78bbb3f1f80d7ce7a2f26d04bc3`
+- `UX.md`: SHA-256 `2785e05fcc2d8fb2f13b66897fea76ca357193d5168a2f82977a3c43440faa76`
+- `docs/ACCEPTANCE.md`: SHA-256 `7f7599551abe219cf03568aaa6cd29ef4481d2aa0f9100eff85f1c2ef61f4079`
+- `docs/ARCHITECTURE.md`: SHA-256 `d10e548c2a5e7e9f1ba668d05f697fe2792845507d9b01b9532a7857aa2d0693`
+- `docs/ENGINEERING.md`: SHA-256 `e9961b9b5b837efdf838c61d03bdf53c85d820b32a0f01ad43c6d3c96dad16f3`
+- `docs/IMPLEMENTATION-PLAN.md`: SHA-256 `3a3843e4612d952d3a475dc484e707b59d64d4d661ba04448f5708127402c200`
 
 ## Freeze validation
 
-A valid documentation-only distribution of this package satisfies:
+A valid v2.0.0 documentation freeze satisfies:
 
 ```text
-all listed Markdown files are present
-all recorded checksums match
-no non-Markdown file is present
-all cross-references resolve inside the package
-the evidence ledger identifies itself as mutable and non-constitutional
+exactly 13 Markdown files are present
+→ every file identifies version 2.0.0
+→ local links resolve
+→ canonical sequences are identical
+→ native references are deferred only
+→ 11 staged Git-blob hashes match this manifest
+→ this manifest and the evidence ledger are excluded from checksums
+→ the evidence ledger contains no implementation claim
+→ git diff --check passes
 ```

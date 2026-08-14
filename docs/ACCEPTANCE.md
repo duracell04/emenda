@@ -1,432 +1,255 @@
 # Emenda V0.1 Acceptance
 
-> **Frozen V0.1 execution constitution, version 1.0.1. Supersedes version 1.0.0.**
+> **Frozen acceptance contract, version 2.0.0**
 
-## 1. Role and checkpoint model
+## 1. Evidence standard
 
-This file is the pass/fail contract for ROADMAP.md and docs/IMPLEMENTATION-PLAN.md.
+A gate passes only through direct, reproducible evidence recorded in `docs/EVIDENCE.md`. Claims distinguish:
 
-V0.1 follows one evidence order:
+```text
+inspected
+compiled
+deterministically tested
+integration tested
+live provider verified
+runtime verified
+```
 
-~~~text
-0. Documentation baseline + Documentation Gate
-1. Domain
-2. TextSurface
-3. MockTextSurface
-4. InferenceProvider + Mock
-5. Controller, debounce, context, and revision
-6. Validator + presentation state
-7. Complete mock product + Mock Product Gate
-8. OpenRouterProvider + Provider Gate
-9. Tauri UI + Presentation Gate
-10. Architecture Gate
-11. Current-host leaf + Current-Host Binding Gate
-12. Two-app runtime + V0.1 Conformance Gate
-13. Release later
-~~~
+Later success does not erase an earlier failure. Environment, commands, commit identity, exact results, and limitations are recorded.
 
-Gates are checkpoints inside one autonomous V0.1 run, never stop points. On failure, repair the violated in-scope invariant, rerun the checkpoint, append truthful evidence, and continue. Only a genuine external blocker or completed V0.1 Conformance ends the run.
+## 2. Active gates
 
-No OpenRouter implementation or live evidence is admissible before the Mock Product Gate. No native binding is admissible before the Architecture Gate.
+```text
+Documentation
+→ Mock Product
+→ Architecture
+→ Provider
+→ Browser Integration
+→ V0.1 Conformance
+```
 
-## 2. Evidence rules
+Presentation and accessibility are part of Browser Integration. There is no separate presentation gate.
 
-docs/EVIDENCE.md is the implementation ledger. Every increment and gate entry identifies:
+## 3. Canonical implementation sequence
 
-~~~text
-constitution version 1.0.1
-baseline and implementation commit
-commands and exact result
-deterministic, integration, live, or runtime evidence level
-host, application, model, and dependency facts when relevant
-limitations and failures without inflated claims
-~~~
+```text
+Documentation baseline + Documentation Gate
+→ strict-TypeScript domain and schemas
+→ TextSurface + MockTextSurface
+→ InferenceProvider + MockInferenceProvider
+→ controller, scheduler, context, and revision
+→ validator + presentation state
+→ complete mock product + Mock Product Gate
+→ Architecture Gate
+→ BrowserTextSurface
+→ MV3 worker, options, and overlay
+→ OpenRouterProvider + Provider Gate
+→ textarea runtime
+→ conventional contenteditable runtime
+→ Browser Integration + V0.1 Conformance Gate
+→ stop
+```
 
-Later evidence may extend earlier evidence but cannot silently replace or reinterpret it.
-
-## 3. Documentation baseline + Documentation Gate
-
-Expected:
-
-~~~text
-canonical Markdown files present
-reading order and cross-references resolve
-hard operating-system invariant is consistent
-roadmap, plan, and acceptance sequence agree exactly
-clean-room archive contains Markdown only
-constitution files are frozen at version 1.0.1
-baseline checksums and commit are recorded
-docs/EVIDENCE.md exists as a separate appendable factual ledger
-~~~
-
-Normal implementation evidence changes the ledger, not the frozen constitution. A policy change requires an explicit later constitution version.
-
-## 4. Domain
-
-Expected platform-neutral types include:
-
-~~~text
-RevisionId
-immutable Revision
-SourceReference
-SourceDisplay
-ObservedChange
-SurfaceSignal
-ContextRequest
-TextContext
-TextRange
-TextGeometry
-Correction
-Suggestion
-SuggestionView
-CheckRequest
-CheckResult
-State
-typed outcomes and errors
-~~~
-
-RevisionId is monotonically increasing. Revision has no mutation path after it is sealed from an ID and returned context.
-
-TextRange uses half-open Unicode scalar positions.
-
-TextGeometry is normalized before crossing the shared boundary:
-
-~~~text
-x and y are finite logical-pixel coordinates
-width and height are finite and non-negative
-rectangle orientation is left-to-right and top-to-bottom
-coordinates are relative to the active Emenda presentation root
-no coordinate-space field, native transform, or scale factor crosses the boundary
-negative origins remain valid for multi-display layouts
-native units remain binding-private
-unreliable geometry becomes None
-~~~
-
-One shared fixture corpus covers serialized domain values, zero-or-one inference decisions, states, errors, and geometry. Rust consumes it; strict TypeScript and the future browser contract consume the same fixtures without native fields or changed meanings.
-
-## 5. TextSurface
-
-The semantic port provides:
-
-~~~text
-subscribe
-context
-geometry
-replace_if_current
-~~~
-
-Expected:
-
-~~~text
-SourceReference remains opaque
-subscription emits Changed only for eligible text and display-safe Unavailable without text or opaque identity
-context and replacement use scalar ranges
-geometry returns normalized TextGeometry or None
-typed outcomes describe product meaning
-no host API, identifier, path, handle, DOM object, or input mechanism appears publicly
-~~~
-
-## 6. MockTextSurface
-
-Expected deterministic coverage:
-
-~~~text
-emit change
-emit display-safe Unavailable without text or SourceReference
-return bounded context
-return normalized geometry or None
-record exact replacement
-simulate changed source
-simulate protected source
-simulate unsupported operation
-~~~
-
-Changed, protected, and unsupported paths perform no source edit.
-
-## 7. InferenceProvider + Mock
-
-The semantic result contains exactly zero or one correction in its required array field:
-
-~~~text
-corrections: [] | [Correction]
-~~~
-
-Its strict serialized shape matches `SPEC.md`: required `language_profile`, required `corrections`, zero-or-one array cardinality, strict correction fields, and no additional owned properties. Multiple corrections, missing fields, and extra fields are rejected.
-
-MockInferenceProvider deterministically covers one correction, no correction, typed failures, and delayed stale completion.
-
-Expected at this checkpoint:
-
-~~~text
-no OpenRouter code or dependency
-no credential or network configuration
-no live-provider evidence
-~~~
-
-## 8. Controller, debounce, context, and revision
-
-Revision lifecycle:
-
-~~~text
-eligible ObservedChange
-→ reserve and publish a new authoritative RevisionId immediately
-→ invalidate older work
-→ debounce
-→ request current bounded context for that ID
-→ reject stale context
-→ seal one immutable Revision
-~~~
-
-The RevisionId is reserved before debounce. Revision is created only after context returns and cannot change afterward.
-
-Context policy defines:
-
-~~~rust
-const MAX_CONTEXT_SCALARS: usize = 2000;
-~~~
-
-Expected:
-
-1. If the changed range alone exceeds the cap, return `ContextTooLarge` and do not call inference.
-2. Use the reliably bounded enclosing sentence when it fits the cap.
-3. Otherwise use the reliably bounded enclosing local paragraph when it fits the cap.
-4. Otherwise use a deterministic Unicode-scalar-safe window containing the complete changed range. Divide spare capacity evenly around the range, give an odd spare scalar to the trailing side, clamp at ends, and backfill from the other side.
-5. Check currency after every asynchronous boundary and immediately before replacement.
-
-Rapid changes produce one current request. Old context cannot seal a current Revision. Stale work cannot publish or edit.
-
-## 9. Validator + presentation state
-
-Correction validation requires:
-
-~~~text
-strict zero-or-one corrections-array schema
-current revision
-in-range scalar positions
-exact original identity or unique exact-original recovery
-valid insertion and deletion range rules
-valid replacement, category, and confidence
-non-ambiguous and non-no-op result
-~~~
-
-State mapping is exhaustive:
-
-| Event or outcome | Published state |
-|---|---|
-| No active work | Quiet |
-| New change or pending debounce | Quiet; invalidate an older suggestion |
-| Current context or inference begins | Checking |
-| Exactly one correction validates | Suggestion |
-| Valid empty corrections array | Clean |
-| Apply succeeds or writer Dismisses | Quiet |
-| Stale completion | No transition; preserve newer state |
-| Writer-triggered Apply loses a revision race | Error(StaleRevision); preserve current text |
-| Protected, unsupported, transport, protocol, semantic, validation, context, or replacement failure | Error with typed display-safe kind |
-
-SuggestionView exposes SuggestionId, SourceDisplay, exact before/after values, category, optional explanation, and optional normalized geometry. It never exposes SourceReference or native identity.
-
-When explanation is absent, presentation uses the exact category fallback copy from `SPEC.md` and performs no additional inference request.
-
-## 10. Complete mock product + Mock Product Gate
-
-Required loop:
-
-~~~text
-MockTextSurface change
-→ immediate RevisionId reservation
-→ debounce and bounded context
-→ immutable Revision
-→ MockInferenceProvider
-→ validator
-→ presentation state
-→ Apply or Dismiss
-→ MockTextSurface.replace_if_current
-~~~
+## 4. Documentation Gate
 
 Required evidence:
 
-~~~text
-one valid correction produces Suggestion and one exact Apply
-Dismiss produces no replacement
-an empty corrections array produces Clean and no replacement
-rapid changes coalesce
-stale context and inference publish nothing
-changed and protected sources remain untouched
-invalid, multiple, ambiguous, and no-op output fails closed
-context fallback and oversize rejection are exact
-missing geometry preserves the same interaction
-typed failures map explicitly
-~~~
+- repository HEAD contains exactly the 13 constitutional Markdown files and no implementation source;
+- all 13 files identify version 2.0.0;
+- freeze ID is `emenda-clean-room-v2.0.0-2026-08-14`;
+- version 1.0.1 is preserved at `d3192b7`;
+- every local Markdown link resolves;
+- all canonical-sequence occurrences are identical;
+- active gates use only the six locked names and order;
+- all native-related references are explicitly deferred;
+- the 11 immutable documents match SHA-256 values computed from exact staged Git-blob bytes;
+- `PACKAGE-MANIFEST.md` and `docs/EVIDENCE.md` are excluded from the checksum table;
+- the evidence ledger contains a blank v2.0.0 template and no implementation claim;
+- `git diff --check` passes;
+- the documentation commit is pushed and local/remote identity matches.
 
-The gate passes only with the complete product semantics running without OpenRouter, Tauri, a native binding, credentials, or network access. Record it and continue.
+## 5. Mock Product Gate
 
-## 11. OpenRouterProvider + Provider Gate
+### 5.1 Timing and authority
 
-Only after the Mock Product Gate, implement the adapter.
+Fake-clock tests prove:
 
-Request evidence:
+- eligible committed input reserves a revision synchronously;
+- composition activity invalidates synchronously;
+- inference waits for `compositionend`;
+- no request at 599 ms and exactly one eligible request at 600 ms;
+- a new input restarts the trailing-edge timer;
+- one request maximum per current controller revision;
+- a newer revision calls cancellation best-effort;
+- a stale result and stale failure remain silent;
+- the current revision wins regardless of completion order.
 
-~~~text
-sealed current Revision
-at most MAX_CONTEXT_SCALARS
-configured model
-supported-language-profile instructions
-the exact zero-or-one structured-output schema from SPEC.md
-no source-native identity
-credentials absent from state and logs
-~~~
+### 5.2 Context and Unicode
 
-Response evidence:
+Deterministic tests cover:
 
-~~~text
-bounded body
-required language_profile and corrections fields
-zero or one strict Correction object in the corrections array
-additional properties rejected
-no prose fallback, automatic retry, fallback model, or silent substitution
-typed transport, protocol, and semantic failures
-observable model identity
-~~~
+- Georgian and Russian;
+- combining marks;
+- emoji and supplementary-plane scalars;
+- half-open scalar offsets;
+- the sentence containing the post-edit caret;
+- paragraph context when it fits;
+- evenly balanced and edge-clamped windows;
+- the exact 1,200-scalar upper bound;
+- overlong focus refusal;
+- correction containment inside focus;
+- empty, whitespace-only, and nonlinguistic silence.
 
-Provider Gate requires at least one successful strict live correction that parses and validates. External failures are recorded truthfully. V0.1 performs one provider request per sealed revision and uses no automatic retry, fallback model, or silent substitution; a classified failure alone does not pass this gate.
+### 5.3 Schema and validation
 
-Invalid output never reaches suggestion or source replacement.
+Strict-schema tests cover:
 
-## 12. Tauri UI + Presentation Gate
+- clean response;
+- one valid correction;
+- malformed JSON and malformed shape;
+- extra properties;
+- multiple corrections;
+- unsupported language;
+- insertion;
+- deletion;
+- replacement;
+- no-op;
+- out-of-bounds and out-of-focus ranges;
+- mismatched original substring;
+- stale adapter-copied revision;
+- concise explanation and allowed categories.
 
-The thin Tauri composition root renders:
+### 5.4 Complete product
 
-~~~text
-Quiet
-Checking
-Suggestion
-Clean
-Error(ErrorKind)
-~~~
+Mock composition proves the full flow from signal through Apply or Dismiss. It includes typed capture failures, changed sources, changed snapshots, changed text, failed mapping, stale Apply, exact replacement recording, and no mutation after Dismiss or refusal.
 
-Verify:
+## 6. Architecture Gate
 
-~~~text
-strict TypeScript and Zod boundary
-shared Rust/TypeScript/browser conformance fixtures
-all explicit state mappings
-SourceDisplay only
-SuggestionId-based Apply and Dismiss
-keyboard access and visible focus
-screen-reader labels
-reduced-motion handling
-normalized geometry or stable no-geometry placement
-~~~
+Required evidence:
 
-Brand contrast rule:
+- `core/` compiles under strict TypeScript with DOM, Chrome, Node, React, and extension types unavailable;
+- import checks prove `core/` never imports `extension/`;
+- public core declarations contain no browser or runtime mechanism;
+- repository shape is one npm package;
+- Zod is the only direct runtime dependency;
+- development dependencies are limited to TypeScript, esbuild, Vitest, Playwright, and Chrome/Node types;
+- no React, Vite, Tailwind, extension framework, OpenRouter SDK, monorepo tool, backend, database, or code generation exists;
+- no geometry, credential-store, native host, or accessibility port exists;
+- no deferred-runtime placeholder exists.
 
-~~~text
-WCAG 2.2 AA overrides palette preference
-normal text is at least 4.5:1
-large text, focus indicators, and essential graphics are at least 3:1
-Steel Gray is not essential or normal-size text unless its measured pair passes
-Oxblood is never the only carrier of meaning
-actual rendered token pairs are measured
-~~~
+## 7. Provider Gate
 
-The UI remains compact, quiet, and subordinate to the original application. Record the gate and continue.
+### 7.1 Deterministic provider tests
 
-## 13. Architecture Gate
+Tests prove:
 
-Before native work, verify:
+- the endpoint is exactly `https://openrouter.ai/api/v1/chat/completions`;
+- the request is non-streaming and contains only the bounded product payload;
+- a concrete configured model is required;
+- `provider.require_parameters` is exactly `true`;
+- strict JSON Schema is requested;
+- local Zod validation follows transport parsing;
+- revision identity is adapter-copied and never model-authored;
+- runtime messages are versioned, discriminated, minimal, and strict;
+- unknown versions, extra properties, and malformed messages fail closed;
+- timeout occurs at eight seconds;
+- body reading stops above 32 KiB;
+- cancellation maps to a typed outcome;
+- HTTP, transport, timeout, size, parse, schema, and unsupported failures are typed;
+- secrets, authorization headers, raw context, raw response bodies, source identity, and DOM data are absent from logs and failures;
+- retry, healing, fallback, streaming, persistent cache, telemetry, and analytics are absent.
 
-~~~text
-complete mock product still passes
-controller depends only on semantic ports
-context, revision, validation, and presentation are platform-neutral
-OpenRouter protocol is isolated in OpenRouterProvider
-frontend receives display-safe DTOs only
-Tauri owns composition and window lifecycle only
-Rust and strict-TypeScript/browser fixtures agree
-no native text dependency or target-specific shared abstraction exists
-no fake native handles, paths, process IDs, or platform APIs exist in shared tests
-one ambient workflow exists without a generalized capability framework
-every direct dependency has a current owner and justification
-~~~
+### 7.2 Live provider evidence
 
-Repair failures, rerun, record the Architecture Gate, and continue.
+With one dedicated spend-limited key and one concrete structured-output model, record:
 
-## 14. Current-host leaf + Current-Host Binding Gate
+- model identifier;
+- UTC timestamp;
+- one correction and one clean case for each of `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE`, and `ru-RU`;
+- one unsupported-language case;
+- sanitized structured outcome and end-to-end latency for each case;
+- no credential or raw private text.
 
-The current verification host selects one private leaf binding. On the owner's present host this may be WindowsTextSurface; that name and its mechanisms remain in binding code, binding tests, and evidence only.
+A live case passes only when the same schema and validation path used by the product accepts the result.
 
-Expected:
+## 8. Browser Integration Gate
 
-~~~text
-ambient eligible-change observation
-private native identity
-bounded context retrieval
-native-offset to Unicode-scalar translation
-normalized logical-pixel geometry or None
-current-source and expected-context verification
-one coherent exact replacement
-typed protected, changed, unsupported, and replacement outcomes
-no shared contract changes
-~~~
+Use Playwright's [persistent-Chromium extension setup](https://playwright.dev/docs/chrome-extensions) against the built unpacked extension.
 
-Current-Host Binding Gate uses deterministic contract tests plus a controlled native fixture. Changed and protected sources remain untouched.
+### 8.1 Permission lifecycle
 
-Undo is conditional on the exercised host: when native Undo is exposed, one Undo must restore the original text after Apply; when it is not exposed or supported, record that limitation rather than claiming or failing Emenda-owned Undo behavior.
+Prove:
 
-Record the gate and continue.
+- toolbar activation requests the exact current HTTP(S) origin;
+- grant persists and updates one dynamic content-script registration;
+- revocation removes the origin from that registration;
+- another origin remains inactive until explicitly enabled;
+- restricted pages, file URLs, PDFs, and incognito stay unsupported;
+- there is no static all-sites script or `<all_urls>` grant.
 
-## 15. Two-app runtime + V0.1 Conformance Gate
+### 8.2 Textarea runtime
 
-Run the complete ambient product in:
+Prove on a visible, focused, writable light-DOM `<textarea>`:
 
-~~~text
-one simple editable application
-+
-one additional ordinary editable application
-~~~
+- committed input, debounce, request, suggestion, Apply, and Dismiss;
+- insertion, deletion, and replacement;
+- IME composition;
+- stale result silence;
+- changed-source, changed-snapshot, changed-text, and original-mismatch refusal;
+- exact focus preservation;
+- one native Undo restores the exact original text.
 
-For both applications record:
+### 8.3 Contenteditable runtime
 
-~~~text
-application/version and host facts
-ObservedChange
-immediate RevisionId reservation
-one debounced bounded request
-successful live provider correction
-exact Suggestion
-Apply and Dismiss
-stale-result safety
-changed-source safety
-geometry-present or geometry-absent behavior
-Undo result when supported by that host
-~~~
+Prove the same contract on simple `contenteditable="true"` and `plaintext-only` fixtures. Include multi-node lossless mapping where supported and explicit refusal where mapping is ambiguous.
 
-V0.1 Conformance requires:
+### 8.4 Exclusion behavior
 
-~~~text
-frozen constitution and complete docs/EVIDENCE.md ledger
-Domain
-TextSurface
-MockTextSurface
-InferenceProvider + Mock
-Controller, debounce, context, and revision
-Validator + presentation state
-Mock Product Gate
-Provider Gate with successful live correction
-Presentation Gate
-Architecture Gate
-Current-Host Binding Gate
-two-application runtime evidence
-UX and brand review
-dependency review
-repository health checks
-verified implementation commit and clean worktree
-~~~
+Verify fail-closed behavior for inputs, iframes, shadow DOM, rich/virtualized/canvas editors, Google Docs-style fixtures, readonly or disabled surfaces, invisible or unfocused surfaces, and unsupported mappings.
 
-Use precise evidence language: implemented, compiled, deterministically tested, integration tested, live tested, runtime verified, and supported. Compilation is not runtime support; mock evidence is not host evidence.
+### 8.5 Presentation and accessibility
 
-## 16. Release later
+Prove:
 
-Packaging, signing, installers, publisher trust, update delivery, and public distribution require a later explicitly authorized Release objective.
+- the overlay is fixed, unanchored, and shadow-root isolated;
+- it appears only for current suggestions or writer-triggered failures;
+- it never autofocuses or steals page focus;
+- before/after text, category, explanation, Apply, and Dismiss are understandable;
+- Escape dismisses and Alt+Enter applies only the current suggestion;
+- controls have accessible names;
+- keyboard focus is visible;
+- focus order is coherent;
+- reduced-motion preference is honored;
+- normal text, controls, and meaningful non-text indicators meet WCAG 2.2 AA;
+- color is not the only carrier of meaning.
 
-Release evidence does not block or redefine V0.1 product conformance.
+### 8.6 Storage and message isolation
+
+Prove:
+
+- the API key and model are written and read only by trusted extension contexts;
+- content scripts receive only `hasApiKey`;
+- source references and raw DOM data never leave the content script;
+- worker restart preserves only intended durable settings and permissions;
+- executable code is local to the package.
+
+## 9. V0.1 Conformance Gate
+
+Required final evidence:
+
+- all prior gates remain passing at the final commit;
+- full deterministic and persistent-Chromium suites pass from a clean install;
+- production extension build succeeds;
+- unpacked-extension smoke passes on current Chrome Stable, with exact version and host OS recorded;
+- manifest permissions and dynamic-registration behavior match the constitution;
+- dependency and bundled-code inventories match the allowlists;
+- no secret, private text, telemetry, analytics, or persistent text cache exists;
+- supported and excluded surface claims are precise;
+- cross-OS runtime support is not claimed without separate evidence;
+- final commit is pushed, local and remote commit identity match, and the worktree is clean.
+
+Then stop.
+
+## 10. Explicitly deferred evidence
+
+Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, packaging, signing, Chrome Web Store publication, release automation, native placeholders, and general cross-OS runtime evidence belong to later versioned objectives.
