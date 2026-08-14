@@ -1,312 +1,210 @@
 # Emenda V0.1 Architecture
 
-> **Frozen architecture, version 2.0.0**
+> **Frozen architecture, version 2.0.1**
 
-## 1. Architectural thesis
+## 1. Authority and objective boundary
 
-V0.1 is one browser product:
+[`SPEC.md`](../SPEC.md) defines product behavior. This document defines ownership, boundaries, import direction, and runtime data flow. [`IMPLEMENTATION-PLAN.md`](IMPLEMENTATION-PLAN.md) defines build order.
 
-```text
-OS-agnostic strict-TypeScript core
-→ browser leaf adapters
-→ Chromium Manifest V3 extension
-```
+The current objective ends when the v2.0.1 Markdown constitution is rewritten, verified, hashed, committed, and pushed. Product implementation requires a separate future objective.
 
-The core owns product meaning. The extension owns browser mechanisms. No second runtime, native placeholder, or cross-platform adapter tree exists in V0.1.
+## 2. System shape
 
-## 2. Dependency direction
+Emenda V0.1 is one npm package with two architectural regions:
 
 ```text
-extension/options ───────────────┐
-extension/worker ────────────────┼─→ validated messages and composition
-extension/content ───────────────┘
-          │
-          ├─ BrowserTextSurface
-          ├─ shadow-root overlay
-          └─ core public ports and values
-                    │
-                    ▼
-      domain + controller + policies + validator
+core/                         strict TypeScript product semantics
+extension/                    Chromium Manifest V3 mechanisms
 ```
 
-Allowed direction:
+The active composition is:
 
 ```text
-extension → core
-tests → core and extension test seams
-core → TypeScript standard language features only
+content script
+  unified state machine + effect runner
+  BrowserTextSurface
+  shadow-root overlay
+        |
+        | validated, versioned messages
+        v
+service worker
+  permissions and origin lifecycle
+  trusted settings
+  cancellation
+  OpenRouter transport
+        ^
+        |
+options page
 ```
 
-Forbidden direction:
+There is one `BrowserTextSurface` implementation supporting both `<textarea>` and the constrained contenteditable grammar. There is no second controller or state machine for either surface class.
+
+## 3. Ownership
+
+| Concern | Owner | Boundary rule |
+| --- | --- | --- |
+| Domain values, deterministic text policy, reducer, context, validation, and semantic ports | `core/` | Pure TypeScript; no DOM, Chrome, Node, React, or extension types; no Zod |
+| Model-authored result schema | `core/provider-schema/` | Zod is permitted only for this external model boundary |
+| Runtime message schemas | `extension/protocol/` | Versioned, discriminated, strict Zod schemas |
+| Controller instance, revision lifetime, cached public configuration, source registries, and presentation | content script | Raw source identity and DOM data remain here |
+| Capture, scalar-to-DOM mapping, and mutation safety | `BrowserTextSurface` in `extension/content/` | Browser types are confined to the adapter |
+| Trusted settings schema, storage, permissions, origin lifecycle, request cancellation, and OpenRouter traffic | service worker | Secrets and the configured model never enter content scripts |
+| Settings interaction | options page through the worker | The options page never accesses trusted storage directly |
+| Visible suggestion and error UI | content-script shadow overlay | It renders state and emits semantic commands; it does not own authority |
+
+Source and snapshot references are opaque core values backed by content-script-private registries. They are never serialized to the worker, provider, logs, or durable storage.
+
+## 4. Core state and effects
+
+One pure reducer owns the complete product state:
 
 ```text
-core → DOM
-core → Chrome APIs
-core → Node APIs
-core → React
-core → extension message types
-content script → API key or OpenRouter fetch
-service worker → DOM, source identity, or raw page structures
+Idle | Debouncing | Checking | Suggestion | Applying | Error
 ```
 
-## 3. Repository shape
+It controls revision reservation, the 600 ms trailing debounce, request authority, validation, suggestions, Apply, Dismiss, and failure transitions. Inputs are semantic events; outputs are declarative effects. Effect handlers perform timers, inference, messaging, storage interaction, and DOM operations and return typed events to the reducer.
+
+Each eligible committed change reserves a `RevisionId` synchronously. A newer revision cancels older work best-effort and is always authoritative. Stale results, failures, and commands cannot change presentation or text.
+
+The semantic ports describe capture, conditional replacement, cancelable inference, and deterministic scheduling. They expose capabilities and typed outcomes, not browser or transport mechanisms. Deterministic mocks implement the same ports for the complete simulated product.
+
+## 5. Import and dependency direction
+
+Imports point toward product semantics:
 
 ```text
-core/
-  domain/
-  schemas/
-  context/
-  controller/
-  presentation/
-extension/
-  content/
-  worker/
-  options/
-  manifest.json
-tests/
-  core/
-  provider/
-  browser/
-  fixtures/
-scripts/
-  build-extension.mjs
-package.json
-package-lock.json
+extension composition and adapters
+              |
+              v
+        core semantic ports
+              |
+              v
+       core domain and policy
 ```
 
-This is one npm package. Directory names below the required top level may be flattened when that makes the implementation clearer, provided dependency direction remains enforced.
+`core/` never imports `extension/`. Model-schema code may depend on Zod and core domain definitions, but domain, policy, ports, and state do not depend on model-schema parsing. Protocol and worker schemas remain outside core.
 
-## 4. Core ports
+Zod is the only direct runtime dependency. Development dependencies are limited to TypeScript, esbuild, Vitest, Playwright, and Chrome/Node types. The package has no framework, backend, database, remote executable code, native placeholder, or monorepo machinery.
 
-```ts
-interface TextSurface {
-  observe(sink: (signal: SurfaceSignal) => void): Disposable;
-  capture(change: ObservedChange): Promise<SurfaceSnapshot>;
-  replaceIfCurrent(request: ReplacementRequest): Promise<ReplacementResult>;
-}
+## 6. Trusted configuration flow
 
-interface InferenceProvider {
-  check(request: CheckRequest): PendingCheck;
-}
-
-type PendingCheck = {
-  result: Promise<CheckResult>;
-  cancel(): void;
-};
-```
-
-A minimal scheduler seam exposes scheduled trailing-edge work and cancellation in semantic terms. Fake clocks own deterministic time in tests.
-
-`SurfaceSnapshot` contains:
+The worker owns these values in `chrome.storage.local`:
 
 ```text
-opaque SourceReference
-opaque SnapshotReference
-exact logical text
-focus TextRange
+schemaVersion
+apiKey
+model
+profileMode
+settingsRevision
+enabledOrigins
 ```
 
-It never contains a DOM node, selector, frame, document object, geometry, or browser identifier.
+`profileMode` defaults to `auto`.
 
-## 5. Controller ownership
-
-The content script creates one controller for its document. The controller owns:
-
-- monotonically increasing `RevisionId` values;
-- immediate authority changes;
-- the one active debounce handle;
-- the one active `PendingCheck`;
-- immutable current `Revision`;
-- validator outcomes;
-- current `Suggestion` and `SuggestionId`;
-- `Idle | Debouncing | Checking | Suggestion | Applying | Error`;
-- Apply and Dismiss commands.
-
-The controller is core code despite being composed in the content script. It knows only ports and domain values.
-
-Every committed input reserves a revision before scheduling. Composition reserves and invalidates immediately, while request eligibility begins only after `compositionend`. Cancellation is an optimization; revision equality is authority.
-
-## 6. Context ownership
-
-The browser adapter captures exact logical text and the post-edit caret. The core derives:
-
-- the sentence containing the caret as focus;
-- the enclosing paragraph as context when it fits;
-- otherwise an evenly balanced, clamped window;
-- an exact upper bound of 1,200 Unicode scalars;
-- mappings between context-relative and snapshot-relative scalar ranges.
-
-Browser code converts DOM and UTF-16 positions into scalar offsets. A surface is unsupported when conversion or round-trip mapping is ambiguous or lossy.
-
-## 7. BrowserTextSurface
-
-`BrowserTextSurface` is a leaf adapter in the content script. It owns:
-
-- top-document event observation;
-- eligibility, visibility, focus, connectedness, and writability checks;
-- composition signals;
-- DOM node identity in a private registry;
-- logical-text extraction;
-- textarea selection conversion;
-- conventional contenteditable selection and text-node mapping;
-- document and snapshot tokens;
-- final current-state verification;
-- selection restoration and the mutation leaf;
-- typed refusals.
-
-It emits only semantic signals and values to the core. It never sends source references or raw DOM data through extension messaging.
-
-## 8. Safe replacement
-
-The controller resolves `SuggestionId` to its private current suggestion and asks the same surface to replace. Immediately before mutation, the adapter verifies:
+At worker initialization, it must await:
 
 ```text
-current revision
-+ same connected writable source
-+ same document and opaque snapshot
-+ exact current logical text
-+ lossless range mapping
-+ exact original substring
+chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })
 ```
 
-Only then may it restore the exact target selection and invoke the runtime-gated leaf:
+No trusted-settings read or write may occur first. Unavailability or rejection leaves configuration and provider work closed. Content scripts must be unable both to read the storage area and to receive its change events.
 
-```ts
-document.execCommand("insertText", false, replacement);
-```
-
-The adapter reports unsupported if the operation cannot be proven undo-aware. There is no direct assignment to `value`, DOM rewrite, clipboard path, simulated keyboard path, fuzzy match, or fallback mutation.
-
-## 9. Content-script presentation
-
-The content script owns one fixed-position, unanchored overlay rendered in a closed or otherwise isolated shadow root. Presentation receives display-safe state only:
+The options page reads and changes settings through validated worker messages. On content-script initialization, the worker returns only:
 
 ```text
-SuggestionId
-exact before text
-exact after text
-category
-concise explanation
-writer-visible failure
+hasApiKey
+profileMode
+settingsRevision
 ```
 
-Presentation never receives source identity, snapshot identity, full context, API credentials, or DOM nodes. It emits only `Apply(SuggestionId)`, `Dismiss(SuggestionId)`, and retry/configuration navigation actions explicitly defined by UX.
+The content script caches that public configuration. Validated settings-change messages to every live enabled content script replace the cache; capture does not fetch configuration again. API-key, model, and profile changes increment `settingsRevision`, cancel active inference, and invalidate visible suggestions. Origin changes use the activation and revocation lifecycle instead.
 
-## 10. Service worker
+Every content-to-worker check carries the cached `settingsRevision`. Before using its private API key and model, the worker compares that value with current trusted settings. A stale request is rejected and the public cache is resynchronized; the rejected revision is not retried. `settingsRevision` is Emenda-internal and is never sent to OpenRouter.
 
-The ephemeral MV3 worker owns only:
+## 7. Check and presentation flow
 
-- toolbar activation;
-- exact-origin optional permission requests and removals;
-- one dynamic content-script registration;
-- trusted settings reads and writes;
-- strict versioned message validation;
-- `AbortController` instances keyed by message-level request IDs;
-- the fixed OpenRouter network request.
+For an eligible revision:
 
-Worker restarts are normal. Durable truth is limited to enabled origins and trusted settings. Request cancellation is best-effort and never supplies authority; the content-script revision check remains decisive.
+1. The content script captures an opaque snapshot through `BrowserTextSurface` after debounce.
+2. Pure core policy selects the deterministic focus and a context of at most 1,200 Unicode scalars.
+3. The content script sends only the bounded context, selected profile, request identity, and `settingsRevision` to the worker.
+4. The worker revalidates origin, configuration revision, and message shape, then uses its private model and credential for one OpenRouter request.
+5. The worker validates the external result and returns a typed, versioned outcome.
+6. The reducer accepts the outcome only for the current revision and either returns to `Idle`, presents one suggestion, or enters `Error` according to the specification.
 
-## 11. Message boundary
+The page URL, full document, source identity, snapshot identity, DOM structure, API key, and model identifier do not cross boundaries that do not own them.
 
-Every runtime message has:
+## 8. Revision and mutation authority
+
+Apply is split deliberately:
+
+- The controller verifies the current `SuggestionId`, current `RevisionId`, and that the suggestion belongs to that revision.
+- `BrowserTextSurface` verifies the same connected source and document, opaque snapshot, focused writable surface, exact expected logical text, lossless mapping, and exact original substring.
+
+The authorized replacement request contains the opaque source and snapshot references, expected logical text, snapshot-relative scalar range, original, and replacement. The surface does not query or reproduce reducer revision policy.
+
+Immediately before the sole mutation leaf, runtime-gated `document.execCommand("insertText")`, the surface registers a one-use expected self-mutation containing the source, pre-edit text, post-edit text, target range, and replacement. An exact matching input becomes `AppliedChange`: it updates the logical-text and snapshot baseline, emits no `ObservedChange`, advances reducer authority without inference, and returns to `Idle`. A mismatch is an ordinary external committed change and invalidates the Apply result. No direct value assignment, DOM rewrite, clipboard operation, simulated input, fuzzy matching, or unique-match recovery is allowed.
+
+Composition handling is centralized at the adapter/controller boundary. `compositionstart` invalidates current authority immediately; composing input only refreshes the adapter baseline; `compositionend` emits the sole committed change. An identical later terminal input is suppressed within that composition generation, while a divergent input is external and reserves a revision normally.
+
+## 9. Browser text mapping
+
+`BrowserTextSurface` owns exact logical-text construction and bidirectional mapping. It accepts only a visible, focused, writable, light-DOM `<textarea>` or the bounded contenteditable grammar in the specification. Unsupported or ambiguous surfaces fail closed before inference or mutation.
+
+For contenteditable, the mapper records the DOM source span of every emitted logical scalar. In collapsed whitespace modes, one emitted logical space records the complete underlying whitespace run, and replacement boundaries map to the beginning and end of the recorded spans. `<br>` emits one logical LF; a boundary between two permitted top-level blocks emits one logical LF; no synthetic leading or trailing LF is added. Element-generated newlines also receive deterministic DOM spans.
+
+An accepted surface must round-trip every scalar boundary and yield one unique safe DOM replacement span for every accepted correction range. The adapter rejects any structure, whitespace behavior, or boundary that cannot satisfy both conditions.
+
+## 10. Origin lifecycle
+
+V0.1 requires Chrome 140 or newer and uses one dynamic registration:
 
 ```text
-protocol version
-discriminated message kind
-minimal payload
+emenda-enabled-origins
 ```
 
-Zod validates messages at both sending and receiving boundaries. Unknown versions, kinds, extra properties, malformed sizes, and unexpected data fail closed.
+Enablement validates a top-level HTTP(S) tab, requests its exact optional origin permission, persists the origin, then creates or updates that registration. The worker pings the current tab and injects the packaged content script into the top frame only if it does not respond. Content-script initialization is idempotent. An empty `enabledOrigins` set always means zero dynamic registrations.
 
-Permitted content-to-worker provider data consists only of a message request ID and the bounded `CheckRequest` fields needed for the fixed fetch. The worker response contains the copied request/revision correlation and a typed result or typed failure.
+Revocation first marks the origin disabled so new messages fail. It then cancels associated worker requests, sends versioned `Deactivate` messages to live tabs on the origin, and requires each content script to invalidate its revision, cancel debounce and inference, detach input and composition listeners, remove its overlay host, clear source and snapshot registries, and become inert. The worker then updates or removes the registration and removes the optional permission. Registration removal alone is never treated as teardown of already-injected code.
 
-Source references, snapshot references, DOM details, full-document text, selection objects, and writer page metadata never cross this boundary.
+## 11. Provider boundary
 
-## 12. Provider adapter
-
-`OpenRouterProvider` implements the core `InferenceProvider` from the content-script perspective through validated worker messaging. It:
-
-- creates a cancelable message request;
-- maps worker outcomes to typed core failures;
-- copies the current `RevisionId` into the accepted `CheckResult`;
-- never trusts model-authored revision identity;
-- never heals responses.
-
-The worker sends a non-streaming request to `https://openrouter.ai/api/v1/chat/completions`, sets `provider.require_parameters: true`, uses strict JSON Schema, enforces eight seconds and 32 KiB, and validates the body locally with Zod.
-
-## 13. Permissions and storage
-
-The manifest declares:
+The worker calls only `https://openrouter.ai/api/v1/chat/completions`, using one concrete configured model and no `models` array. Routing is explicit:
 
 ```text
-permissions: activeTab, scripting, storage
-required host: https://openrouter.ai/*
-optional hosts: http://*/* and https://*/*
-minimum Chrome: 102
-incognito: disabled
+provider.require_parameters: true
+provider.allow_fallbacks: false
+provider.data_collection: "deny"
 ```
 
-Toolbar activation requests persistent permission for the exact current origin and updates one dynamic registration. Chrome's [optional permissions](https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions) and [scripting API](https://developer.chrome.com/docs/extensions/reference/api/scripting) define the platform mechanism.
+The request is non-streaming and uses strict structured output. The adapter enforces an eight-second timeout, incrementally stops above 32 KiB, supports cancellation, validates locally with Zod, and exposes only typed redacted failures. Emenda performs no retry, healing, streaming, caching, telemetry, provider failover, or model substitution.
 
-The API key and concrete model are stored in `chrome.storage.local`, restricted to trusted extension contexts. Content code receives only `hasApiKey`. This uses Chrome's documented [storage access-level controls](https://developer.chrome.com/docs/extensions/reference/api/storage). Browser-profile storage is not an operating-system secret vault.
+## 12. Gate ownership
 
-## 14. Build and executable-code policy
-
-`scripts/build-extension.mjs` drives esbuild directly. It emits only local extension assets and bundled executable code. Manifest V3's [remote-code prohibition](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3) is an architectural requirement.
-
-Runtime dependency:
+There are six gates in this order:
 
 ```text
-zod
+Documentation
+→ Mock Product
+→ Architecture
+→ Provider
+→ Browser Integration
+→ V0.1 Conformance
 ```
 
-Development dependencies:
+| Gate | Architectural scope |
+| --- | --- |
+| Documentation | Frozen Markdown identity, consistency, links, staged hashes, and documentation-only ancestry |
+| Mock Product | Complete reducer-and-effects behavior through deterministic ports and mocks |
+| Architecture | Strict core compilation, prohibited type absence, Zod placement, import direction, semantic ports, dependency allowlist, and absence of native scaffolding |
+| Provider | Runtime-message and external-result schema enforcement, worker/provider boundary behavior, and live structured-output compatibility |
+| Browser Integration | Manifest, permissions, registrations, trusted-storage isolation, lifecycle, DOM safety, overlay accessibility, and bundled-Chromium runtime behavior |
+| V0.1 Conformance | Clean final build, minimum-runtime and current-Stable evidence, personal-device evidence, final audit, pushed identity, and stop condition |
 
-```text
-typescript
-esbuild
-vitest
-playwright
-Chrome types
-Node types
-```
+A later-gate failure does not erase earlier evidence unless the underlying tested invariant changed.
 
-React, Vite, Tailwind, extension frameworks, the OpenRouter SDK, monorepo tools, backends, databases, and code generation are outside the graph.
+## 13. Deferred architecture
 
-## 15. Architecture enforcement
+Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, native packaging and signing, store publication, release automation, commercial services, and general cross-platform claims are outside V0.1. They must not shape current ports, packages, or placeholders.
 
-The Architecture Gate requires:
-
-- a dedicated core TypeScript compilation with libraries and types that exclude DOM, Chrome, Node, React, and extension globals;
-- import-boundary checks preventing `core/` from importing `extension/`;
-- a dependency inventory matching the allowlist;
-- a manifest permission inventory matching the locked contract;
-- message-schema tests;
-- source and raw-DOM confinement inspection;
-- no placeholder for deferred runtimes.
-
-## 16. Canonical implementation sequence
-
-```text
-Documentation baseline + Documentation Gate
-→ strict-TypeScript domain and schemas
-→ TextSurface + MockTextSurface
-→ InferenceProvider + MockInferenceProvider
-→ controller, scheduler, context, and revision
-→ validator + presentation state
-→ complete mock product + Mock Product Gate
-→ Architecture Gate
-→ BrowserTextSurface
-→ MV3 worker, options, and overlay
-→ OpenRouterProvider + Provider Gate
-→ textarea runtime
-→ conventional contenteditable runtime
-→ Browser Integration + V0.1 Conformance Gate
-→ stop
-```
-
-## 17. Deferred architecture
-
-Native hosts, Tauri, Rust, operating-system accessibility APIs, credential-vault adapters, native packaging and signing, store publication, release automation, and native placeholders are deferred. They must not influence V0.1 types or repository structure.
-
-Any later native objective begins from measured browser limitations and defines its own versioned architecture rather than being pre-shaped here.
+The constitution resolves all product, safety, architecture, and acceptance decisions. The implementation agent retains ordinary discretion over local naming and code organization within the locked boundaries.

@@ -1,20 +1,20 @@
 # Emenda Implementation Evidence
 
-> **Mutable implementation-ledger template for constitution version 2.0.0**
+> **Mutable evidence-ledger template for constitution version 2.0.1**
 
-This ledger records implementation facts after the Documentation Gate. It is not constitutional authority and is excluded from the frozen checksums in `PACKAGE-MANIFEST.md`.
+This ledger is not constitutional authority and is excluded from the immutable checksums in `PACKAGE-MANIFEST.md`. It remains empty in the documentation-only v2.0.1 freeze.
 
-## Baseline
+Implementation evidence may be added only under a separately authorized future implementation objective. Each entry identifies an already-existing implementation commit that was actually tested. The later evidence commit records that fact; it does not claim to have tested itself.
+
+## Baseline template
 
 ```text
 constitution version:
 freeze ID:
-starting constitution commit:
-initial implementation commit:
+constitution commit:
+implementation objective:
 UTC time:
 environment:
-Documentation Gate commands:
-Documentation Gate results:
 limitations:
 ```
 
@@ -23,7 +23,8 @@ limitations:
 ```text
 UTC time:
 gate or increment:
-implementation commit:
+tested implementation tree:
+tested implementation commit:
 commands:
 exact results:
 evidence level: inspected | compiled | deterministic | integration | live | runtime
@@ -32,6 +33,23 @@ limitations or failures:
 next checkpoint:
 ```
 
+Preserve failures and later recoveries as separate entries. Never record credentials, authorization headers, raw private text, page URLs, source identity, DOM structures, or raw provider bodies.
+
+## Browser evidence extension
+
+For browser or device evidence, append only the relevant fields:
+
+```text
+browser and exact version:
+operating system and version:
+device:
+extension commit:
+tester:
+timestamp:
+checklist results:
+failures or limitations:
+```
+
 ## Evidence entries
 
-No implementation evidence is recorded in the documentation-only v2.0.0 freeze.
+No implementation evidence is recorded in the documentation-only v2.0.1 freeze.

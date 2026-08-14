@@ -1,116 +1,53 @@
-# Build Emenda V0.1
+# Emenda V0.1
 
-> **Frozen clean-room build objective, version 2.0.0**
+> **Frozen clean-room constitution, version 2.0.1**
 
-Build Emenda from this documentation package. Read the complete package before implementation and treat it as the product constitution.
+This repository contains the documentation-only constitution for Emenda V0.1. It does not authorize implementation by itself.
 
-## Objective
+## Current objective
 
-Deliver one OS-agnostic strict-TypeScript product core and one active V0.1 runtime: an unpacked Chromium Manifest V3 extension.
+The v2.0.1 objective ends when the 13 Markdown documents are rewritten, verified, hashed, committed, pushed, and the worktree is clean. Do not create implementation files during this objective. Building the product requires a separate future objective.
 
-Emenda is a personal writing assistant that:
+Version 2.0.0 remains preserved at Git commit `a1a13607867db8e6eb2ea904f6387ba130f22ce7`.
 
-- observes committed changes in explicitly enabled browser text surfaces;
-- reserves revision authority immediately and checks only after typing settles;
-- selects a deterministic, bounded linguistic context;
-- delegates linguistic judgment to a user-configured structured-output model through OpenRouter;
-- validates every response locally and strictly;
-- presents at most one exact correction;
-- changes text only after explicit writer approval and complete current-state verification;
-- preserves the writer's meaning, terminology, register, rhythm, and Duktus.
+## Future product objective
 
-The active product loop is:
+When separately authorized, build the smallest complete Emenda V0.1 as:
 
-```text
-eligible committed input
-→ reserve RevisionId immediately
-→ 600 ms trailing-edge debounce
-→ capture SurfaceSnapshot
-→ derive bounded TextContext and focus
-→ check through InferenceProvider
-→ validate corrections: [] | [Correction]
-├─ [] → Idle
-└─ [Correction] → Suggestion
-   → Apply(SuggestionId) or Dismiss
-   → verified undo-aware replacement or no edit
-   → Idle
-```
+- one strict-TypeScript product core;
+- one Chromium Manifest V3 extension requiring Chrome 140 or newer;
+- one bounded correction at a time through a user-configured OpenRouter model;
+- explicit writer approval before any verified, one-step-undoable edit.
 
-## Hard architecture invariant
+Emenda preserves the writer's meaning, terminology, register, rhythm, and Duktus. It performs no translation, telemetry, persistent text logging, automatic rewriting, or unsupported-surface fallback.
 
-The product core is strict TypeScript with no DOM, Chrome, Node, React, or extension types. Browser mechanisms exist only in `extension/` adapters and composition code. Source identity and snapshot identity remain opaque. Raw DOM data never leaves the content script.
+## Authority
 
-The only active V0.1 composition is:
+Read the complete package before implementation. The three subject authorities are:
 
-```text
-strict-TypeScript core
-+ BrowserTextSurface
-+ content-script controller and overlay
-+ MV3 service worker
-+ options page
-+ OpenRouterProvider
-```
+1. [`SPEC.md`](SPEC.md) — product behavior, safety, compatibility, and failures.
+2. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — ownership, boundaries, and dependency direction.
+3. [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) — implementation order and gate placement.
 
-## Locked semantic ports
+Supporting documents may summarize or verify these authorities but cannot change them. [`AGENTS.md`](AGENTS.md) defines repository operating constraints.
 
-```ts
-interface TextSurface {
-  observe(sink: (signal: SurfaceSignal) => void): Disposable;
-  capture(change: ObservedChange): Promise<SurfaceSnapshot>;
-  replaceIfCurrent(request: ReplacementRequest): Promise<ReplacementResult>;
-}
+## Canonical future sequence
 
-interface InferenceProvider {
-  check(request: CheckRequest): PendingCheck;
-}
-
-type PendingCheck = {
-  result: Promise<CheckResult>;
-  cancel(): void;
-};
-```
-
-`SurfaceSnapshot` contains opaque source and snapshot references, logical text, and a focus range. It contains no DOM reference. Apply accepts only `SuggestionId`; the controller owns all source, snapshot, revision, and correction authority.
-
-## Locked product limits
-
-- `DEBOUNCE_MS = 600`, trailing-edge only.
-- `MAX_CONTEXT_SCALARS = 1200`, measured in Unicode scalar values.
-- Half-open scalar ranges.
-- One provider request for each current eligible controller revision.
-- One response containing zero or one correction.
-- Eight-second timeout and 32 KiB response-body limit.
-- No streaming, retry, response healing, fallback model, persistent text cache, telemetry, or analytics.
-- No compiled model default. The user configures a concrete structured-output model.
-- Supported profiles: `auto`, `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE`, `ru-RU`, and fail-closed `unsupported`.
-- No translation.
-- State: `Idle | Debouncing | Checking | Suggestion | Applying | Error`.
-
-The full behavioral contract is defined in [`SPEC.md`](SPEC.md).
-
-## Canonical implementation sequence
-
-Use this exact sequence without reordering or parallel implementation tracks:
+The Documentation Gate is a prerequisite. It is not an implementation increment.
 
 ```text
 Documentation baseline + Documentation Gate
-→ strict-TypeScript domain and schemas
-→ TextSurface + MockTextSurface
-→ InferenceProvider + MockInferenceProvider
-→ controller, scheduler, context, and revision
-→ validator + presentation state
-→ complete mock product + Mock Product Gate
-→ Architecture Gate
-→ BrowserTextSurface
-→ MV3 worker, options, and overlay
-→ OpenRouterProvider + Provider Gate
-→ textarea runtime
-→ conventional contenteditable runtime
-→ Browser Integration + V0.1 Conformance Gate
+→ Increment 1: Pure Core & Simulation
+→ Increment 2: Unified State Machine
+→ Increment 3: Mock Product + Architecture Gates
+→ Increment 4: Unified DOM Integration
+→ Increment 5: MV3 Shell + Provider
+→ Increment 6: Browser Integration
+→ Increment 7: V0.1 Conformance
 → stop
 ```
 
-Active gates are:
+The six gates remain separate:
 
 ```text
 Documentation
@@ -121,38 +58,20 @@ Documentation
 → V0.1 Conformance
 ```
 
-Presentation and accessibility evidence belongs to Browser Integration.
+Gates are evidence checkpoints within a future implementation objective, not new authorization boundaries.
 
-## Execution discipline
+## Hard limits
 
-For each independently verifiable increment:
+- Shared behavior lives in browser-independent strict TypeScript.
+- Browser authority remains in the extension leaves.
+- The service worker alone owns trusted settings, credentials, and OpenRouter traffic.
+- The content script alone owns page text, source identity, controller state, DOM mapping, and the overlay.
+- Apply requires current controller authority and complete surface verification.
+- Unsupported or ambiguous conditions fail closed.
+- Native runtimes, release packaging, signing, store publication, and commercial expansion are deferred.
 
-```text
-inspect
-→ implement one invariant
-→ run the smallest relevant verification
-→ inspect the diff
-→ record factual evidence
-→ commit
-→ push
-→ verify the pushed state
-→ continue
-```
+## Completion rules
 
-Initialize [`docs/EVIDENCE.md`](docs/EVIDENCE.md) only after the Documentation Gate passes. The evidence ledger is mutable and non-constitutional. The other immutable documents remain frozen; a material change requires a newly versioned constitution.
+The present documentation objective stops after its verified documentation-only commit is pushed. A future implementation objective stops after all seven increments and six gates pass, its final tested commit is pushed and verified, and the worktree is clean.
 
-## V0.1 scope
-
-Positively support only explicitly enabled top-level HTTP(S) pages containing a visible, focused, writable light-DOM `<textarea>` or a simple `contenteditable="true"` or `contenteditable="plaintext-only"` whose logical text and correction range map losslessly.
-
-Inputs, iframes, shadow DOM, rich, virtualized, or canvas editors, Google Docs-style surfaces, restricted pages, file URLs, PDFs, readonly or disabled surfaces, and incognito are outside V0.1.
-
-## Explicitly deferred
-
-Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, native packaging, signing, Chrome Web Store publication, release automation, native placeholders, and cross-OS runtime claims are deferred to separately versioned objectives. Native work begins only after real browser usage demonstrates a material unmet need.
-
-## Completion and stop rule
-
-Complete every criterion in [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md). V0.1 ends after the Browser Integration and V0.1 Conformance gates pass, the unpacked extension is smoked on current Chrome Stable, evidence is recorded, the final commit is pushed and verified, and the worktree is clean.
-
-Then stop. Distribution and all deferred work require a new explicit objective.
+The constitution resolves all product, safety, architecture, and acceptance decisions. The implementation agent retains ordinary discretion over local naming and code organization within the locked boundaries.

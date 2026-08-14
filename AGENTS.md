@@ -1,8 +1,14 @@
 # Emenda Agent Guide
 
-> **Frozen agent governance, version 2.0.0**
+> **Frozen agent governance, version 2.0.1**
 
-Emenda is built from repository-local sources of truth.
+Emenda is governed by repository-local documentation. The existence of this package does not authorize product implementation.
+
+## Objective boundary
+
+The active v2.0.1 objective is documentation only. Rewrite, verify, hash, commit, and push the 13 Markdown files, confirm the remote commit and a clean worktree, then stop. Implementation requires a separate future objective.
+
+When that future objective is explicitly supplied, own the complete V0.1 outcome through the seven increments and six gates defined in [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) and [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md).
 
 ## Reading order
 
@@ -10,52 +16,26 @@ Emenda is built from repository-local sources of truth.
 2. `AGENTS.md`
 3. `SPEC.md`
 4. `docs/ARCHITECTURE.md`
-5. `ROADMAP.md`
-6. `docs/IMPLEMENTATION-PLAN.md`
-7. `docs/ACCEPTANCE.md`
-8. `docs/ENGINEERING.md`
-9. `UX.md`
+5. `docs/IMPLEMENTATION-PLAN.md`
+6. `docs/ACCEPTANCE.md`
+7. `docs/ENGINEERING.md`
+8. `UX.md`
+9. `ROADMAP.md`
 10. `BRAND.md`
 11. `README.md`
 
-## Principal objective
+`docs/EVIDENCE.md` records facts only. `PACKAGE-MANIFEST.md` identifies the freeze and its checksums.
 
-Build the smallest complete Emenda V0.1 as one strict-TypeScript product core and one Chromium Manifest V3 extension. Own the full outcome as one objective. Gates are verification checkpoints, not new authorization boundaries.
+## Subject authority
 
-## Constitutional authority
+- `SPEC.md` controls product behavior, safety, compatibility, and failures.
+- `docs/ARCHITECTURE.md` controls ownership, dependency direction, and runtime boundaries, subject to the specification.
+- `docs/IMPLEMENTATION-PLAN.md` controls build order and gate placement, subject to both.
+- Supporting documents verify or summarize these authorities and cannot override them.
 
-The source-of-truth order is:
+## Active-gate discipline
 
-```text
-PROMPT.md
-→ AGENTS.md
-→ SPEC.md
-→ docs/ARCHITECTURE.md
-→ ROADMAP.md
-→ docs/IMPLEMENTATION-PLAN.md
-→ docs/ACCEPTANCE.md
-→ docs/ENGINEERING.md
-→ UX.md
-→ BRAND.md
-→ README.md
-```
-
-`docs/EVIDENCE.md` records facts only. It cannot change the constitution.
-
-## Active architecture
-
-- Shared product behavior lives in `core/`.
-- `core/` compiles without DOM, Chrome, Node, React, or extension types.
-- Browser mechanisms live in `extension/`.
-- The content script owns controller state, revision lifetime, `BrowserTextSurface`, and the shadow-root overlay.
-- The service worker owns permissions, trusted settings, cancellation, and the fixed OpenRouter fetch.
-- Source identity and raw DOM data remain in the content script.
-- Runtime messages are versioned and strictly validated.
-- The package is one npm package, not a monorepo.
-
-## Active-gate rule
-
-State the active gate before implementation work:
+State the active gate before future implementation work. The six gate names and order are:
 
 ```text
 Documentation
@@ -66,95 +46,46 @@ Documentation
 → V0.1 Conformance
 ```
 
-Classify every failure by the gate and subsystem that own it. A later-gate failure preserves earlier verified evidence unless the underlying invariant changed.
+Classify a failure by its owning gate and subsystem. Later-gate failure preserves earlier evidence unless the tested invariant changed. Gates do not expand scope or authority.
 
-## Canonical implementation sequence
+## Operating rules
 
-```text
-Documentation baseline + Documentation Gate
-→ strict-TypeScript domain and schemas
-→ TextSurface + MockTextSurface
-→ InferenceProvider + MockInferenceProvider
-→ controller, scheduler, context, and revision
-→ validator + presentation state
-→ complete mock product + Mock Product Gate
-→ Architecture Gate
-→ BrowserTextSurface
-→ MV3 worker, options, and overlay
-→ OpenRouterProvider + Provider Gate
-→ textarea runtime
-→ conventional contenteditable runtime
-→ Browser Integration + V0.1 Conformance Gate
-→ stop
-```
+- Inspect before changing and verify in proportion to risk.
+- Use deterministic mocks and fake clocks before browser integration.
+- Keep commits coherent and attributable to meaningful decisions or increments; do not require one commit per helper or component.
+- Inspect every diff and dependency change before committing.
+- Push and verify remote identity at required checkpoints.
+- Preserve unrelated and ignored workspace state.
+- Record failures and later recoveries as separate factual evidence.
 
-This sequence is binding. Presentation and accessibility evidence is gathered at Browser Integration.
+## Locked boundaries
 
-## Increment rule
+- Core product behavior is strict TypeScript without DOM, Chrome, Node, React, or extension types.
+- One pure reducer owns product state; effects own timers and external I/O.
+- Zod is confined to the declared model, protocol, and trusted-settings boundaries.
+- The service worker owns permissions, trusted settings, cancellation, and OpenRouter traffic.
+- The content script owns page text, source identity, controller state, DOM mapping, and presentation.
+- Controller revision authority and surface mutation safety remain separate.
+- Stale work is silent and cannot mutate page text.
+- Unsupported or ambiguous surfaces fail closed.
 
-Implement one independently verifiable invariant or architectural decision at a time:
+## Dependency and scope rule
 
-```text
-inspect
-→ implement
-→ verify
-→ inspect diff
-→ update factual evidence
-→ commit
-→ push
-→ verify pushed state
-→ continue
-```
+The future product is one npm package. The only permitted direct runtime dependency is Zod. Development dependencies are limited to TypeScript, esbuild, Vitest, Playwright, and Chrome/Node types.
 
-Use fake clocks and deterministic mocks before browser integration. Keep every commit attributable to one decision.
-
-## Authority and staleness
-
-- Each eligible committed input reserves a new `RevisionId` synchronously.
-- Composition input invalidates current work immediately; inference waits for `compositionend`.
-- A newer revision cancels older work best-effort and always wins authoritatively.
-- An Apply command accepts only the current `SuggestionId`.
-- Stale results and stale commands are silent and cannot mutate the page.
-
-## Dependency rule
-
-Direct runtime dependencies are limited to Zod. Development dependencies are limited to TypeScript, esbuild, Vitest, Playwright, and Chrome/Node types.
-
-Every dependency, abstraction, script, permission, and build output must serve a current V0.1 requirement. Prefer deletion, explicit code, and platform capabilities over new machinery.
-
-## Safety rule
-
-The browser binding performs replacement only after verifying current revision, the same connected writable source, the same document and opaque snapshot, exact current logical text, lossless range mapping, and the exact original substring. Its only mutation leaf is a runtime-gated `document.execCommand("insertText")` operation that produces one browser undo step.
-
-Unsupported or ambiguous surfaces fail closed. No direct-value assignment, DOM rewrite, clipboard operation, simulated key input, fuzzy matching, or unique-match recovery is permitted.
+Do not add native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, packaging, signing, store publication, release automation, commercial infrastructure, or placeholders for deferred runtimes.
 
 ## Evidence rule
 
-Report precisely:
+Use the exact levels `inspected`, `compiled`, `deterministic`, `integration`, `live`, and `runtime`. Report what ran, the already-existing implementation tree and commit tested, exact environment, failures, limitations, and what remains unverified.
 
-```text
-what compiled
-what ran deterministically
-what ran in persistent Chromium
-what was verified live
-what was inspected only
-what remains unsupported or unverified
-```
+Keep credentials, raw private text, URLs, source identity, DOM structures, authorization headers, and raw provider bodies out of logs, fixtures, snapshots, commits, and evidence.
 
-Use exact evidence levels: `inspected`, `compiled`, `deterministic`, `integration`, `live`, and `runtime`.
+## Constitution changes
 
-Keep secrets and raw text out of logs, snapshots, fixtures, commits, and error reports. Use synthetic domain-neutral test text.
+Product, architecture, UX, acceptance, implementation-order, brand, or governance changes require a new versioned documentation freeze and new staged checksums. The evidence ledger cannot amend the constitution.
 
-## Documentation rule
+## Stop rules
 
-After the Documentation Gate, initialize the mutable `docs/EVIDENCE.md` ledger with the frozen constitution commit, environment facts, and validation results. Append evidence; preserve failures and later recoveries as separate entries.
-
-Changing product behavior, architecture, UX, brand, acceptance requirements, or agent governance requires a new versioned constitution and new checksums.
-
-## Deferred-work rule
-
-Native hosts, Tauri, Rust, accessibility APIs, native credential stores, packaging, signing, store publication, release automation, native placeholders, and cross-OS runtime claims are outside V0.1. Do not scaffold them. Native work requires browser-usage evidence and a separately versioned objective.
-
-## Stop rule
-
-Continue automatically through every active gate. Stop after the V0.1 Conformance Gate passes, the final verified commit is pushed, and the worktree is clean. If a genuine blocker remains after safe in-scope alternatives are exhausted, record the preserved state, evidence, exact blocker, and external authority required.
+- Present objective: stop after the verified v2.0.1 documentation commit is pushed and the worktree is clean.
+- Future implementation objective: stop after V0.1 Conformance passes, the tested implementation commit is pushed and verified, and the worktree is clean.

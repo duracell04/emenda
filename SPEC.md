@@ -1,166 +1,145 @@
-# Emenda V0.1 Specification
+# Emenda V0.1 Product Specification
 
-> **Frozen product specification, version 2.0.0**
+> **Frozen product authority, version 2.0.1**
 
-## 1. Product goal
+## 1. Authority and objective boundary
 
-Emenda is a personal writing assistant that improves browser text while preserving the author's meaning, voice, rhythm, register, terminology, and Duktus.
+This file is authoritative for what Emenda V0.1 does. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) owns architectural boundaries, and [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) owns future build order.
 
-The writer's page remains the primary writing surface. Emenda is a small deterministic control layer around OpenRouter:
+The v2.0.1 objective is documentation-only. It ends after the 13-document package is rewritten, verified, hashed, committed, and pushed. Product implementation requires a separate future objective.
 
-```text
-observe
-→ reserve revision authority
-→ debounce
-→ capture
-→ derive context
-→ infer
-→ validate
-→ suggest
-→ decide
-→ apply safely
-```
+## 2. Product goal
 
-OpenRouter performs linguistic judgment. Emenda owns observation policy, context selection, revision authority, strict validation, presentation, explicit consent, and safe application.
+Emenda is a personal browser writing assistant. It proposes at most one exact local correction while preserving the writer's meaning, voice, rhythm, register, terminology, names, quotations, and Duktus. It never translates.
 
-## 2. Active V0.1 runtime
+The writer's page remains the primary writing surface. Observation begins only after explicit permission for the current origin, and page text changes only after explicit Apply.
 
-V0.1 has one OS-agnostic strict-TypeScript product core and one active runtime: a Chromium Manifest V3 extension requiring Chrome 102 or newer.
+## 3. V0.1 runtime and limits
 
-The core contains no DOM, Chrome, Node, React, or extension types. Browser APIs and nodes exist only in extension leaf code. This constitution makes no cross-OS runtime claim beyond separately recorded evidence.
-
-## 3. User outcome
+V0.1 is one strict-TypeScript product core and one Chromium Manifest V3 extension with:
 
 ```text
-writer edits an eligible browser surface
-→ committed input reserves a RevisionId immediately
-→ writer pauses for 600 ms
-→ Emenda captures the current logical text and caret
-→ Emenda derives a focus sentence and bounded context
-→ one current request is sent to OpenRouter
-→ zero corrections returns silently to Idle
-→ one exact valid correction creates a Suggestion
-→ writer applies or dismisses
-→ Apply mutates only the verified current surface in one undo step
+minimum_chrome_version: "140"
+DEBOUNCE_MS: 600
+MAX_CONTEXT_SCALARS: 1200
+PROVIDER_TIMEOUT_MS: 8000
+MAX_RESPONSE_BYTES: 32768
 ```
 
-Observation is ambient after explicit per-origin enablement. Application is always explicit.
-
-## 4. Constants and scalar model
-
-```ts
-const DEBOUNCE_MS = 600;
-const MAX_CONTEXT_SCALARS = 1200;
-const PROVIDER_TIMEOUT_MS = 8000;
-const MAX_RESPONSE_BYTES = 32 * 1024;
-```
-
-All text ranges are half-open offsets over Unicode scalar values, not UTF-16 code units, bytes, grapheme clusters, or DOM offsets. Conversions at browser boundaries must be explicit and lossless.
-
-## 5. Semantic ports
-
-```ts
-interface TextSurface {
-  observe(sink: (signal: SurfaceSignal) => void): Disposable;
-  capture(change: ObservedChange): Promise<SurfaceSnapshot>;
-  replaceIfCurrent(request: ReplacementRequest): Promise<ReplacementResult>;
-}
-
-interface InferenceProvider {
-  check(request: CheckRequest): PendingCheck;
-}
-
-type PendingCheck = {
-  result: Promise<CheckResult>;
-  cancel(): void;
-};
-```
-
-The core also owns a minimal scheduler seam sufficient to schedule and cancel the debounce and to make fake-clock tests deterministic. It exposes time semantics rather than browser timer objects.
-
-No geometry port, credential-store port, native host port, or accessibility port enters V0.1.
-
-## 6. Shared types
-
-The shared domain includes:
-
-- `RevisionId`: monotonically increasing session authority reserved synchronously.
-- `Revision`: immutable current check input, including its ID, snapshot references, and derived context.
-- `SourceReference`: opaque equality-capable identity understood by the active `TextSurface`.
-- `SnapshotReference`: opaque identity for one captured document state.
-- `TextRange`: half-open Unicode scalar range.
-- `ObservedChange`: minimal semantic notification that eligible committed text may have changed.
-- `SurfaceSignal`: a committed change, composition invalidation/end signal, or typed unavailability.
-- `SurfaceSnapshot`: opaque source and snapshot references, exact logical text, and a focus range; never a DOM reference.
-- `TextContext`: bounded context text, focus text, language profile, and range mapping back to the snapshot.
-- `Correction`: one exact proposed replacement.
-- `SuggestionId`: opaque current-presentation capability.
-- `Suggestion`: current revision plus validated correction and display-safe fields.
-- `CheckRequest` and `CheckResult`: provider boundary values.
-- `ReplacementRequest` and `ReplacementResult`: application boundary values.
-- `Disposable`, scheduler handles, state values, and typed failures.
-
-All public values are immutable. Opaque references are never serialized to the model and source identity never leaves the content script.
-
-## 7. Observation, composition, and revision authority
-
-An eligible committed `input` event reserves the next `RevisionId` synchronously, clears any visible suggestion, invalidates every older timer or Apply capability, best-effort cancels older provider work, and starts one trailing-edge 600 ms debounce.
-
-Composition behavior is authoritative:
-
-1. `compositionstart` and composing input reserve a new revision and invalidate current work immediately.
-2. No inference request begins while composition is active.
-3. `compositionend` is treated as the committed change that starts the trailing-edge debounce.
-
-Each controller revision may produce at most one provider request. A newer revision always wins, even if cancellation is unavailable or races with completion. Stale completion and stale failure are silent and cannot alter state, presentation, or text.
-
-## 8. Capture and context selection
-
-After debounce, the current change is captured. Capture fails closed if the page, document, source, focus, writability, visibility, or mapping is no longer eligible.
-
-The post-edit caret determines focus:
-
-1. Select the sentence containing the caret as the focus.
-2. If its paragraph fits within 1,200 Unicode scalars, use that paragraph as surrounding context.
-3. Otherwise construct a 1,200-scalar window around the focus, dividing remaining capacity evenly before and after it, clamping at document edges, and backfilling from the available side.
-4. If the focus itself exceeds 1,200 scalars, return a typed context-limit failure and make no provider request.
-
-The focus range is expressed relative to both snapshot logical text and request context. Corrections must remain entirely inside the focus.
-
-Sentence and paragraph selection is deterministic and language-neutral at the core boundary. Line-break conventions are normalized only if the browser adapter can preserve exact bidirectional mapping. Empty, whitespace-only, or nonlinguistic focus produces no request and returns silently to `Idle`.
-
-## 9. Language profiles
-
-The configured profile is one of:
+The state union is:
 
 ```text
-auto
-de-CH
-en-GB
-en-US
-fr-FR
-ka-GE
-ru-RU
-unsupported
+Idle | Debouncing | Checking | Suggestion | Applying | Error
 ```
 
-`unsupported` fails closed and makes no inference request. `auto` asks the provider to identify one supported profile or return `unsupported`. Emenda never translates. It preserves names, quotations, specialist terms, and short embedded passages.
+There is no persistent Clean state. One eligible revision causes at most one provider request and one response containing zero or one correction.
 
-## 10. Correction contract
+The supported profile modes are:
+
+```text
+auto | de-CH | en-GB | en-US | fr-FR | ka-GE | ru-RU
+```
+
+`profileMode` defaults to `auto`. A provider result may additionally identify `unsupported`.
+
+## 4. State, effects, and authority
+
+One pure reducer controls revisions, debounce state, checking, validation outcomes, suggestions, Apply, Dismiss, and errors. Effects execute timers, inference, storage, messaging, and DOM operations and report results back to that reducer.
+
+The core compiles without DOM, Chrome, Node, React, or extension types. Domain values, context policy, and reducer state use pure TypeScript. Zod is permitted only in `core/provider-schema/`, `extension/protocol/`, and the worker-owned trusted-settings boundary. Every runtime message is versioned and strictly validated.
+
+Each eligible committed change synchronously reserves a new monotonically increasing `RevisionId`. It clears any current error or suggestion, invalidates the older Apply capability and timer, best-effort cancels older inference, and starts one trailing-edge 600 ms debounce.
+
+A newer revision is authoritative even when cancellation is unavailable or races. Stale completions, failures, and commands cannot change state, presentation, or page text.
+
+A `SuggestionId` is an opaque capability for one current suggestion. Dismiss accepts only that current capability, preserves page text, invalidates the suggestion, and returns to `Idle`.
+
+The controller verifies before Apply:
+
+```text
+current SuggestionId
++ current RevisionId
++ suggestion belongs to that revision
+```
+
+Source and snapshot references remain opaque to the core. Source identity, raw DOM data, full document metadata, and page URL remain in the content script.
+
+## 5. Settings authority
+
+Trusted settings are worker-owned and stored in `chrome.storage.local`:
+
+```text
+schemaVersion
+apiKey
+model
+profileMode
+settingsRevision
+enabledOrigins
+```
+
+The options page communicates with the worker and never reads or writes this storage area directly.
+
+At worker initialization, before any trusted-settings read or write, the worker must await:
 
 ```ts
-type Correction = {
-  range: TextRange;
-  original: string;
-  replacement: string;
-  category: "spelling" | "grammar" | "punctuation" | "style";
-  explanation: string;
-};
+chrome.storage.local.setAccessLevel({
+  accessLevel: "TRUSTED_CONTEXTS",
+});
 ```
 
-The style category is restrained. It may correct a clear local defect while preserving meaning and Duktus. Confidence is absent.
+Initialization fails closed if the method is unavailable or rejects. Runtime evidence must prove that a content script can neither read the local storage area nor receive its change events. Chrome 140 is the first supported milestone for the relevant [Chromium storage implementation](https://chromium.googlesource.com/chromium/src/+/a8f1f337c692360aaec9470a0a91f965011d37a3) and [Chrome 140 release](https://developer.chrome.com/release-notes/140); compatibility is tested directly against that milestone and current Chrome.
 
-A response contains:
+At initialization, a content script requests and caches only:
+
+```text
+hasApiKey
+profileMode
+settingsRevision
+```
+
+The model and API key never enter the content script. `protocolVersion` belongs to every validated message envelope, not this configuration payload. The worker sends validated settings-change messages to every live enabled content script to update the cache; the content script does not request configuration before each capture.
+
+Changing the API key, model, or profile increments `settingsRevision`, cancels active inference, invalidates visible suggestions, and leaves processing paused until the next committed input. Origin changes do not increment it; enablement and revocation govern origin authority.
+
+Every content-to-worker check carries the cached `settingsRevision`. The worker compares it with current trusted settings before using the worker-owned key or model. A stale request is rejected, the content cache is resynchronized, and that revision is not retried.
+
+## 6. Observation and IME
+
+Only committed changes start debounce and inference.
+
+Composition handling is centralized:
+
+1. `compositionstart` immediately invalidates current authority, timers, inference, and suggestions.
+2. Composing input updates only the surface's current baseline and never starts inference.
+3. `compositionend` emits the sole committed change for that composition generation.
+4. A later terminal non-composing input with identical text, source, and selection is deduplicated for that generation.
+5. A divergent later input is an ordinary external committed change.
+
+A non-collapsed selection is ineligible and returns silently to `Idle`. V0.1 checks only a collapsed caret.
+
+## 7. Scalar text model and focus
+
+All text coordinates are half-open Unicode scalar offsets, not UTF-16 code units, bytes, grapheme clusters, or DOM offsets. Browser-boundary conversion must be explicit and lossless. Logical newlines are LF. Browser soft wrapping never creates a logical newline.
+
+A paragraph is the maximal scalar range between explicit newline boundaries. Within that paragraph, sentence selection uses this deterministic scalar scan:
+
+- terminators are `.`, `!`, and `?`;
+- trailing Unicode closing punctuation (`Pe` and `Pf`) and ASCII quotation marks U+0022 and U+0027 belong to the sentence;
+- a sentence boundary exists only when the trailing sequence is followed by a Unicode `White_Space` scalar, newline, or the end of text;
+- when the caret is in intersentence whitespace, it belongs to the preceding nonempty sentence;
+- at the beginning of a paragraph, including its leading whitespace, the caret belongs to the following sentence.
+
+The core does not use `Intl.Segmenter`.
+
+A focus is nonlinguistic when it contains no Unicode Letter scalar (`\p{L}`). Empty, whitespace-only, and nonlinguistic focus cause no request.
+
+Context contains the complete focus and at most 1,200 scalars. It is exactly 1,200 only when at least that much logical document context is available. If the focus itself exceeds 1,200 scalars, capture fails closed and no inference occurs.
+
+If the complete paragraph fits, it is the context. Otherwise, after including the focus, divide remaining capacity evenly between preceding and trailing text. An odd spare scalar goes to the trailing side. Clamp at document boundaries and backfill unused capacity from the available side.
+
+## 8. Model result and local validation
+
+The model-authored result has exactly this information:
 
 ```ts
 type ModelResult = {
@@ -172,110 +151,123 @@ type ModelResult = {
     | "ka-GE"
     | "ru-RU"
     | "unsupported";
-  corrections: [] | [Correction];
+  corrections:
+    | []
+    | [{
+        range: { start: number; end: number };
+        original: string;
+        replacement: string;
+        category: "spelling" | "grammar" | "punctuation" | "style";
+        explanation: string;
+      }];
 };
 ```
 
-Revision identity is never model-authored. The provider adapter copies the authoritative `RevisionId` from `CheckRequest` into `CheckResult`.
+`range` is half-open, uses Unicode scalar offsets relative to `TextContext.text`, and must remain wholly inside the context's focus range. Revision identity is never model-authored; the provider adapter attaches the request's authoritative revision identity to the local result.
 
-## 11. Model request and response
+Local validation is strict and rejects extra properties. A correction is accepted only when:
 
-The user must configure a concrete OpenRouter model that supports structured output. There is no compiled model default, and `openrouter/free` is not a daily-product default.
+- the attached revision is current;
+- the configured and returned language rules pass;
+- the result contains exactly one correction;
+- scalar offsets are integral, ordered, in bounds, and inside focus;
+- `original` exactly equals the context substring at the range;
+- `replacement` differs from `original`;
+- category is allowed and explanation is nonempty;
+- the insertion, deletion, or replacement maps losslessly to the captured snapshot.
 
-The service worker uses the fixed endpoint:
+The controller maps an accepted context-relative correction once to snapshot-relative scalar coordinates.
+
+In `auto`, any supported returned profile or `unsupported` is valid. In a fixed mode, the returned profile must be that exact profile or `unsupported`. `unsupported` is accepted only with `corrections: []` and returns silently to `Idle`. A different supported profile is the typed failure `LanguageMismatch` and produces no suggestion.
+
+There is no fuzzy match, unique-match search, offset recovery, correction relocation, confidence threshold, or response healing.
+
+## 9. Provider request
+
+The worker sends one non-streaming request to:
 
 ```text
 POST https://openrouter.ai/api/v1/chat/completions
 ```
 
-The request is non-streaming and minimal: configured model, one system instruction, the bounded context and focus/range data, the selected profile, `provider.require_parameters: true`, temperature only if required by the chosen model, and strict JSON Schema response formatting.
+The request contains one concrete user-configured model, the bounded context and focus coordinates, the selected profile, one system instruction, and strict structured-output schema. Emenda has no compiled model default. The request contains no `models` fallback array and uses:
 
-The model instruction requires zero or one correction, exact scalar range and original text, a replacement, a category, a concise explanation, preservation of meaning and Duktus, no translation, and `unsupported` when the text cannot be handled safely.
-
-Use strict JSON Schema as documented by [OpenRouter structured outputs](https://openrouter.ai/docs/guides/features/structured-outputs), followed by local Zod validation. No response healing, extraction from prose, second-pass repair, retry, fallback model, or streaming is permitted.
-
-The service worker enforces an eight-second deadline and a 32 KiB response limit while reading the body. Cancellation is best-effort. Provider, transport, timeout, size, HTTP, parse, schema, and unsupported-language failures are typed and contain no key or raw request text.
-
-## 12. Local validation
-
-The validator accepts exactly one suggestion only when all conditions hold:
-
-- the result carries the current adapter-copied revision ID;
-- `languageProfile` is supported;
-- the schema is exact and has no extra properties;
-- `corrections` contains exactly one item;
-- scalar offsets are integers, ordered, in bounds, and fully inside focus;
-- `original` equals the exact substring at the range;
-- `replacement` differs from `original`;
-- category is allowed and explanation is concise and nonempty;
-- the operation is a replacement, insertion, or deletion that can map losslessly.
-
-Malformed, multiple-correction, unsupported-language, out-of-focus, mismatched-range, no-op, or stale results create no suggestion. Writer-triggered provider or surface failures may enter `Error`; stale failures remain silent.
-
-There is no fuzzy match, unique-match search, offset recovery, correction relocation, or confidence threshold.
-
-## 13. State machine
-
-```ts
-type State =
-  | { kind: "Idle" }
-  | { kind: "Debouncing"; revisionId: RevisionId }
-  | { kind: "Checking"; revisionId: RevisionId }
-  | { kind: "Suggestion"; suggestion: Suggestion }
-  | { kind: "Applying"; suggestionId: SuggestionId }
-  | { kind: "Error"; failure: WriterVisibleFailure };
+```text
+provider.require_parameters: true
+provider.allow_fallbacks: false
+provider.data_collection: "deny"
 ```
 
-There is no persistent `Clean` state or clean-success UI. Zero corrections returns silently to `Idle`.
+`settingsRevision` is an internal Emenda authority value and is never sent to OpenRouter.
 
-Dismiss accepts the current `SuggestionId`, invalidates that suggestion, and returns to `Idle` without mutation. Apply accepts only `SuggestionId`; presentation never supplies source, range, original, replacement, revision, or DOM data.
+The worker incrementally enforces the eight-second timeout and 32 KiB response-body limit, then validates locally with Zod. Cancellation is best-effort. Provider, transport, timeout, size, HTTP, parse, and schema failures are typed and redacted.
 
-## 14. Apply safety
+Only a route that supports the required structured-output parameters and denies provider data collection is eligible. Emenda performs no retry, response repair, streaming, caching, telemetry, analytics, provider failover, or model substitution. The routing values remain explicit because OpenRouter's defaults differ; see [provider routing](https://openrouter.ai/docs/guides/routing/provider-selection).
+
+## 10. Apply contract
+
+`ReplacementRequest` contains the controller-authorized source reference, snapshot reference, expected logical text, snapshot-relative correction range, original, and replacement. It contains no revision oracle for the surface to evaluate.
 
 Immediately before mutation, `BrowserTextSurface` verifies:
 
 ```text
-current revision
-+ same connected writable source
-+ same document and opaque snapshot
-+ exact current logical text
+same connected source
++ same document
++ same opaque snapshot
++ visible, focused, writable surface
++ exact expected logical text
 + lossless range mapping
 + exact original substring
 ```
 
-Failure returns a typed refusal without mutation.
+Failure returns a typed refusal without mutation. A refusal after the writer chooses Apply enters `Error`.
 
-The only V0.1 mutation leaf is a runtime-gated `document.execCommand("insertText")` call after restoring the verified selection or textarea range. Direct-value assignment, DOM rewriting, clipboard use, simulated keys, and alternative mutation fallbacks are forbidden.
+Before mutation, the surface registers one expected self-mutation containing:
 
-A surface is positively supported only when runtime integration evidence proves that one native browser Undo restores the exact original text after Apply.
+```text
+source
+expected pre-edit text
+expected post-edit text
+expected target range
+replacement
+```
 
-## 15. Supported browser surfaces
+The only mutation leaf is a runtime-gated `document.execCommand("insertText")` after restoring the verified textarea selection or DOM range. Direct value assignment, DOM rewriting, clipboard operations, simulated keys, and fallback mutation strategies are forbidden.
 
-V0.1 positively supports only:
+The exact matching input event is consumed internally as `AppliedChange`: it updates the adapter's snapshot and logical-text baseline and does not emit `ObservedChange`. Successful replacement returns the post-edit snapshot. The controller advances authority, invalidates the suggestion, and returns to `Idle` without debounce or inference.
 
-- top-level HTTP(S) pages;
-- origins explicitly enabled by the writer;
-- visible, focused, writable light-DOM `<textarea>`;
-- simple light-DOM `contenteditable="true"` or `contenteditable="plaintext-only"`;
-- surfaces whose complete logical text, focus, target range, selection, and replacement map losslessly.
+A mismatching event is an external committed change. It reserves a new revision, invalidates the Apply result, and follows the ordinary input path.
 
-V0.1 excludes:
+A surface is supported for Apply only after browser evidence proves that one native Undo restores the exact original text.
 
-- `<input>` elements;
-- iframes;
-- shadow DOM editors;
-- rich, virtualized, or canvas editors;
-- Google Docs-style surfaces;
-- restricted browser and extension pages;
-- file URLs and PDFs;
-- readonly or disabled surfaces;
-- incognito.
+## 11. Supported surfaces and mappings
 
-Excluded surfaces are unsupported rather than partially supported.
+V0.1 supports only explicitly enabled top-level HTTP(S) pages with one visible, focused, writable light-DOM `<textarea>` or one bounded contenteditable host. The exact textarea value and collapsed selection must map losslessly between UTF-16 DOM offsets and scalar offsets.
 
-## 16. Extension permissions and activation
+A contenteditable host must use `contenteditable="true"` or `contenteditable="plaintext-only"`. A `<span>` is transparent only when it is visible, has inline computed display, uses the accepted whitespace behavior, introduces no editing boundary, and contributes no generated visual content. The host may contain either:
 
-The manifest requires Chrome 102 or newer and disables incognito. It declares only:
+- the inline grammar: text nodes, `<br>`, and recursively transparent inline `<span>` elements; or
+- simple top-level `<div>` or `<p>` blocks whose contents use only that inline grammar.
+
+Mixing top-level inline and block forms is unsupported. Nested blocks or editing hosts, `contenteditable="false"` islands, hidden descendants, replaced elements, generated visual text, unsupported nodes, shadow content, and ambiguous mappings are unsupported.
+
+Computed whitespace modes `pre`, `pre-wrap`, `break-spaces`, `normal`, `nowrap`, and `pre-line` are eligible only when exact visible-text mapping can be proven. Text-node scalars follow the accepted mode.
+
+The mapper records a DOM source span for every emitted logical scalar. In a collapsed whitespace mode, one emitted logical space maps to the complete underlying whitespace run. A nonempty replacement maps from the beginning of its first covered scalar span to the end of its last covered scalar span; an insertion requires one unique recorded boundary.
+
+Logical contenteditable newlines are exact:
+
+- `<br>` emits one newline;
+- a boundary between two permitted top-level blocks emits one newline;
+- no synthetic leading or trailing newline is added.
+
+Every `<br>` and block-boundary newline maps to a deterministic DOM boundary span. Before a surface is accepted, every logical scalar boundary must round-trip to a DOM boundary. The surface is rejected when a logical range cannot produce one unique safe replacement span.
+
+V0.1 excludes inputs, iframes, shadow-DOM editors, rich, virtualized, canvas, and Google Docs-style editors, restricted or extension pages, file URLs, PDFs, readonly or disabled surfaces, and incognito. Excluded surfaces fail closed rather than operating partially.
+
+## 12. Origin activation and revocation
+
+The manifest disables incognito and declares only:
 
 ```json
 {
@@ -285,100 +277,67 @@ The manifest requires Chrome 102 or newer and disables incognito. It declares on
 }
 ```
 
-Toolbar activation requests persistent optional permission for the exact current origin. The worker then maintains one dynamic content-script registration whose matches equal the enabled-origin set. Revocation removes the origin and updates the registration. There is no static all-sites content script and no `<all_urls>` grant.
-
-This follows Chrome's [optional-permission model](https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions) and [dynamic scripting API](https://developer.chrome.com/docs/extensions/reference/api/scripting).
-
-## 17. Extension boundaries
-
-The content script owns:
-
-- controller and scheduler composition;
-- revision lifetime and current suggestions;
-- `BrowserTextSurface` and all DOM references;
-- logical-text and scalar mapping;
-- fixed-position shadow-root overlay;
-- focus-neutral keyboard handling.
-
-The ephemeral service worker owns only:
-
-- optional permission lifecycle and dynamic registration;
-- trusted settings access;
-- request cancellation;
-- the fixed OpenRouter fetch;
-- strictly validated versioned runtime messages.
-
-The options page writes the API key and model. `chrome.storage.local` is restricted to trusted extension contexts. Content scripts receive only `hasApiKey`, never the key or model. Chrome documents default content-script storage exposure and trusted-context restriction in the [storage API](https://developer.chrome.com/docs/extensions/reference/api/storage).
-
-Browser-profile storage is disclosed as browser storage and not represented as an operating-system secret vault.
-
-All executable code is bundled locally as required by [Manifest V3](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3). There is no remotely hosted script.
-
-## 18. Presentation contract
-
-The overlay:
-
-- is fixed to the viewport and deliberately unanchored;
-- renders inside a content-script-owned shadow root;
-- appears only for a current suggestion or writer-triggered failure;
-- never autofocuses or steals page focus;
-- shows exact before and after text, category, and concise explanation;
-- provides Apply, Dismiss, Escape, and Alt+Enter;
-- uses accessible names, visible focus, reduced motion, and WCAG 2.2 AA styling.
-
-Escape dismisses the current suggestion. Alt+Enter applies it only when a current suggestion exists. Key handling must preserve composition and host editing behavior.
-
-## 19. Data, privacy, and observability
-
-Only the bounded request context is sent to OpenRouter. There is no persistent text cache, telemetry, analytics, request logging, correction history, or source-identity export.
-
-Logs and typed failures redact the API key, authorization header, raw context, raw model body, and DOM data. Tests use synthetic domain-neutral fixtures.
-
-## 20. Package and dependencies
-
-V0.1 is one npm package with this top-level implementation shape:
+There is no static all-sites content script and no all-sites grant. One dynamic content-script registration uses the ID:
 
 ```text
-core/
-extension/
-tests/
-scripts/build-extension.mjs
-package.json
-package-lock.json
+emenda-enabled-origins
 ```
 
-Direct dependencies are limited to Zod. Development dependencies are limited to TypeScript, esbuild, Vitest, Playwright, and Chrome/Node types.
+Enable follows this lifecycle:
 
-The extension uses plain TypeScript, HTML, and CSS. V0.1 contains no React, Vite, Tailwind, extension framework, OpenRouter SDK, monorepo tooling, backend, database, or code generation.
+1. Validate that the active tab is a top-level HTTP(S) page.
+2. Request optional permission for its exact origin.
+3. Add the origin to worker-owned `enabledOrigins`.
+4. Create the registration if this is the first enabled origin; otherwise update its `matches`.
+5. Ping the current tab.
+6. If no content script responds, inject the packaged content script into the top frame.
 
-## 21. Canonical implementation sequence
+Content-script initialization is idempotent: duplicate injection cannot create duplicate listeners, controllers, or overlays.
 
-```text
-Documentation baseline + Documentation Gate
-→ strict-TypeScript domain and schemas
-→ TextSurface + MockTextSurface
-→ InferenceProvider + MockInferenceProvider
-→ controller, scheduler, context, and revision
-→ validator + presentation state
-→ complete mock product + Mock Product Gate
-→ Architecture Gate
-→ BrowserTextSurface
-→ MV3 worker, options, and overlay
-→ OpenRouterProvider + Provider Gate
-→ textarea runtime
-→ conventional contenteditable runtime
-→ Browser Integration + V0.1 Conformance Gate
-→ stop
-```
+When `enabledOrigins` is empty there are zero dynamic content-script registrations. The fixed registration is unregistered because Chrome does not accept an empty `matches` list.
 
-## 22. Deferred scope
+Revoke follows this lifecycle:
 
-Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, native packaging, signing, Chrome Web Store publication, release automation, native placeholders, and general cross-OS runtime claims are explicitly deferred.
+1. Mark the origin disabled in trusted settings so new work and messages from it are rejected.
+2. Cancel worker requests associated with the origin.
+3. Send a versioned `Deactivate` message to all live tabs on that origin.
+4. Each content script invalidates its current revision, cancels debounce and inference, removes input and composition listeners, removes the overlay host, clears source and snapshot registries, and becomes inert.
+5. Update the dynamic registration, or remove it when no origins remain.
+6. Remove the optional origin permission.
 
-Native work begins only after real browser usage demonstrates a material unmet need and a separately versioned objective authorizes it.
+Unregistering does not remove code already injected into a page, so teardown is a separate required contract; see the [Chrome scripting API](https://developer.chrome.com/docs/extensions/reference/api/scripting).
 
-## 23. Definition of Done
+## 13. Failure transitions
 
-V0.1 is complete only when every gate in [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) passes, including deterministic mock behavior, core dependency isolation, provider conformance, persistent-Chromium browser integration, one-step Undo, live supported-profile evidence, and an unpacked-extension smoke on current Chrome Stable.
+| Outcome | Required result |
+| --- | --- |
+| Clean result, empty focus, nonlinguistic focus, unsupported language, over-limit focus, non-collapsed selection, or unsupported capture during ordinary typing | `Idle`, silent |
+| Stale completion, stale failure, stale command, or cancellation | No presentation change |
+| Stale settings revision | Resynchronize cached settings, do not retry that revision |
+| Missing configuration | `Error`, with Open Settings |
+| Current provider timeout or failure | `Error` |
+| Invalid current provider response or `LanguageMismatch` | `Error` |
+| Current Apply refusal after writer action | `Error` |
+| New committed input | Clear current `Error`, reserve a revision, and debounce |
 
-Implementation then records the final evidence, commits, pushes, verifies remote identity and a clean worktree, and stops.
+Errors contain no API key, authorization header, raw context, model body, source identity, or DOM data.
+
+## 14. Presentation and privacy
+
+The content script owns a fixed, unanchored shadow-root overlay. It appears only for a current suggestion or writer-visible error, never autofocuses, and offers exact before/after text, category, concise explanation, Apply, and Dismiss. `Escape` dismisses and `Alt+Enter` applies only a current suggestion without interfering with IME or host editing.
+
+The options page must display this disclosure verbatim:
+
+> Emenda sends only the current bounded text context, up to 1,200 Unicode scalars, to OpenRouter and the provider serving the configured model. It does not send the page URL, full document, source identity or DOM structure. Processing remains subject to OpenRouter’s and the model provider’s policies. The API key is stored in the browser profile, not in an operating-system secret vault.
+
+Emenda stores no text history or persistent text cache and emits no telemetry or analytics. Tests and evidence use synthetic domain-neutral text.
+
+Visible interaction and accessibility details are authoritative in [`UX.md`](UX.md).
+
+## 15. Deferred scope and completion
+
+Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, native packaging and signing, store publication, release automation, native placeholders, general cross-OS claims, multiple suggestions, and complex editors are outside V0.1 and must not be scaffolded.
+
+Future implementation is complete only when all six gates in [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) pass and the factual evidence distinguishes deterministic, bundled-Chromium, minimum-Chrome-140, current-Chrome, and personal-device results.
+
+The constitution resolves all product, safety, architecture, and acceptance decisions. The implementation agent retains ordinary discretion over local naming and code organization within the locked boundaries.

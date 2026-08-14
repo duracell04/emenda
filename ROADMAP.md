@@ -1,139 +1,82 @@
 # Emenda Roadmap
 
-> **Frozen product roadmap, version 2.0.0**
+> **Frozen product roadmap, version 2.0.1**
 
-## Roadmap rule
+## 1. Roadmap boundary
 
-V0.1 proves one complete browser correction loop before expanding product breadth. Gates measure evidence inside one objective. They are not releases and do not authorize parallel feature tracks.
+The current objective ends with the verified, hashed, committed, and pushed v2.0.1 documentation freeze. It does not authorize product implementation. A separate future objective may build the smallest complete browser V0.1 through the ordered increments below.
 
-## Active V0.1 sequence
+V0.1 proves one correction loop before any expansion. Gates are evidence checkpoints, not releases or parallel work streams.
+
+## 2. Canonical sequence
 
 ```text
 Documentation baseline + Documentation Gate
-→ strict-TypeScript domain and schemas
-→ TextSurface + MockTextSurface
-→ InferenceProvider + MockInferenceProvider
-→ controller, scheduler, context, and revision
-→ validator + presentation state
-→ complete mock product + Mock Product Gate
-→ Architecture Gate
-→ BrowserTextSurface
-→ MV3 worker, options, and overlay
-→ OpenRouterProvider + Provider Gate
-→ textarea runtime
-→ conventional contenteditable runtime
-→ Browser Integration + V0.1 Conformance Gate
+→ Increment 1: Pure Core & Simulation
+→ Increment 2: Unified State Machine
+→ Increment 3: Mock Product + Architecture Gates
+→ Increment 4: Unified DOM Integration
+→ Increment 5: MV3 Shell + Provider
+→ Increment 6: Browser Integration
+→ Increment 7: V0.1 Conformance
 → stop
 ```
 
-Active gates:
+The Documentation Gate is the prerequisite baseline, not an eighth implementation increment.
+
+## 3. Documentation baseline
+
+The v2.0.1 baseline consists of:
+
+- exactly 13 Markdown files frozen as `emenda-clean-room-v2.0.1-2026-08-14`;
+- one documentation-only child commit of v2.0.0 at `a1a13607867db8e6eb2ea904f6387ba130f22ce7`;
+- 11 immutable documents verified by individual staged-Git-blob SHA-256 values;
+- an empty mutable evidence-ledger template;
+- no implementation source or unsupported product claim.
+
+After the freeze commit is pushed, its remote identity and clean worktree are verified, and the Documentation Gate passes, the current objective stops.
+
+## 4. Seven implementation increments
+
+1. **Pure Core & Simulation** — establish the strict-TypeScript package, domain and model boundaries, deterministic text policy, semantic ports, scheduler seam, and simulations.
+2. **Unified State Machine** — implement the reducer/effect architecture, revisions, settings authority, debounce, context, validation, presentation, Apply, Dismiss, and errors.
+3. **Mock Product + Architecture Gates** — prove the full loop with simulations and fake clocks, pass the Mock Product Gate, then separately prove the Architecture Gate.
+4. **Unified DOM Integration** — implement one safe browser surface for textarea and bounded contenteditable, including deterministic mapping, IME handling, self-mutation consumption, and one-step Undo.
+5. **MV3 Shell + Provider** — add the Chrome 140 shell, trusted settings, origin lifecycle, protocol, options, overlay, and fixed OpenRouter adapter, then pass the Provider Gate.
+6. **Browser Integration** — integrate both supported surface classes and verify permissions, storage isolation, teardown, accessibility, authority races, and editing behavior before passing the Browser Integration Gate.
+7. **V0.1 Conformance** — run final audits and compatibility evidence, pass the V0.1 Conformance Gate, push and verify the final implementation, and stop.
+
+The six gates are therefore placed as follows:
+
+| Gate | Checkpoint |
+| --- | --- |
+| Documentation | Before Increment 1 |
+| Mock Product | During Increment 3, before Architecture |
+| Architecture | At the end of Increment 3 |
+| Provider | At the end of Increment 5 |
+| Browser Integration | At the end of Increment 6 |
+| V0.1 Conformance | At the end of Increment 7 |
+
+## 5. V0.1 evidence endpoint
+
+Completion requires all earlier gate evidence to remain current and three distinct browser layers:
+
+1. automated extension tests in Playwright's bundled Chromium persistent context;
+2. minimum-runtime compatibility on Chromium or Chrome for Testing 140;
+3. manual unpacked-extension smoke in current Chrome Stable with the real toolbar permission prompt.
+
+Personal-use evidence records these environments separately:
 
 ```text
-Documentation
-→ Mock Product
-→ Architecture
-→ Provider
-→ Browser Integration
-→ V0.1 Conformance
+Windows Studio + current Chrome
+MacBook + current Chrome
+Chromebook + current ChromeOS/Chrome
 ```
 
-## Milestone 0: frozen baseline
+Each entry reports only what ran on that device. V0.1 is complete only after the final evidence and implementation commits are pushed and verified and the worktree is clean.
 
-Outcome:
+## 6. Deferred horizons
 
-- the 13-file Markdown package is coherent and versioned 2.0.0;
-- freeze ID is `emenda-clean-room-v2.0.0-2026-08-14`;
-- version 1.0.1 remains at `d3192b7`;
-- 11 immutable documents match staged Git-blob checksums;
-- the evidence ledger is an empty mutable template;
-- no implementation source is present.
+Evidence from real browser use may justify later objectives for broader editing surfaces, interaction refinements, release automation, or store publication.
 
-Gate: Documentation.
-
-## Milestone 1: strict-TypeScript semantics
-
-Outcome:
-
-- immutable domain values and typed failures;
-- strict Zod boundary schemas;
-- scalar-range utilities;
-- `TextSurface`, `InferenceProvider`, and minimal scheduler seams;
-- deterministic mocks;
-- no runtime-specific core types.
-
-This milestone creates foundations, not a partial product claim.
-
-## Milestone 2: complete mock product
-
-Outcome:
-
-- immediate revision authority;
-- exact 600 ms trailing-edge debounce;
-- composition invalidation;
-- sentence focus and paragraph/window context;
-- one-request current-revision policy;
-- cancellation and stale silence;
-- strict correction validation;
-- presentation state;
-- Apply and Dismiss through mocks;
-- complete deterministic product loop.
-
-Gate: Mock Product.
-
-## Milestone 3: architecture proof
-
-Outcome:
-
-- `core/` compiles without DOM, Chrome, Node, React, or extension types;
-- dependency and import direction is enforced;
-- top-level package shape and dependency allowlist are satisfied;
-- browser and message concerns remain outside the core.
-
-Gate: Architecture.
-
-## Milestone 4: browser shell and provider
-
-Outcome:
-
-- `BrowserTextSurface` supports lossless capture and refusal;
-- MV3 worker manages exact-origin permissions and one dynamic registration;
-- options page stores the key and concrete model in trusted extension storage;
-- fixed shadow-root overlay presents display-safe state;
-- versioned messages validate strictly;
-- `OpenRouterProvider` enforces endpoint, schema, timeout, body limit, cancellation, and redaction;
-- live checks establish one correction and one clean result for every supported profile plus unsupported-language behavior.
-
-Gate: Provider. Presentation evidence remains pending until integrated browser use.
-
-## Milestone 5: browser integration
-
-Outcome:
-
-- textarea capture, suggestion, Apply, Dismiss, and one-step Undo;
-- conventional contenteditable capture, suggestion, Apply, Dismiss, and one-step Undo;
-- IME, stale-result, changed-source, focus, permission, and storage behavior;
-- accessible overlay, keyboard actions, visible focus, reduced motion, and WCAG 2.2 AA styling;
-- unsupported surfaces fail closed.
-
-Gate: Browser Integration.
-
-## Milestone 6: V0.1 conformance
-
-Outcome:
-
-- all earlier gate evidence remains current;
-- persistent-Chromium suite passes from the unpacked build;
-- live provider evidence identifies concrete model and latency;
-- current Chrome Stable unpacked-extension smoke passes;
-- dependency and permission inventories are final;
-- limitations and environment facts are recorded;
-- final commit is pushed and verified;
-- worktree is clean.
-
-Gate: V0.1 Conformance. Then stop.
-
-## Post-V0.1 evidence horizon
-
-Real browser use may justify later, separately versioned objectives for broader browser-surface compatibility, interaction refinements, release automation, or store publication. Each addition requires measured benefit and explicit acceptance evidence.
-
-Native hosts, Tauri, Rust, operating-system accessibility APIs, credential vaults, packaging, signing, native placeholders, and cross-OS runtime claims remain deferred until browser usage demonstrates a material unmet need.
+Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential vaults, native packaging and signing, native placeholders, and generalized cross-OS runtime claims remain deferred. They require a separately versioned objective and evidence of a material browser-first limitation.

@@ -1,65 +1,52 @@
 # Emenda V0.1 UX
 
-> **Frozen interaction specification, version 2.0.0**
+> **Frozen interaction authority, version 2.0.1**
 
-## 1. UX north star
+## 1. Interaction promise
 
 > **Emenda improves the text while preserving the writer's Duktus and control.**
 
-The writer remains on the page, keeps focus in the original editor, sees one exact proposal, and decides whether the page changes.
+The writer stays on the page, keeps the original editor as the primary surface, sees at most one exact proposal, and decides whether text changes. Emenda never translates and never silently edits.
 
-## 2. Activation
+This file owns visible behavior and accessibility. Product behavior is authoritative in [`SPEC.md`](SPEC.md), and visual identity is authoritative in [`BRAND.md`](BRAND.md).
 
-Emenda begins on an origin only after the writer activates the toolbar action and grants permission for that exact top-level HTTP(S) origin.
+## 2. Activation and revocation
 
-The action communicates one of three simple conditions:
+Emenda observes a site only after the writer uses the toolbar action and grants permission for that exact top-level HTTP(S) origin. The action communicates the relevant next step without implying all-sites access:
 
 ```text
 Enable on this site
 Enabled on this site
-Open settings
+Open Settings
 ```
 
-Revoking an origin removes Emenda from that origin. Another origin remains inactive until separately enabled.
+Each origin is enabled independently. An invalid or unavailable origin produces a concise permission error and no partial activation.
 
-## 3. Eligible writing moment
+Revoking an origin immediately disables new checks there and removes any current Emenda overlay. Already injected content becomes inert; another enabled origin remains active.
 
-Emenda observes only a visible, focused, writable supported surface. It waits for committed input and a 600 ms pause. Composition activity clears old authority immediately while allowing the writer to finish the composition before a check begins.
+## 3. Writing flow
 
-Empty, whitespace-only, nonlinguistic, unsupported-language, and clean outcomes remain silent.
+Emenda observes only a visible, focused, writable supported surface with a collapsed caret. After committed input it waits for a 600 ms pause before checking.
 
-## 4. Product states
+Composition invalidates an old suggestion immediately but produces no check while the writer is composing. Composition end supplies the one committed change. A duplicate terminal input does not create another check.
 
-```text
-Idle
-Debouncing
-Checking
-Suggestion
-Applying
-Error
-```
+These outcomes are deliberately silent:
 
-`Idle`, `Debouncing`, and `Checking` do not create persistent visual noise. There is no Clean badge, success toast, or persistent clean state.
+- clean text;
+- empty or nonlinguistic focus;
+- unsupported language;
+- a non-collapsed selection;
+- context whose focus exceeds the 1,200-scalar bound;
+- an unsupported or ambiguous surface encountered during ordinary typing;
+- stale or cancelled background work.
 
-A writer-triggered failure may appear when action is useful, for example missing configuration, permission loss, provider failure, timeout, or a changed surface that refuses Apply. Stale background failures remain silent.
+`Idle`, `Debouncing`, and `Checking` create no persistent visual noise. There is no Clean badge, success toast, or persistent clean state.
 
-## 5. Overlay
+## 4. Suggestion overlay
 
-The overlay is:
+The overlay is fixed to a consistent viewport corner and deliberately unanchored from the caret. It is compact, visually stable, rendered in an Emenda-owned shadow root, and present only for a current suggestion or actionable error. It does not track selection geometry.
 
-- fixed to the viewport;
-- deliberately unanchored from selection geometry;
-- compact and visually stable;
-- rendered inside a shadow root;
-- shown only for a current suggestion or writer-triggered failure;
-- focus-neutral on appearance;
-- dismissible without editing text.
-
-It uses a consistent viewport corner that avoids covering the browser's primary editing focus where practical. It does not track the caret or animate across the page.
-
-## 6. Suggestion content
-
-One suggestion shows:
+One suggestion displays:
 
 ```text
 category
@@ -69,7 +56,7 @@ Apply
 Dismiss
 ```
 
-The before and after strings remain visually distinct for insertion and deletion. Category labels are plain and restrained:
+Insertions and deletions keep before and after states distinguishable. Category labels are:
 
 ```text
 Spelling
@@ -78,151 +65,113 @@ Punctuation
 Style
 ```
 
-The explanation states the local reason without implying that Emenda rewrote or improved the writer as a person.
+Style suggestions remain local and restrained. Explanations describe the defect without judging the writer.
 
-## 7. Actions
+## 5. Apply and Dismiss
 
-Apply:
+Apply acts only on the current suggestion. It enters `Applying`, changes the verified current surface once, and returns to `Idle`. The browser's next native Undo must restore the exact original text in one step.
 
-- submits only the current `SuggestionId`;
-- enters `Applying`;
-- changes the verified current surface once;
-- returns to `Idle` after success;
-- produces one browser Undo step;
-- shows a quiet writer-triggered refusal if the surface changed.
+Emenda consumes the exact self-authored input from Apply internally. A successful Apply does not debounce, request inference, or create another suggestion.
 
-Dismiss:
+If the source, focus, text, snapshot, mapping, or original substring is no longer current, Apply makes no mutation and shows a concise actionable error. If the mutation produces an unexpected external change, that change follows the ordinary committed-input flow instead of being treated as Emenda's acknowledgement.
 
-- invalidates the current suggestion;
-- preserves page text exactly;
-- returns to `Idle`.
+Dismiss invalidates the current suggestion, preserves page text exactly, and returns to `Idle`.
 
-Keyboard:
+Keyboard behavior exists only while a current suggestion is available:
 
-- `Escape` dismisses the current suggestion.
-- `Alt+Enter` applies the current suggestion.
+- `Escape` dismisses.
+- `Alt+Enter` applies.
 
-Keyboard handling is active only when Emenda has a current suggestion and must not interfere with IME composition or ordinary host shortcuts.
+These shortcuts must not interfere with IME composition or ordinary host shortcuts.
 
-## 8. Focus
+## 6. Focus and accessibility
 
-The overlay never autofocuses and never steals focus when it appears, updates, or disappears. Page typing continues uninterrupted.
+The overlay never autofocuses and never steals focus when it appears, changes, or disappears. Typing continues in the page.
 
-If the writer explicitly tabs into the overlay, focus order is logical and all controls are operable. After Apply or Dismiss, focus returns to the verified writing surface when the browser operation preserves a coherent focus path.
+If the writer deliberately tabs into Emenda UI, focus order is logical and every control is keyboard operable. After Apply or Dismiss, the verified writing surface remains or regains focus when a coherent browser focus path exists.
 
-Visible focus uses more than color alone.
+Emenda-owned overlay and options UI target WCAG 2.2 AA:
 
-## 9. Accessibility
-
-Emenda-owned UI targets WCAG 2.2 AA:
-
-- semantic controls;
-- accessible names;
-- understandable status and error text;
-- keyboard operation;
-- visible focus;
+- native semantic controls and accurate accessible names;
+- understandable suggestion, status, and error text;
+- keyboard operation without a pointer;
+- clearly visible focus using more than color alone;
 - sufficient text, control, and meaningful non-text contrast;
-- color paired with text or shape;
+- meaning conveyed by text or shape as well as color;
 - reduced-motion support;
-- stable placement and restrained animation;
+- stable placement and restrained motion;
 - no focus change caused solely by suggestion arrival.
 
-Presentation and accessibility evidence is collected in the Browser Integration Gate.
+Suggestions and errors must be available to assistive technology without repeatedly announcing hidden debounce or checking activity. Browser Integration owns the accessibility evidence.
 
-## 10. Language and authorship
-
-Profiles are `auto`, `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE`, and `ru-RU`. Unsupported language fails closed.
-
-The correction preserves:
-
-```text
-meaning
-voice
-register
-terminology
-names
-quotations
-rhythm
-Duktus
-```
-
-Emenda never translates. Style corrections are restrained and local.
-
-## 11. Settings
+## 7. Settings
 
 The options page provides:
 
 - a write-only OpenRouter API-key field;
 - a required concrete structured-output model field;
-- language-profile selection;
+- profile selection, defaulting to `auto`;
 - enabled-origin review and revocation;
-- concise privacy disclosure.
+- the privacy disclosure below.
 
-After saving, the key is never displayed back in full. Content scripts see only whether a key exists. The disclosure states that the key is stored in the browser profile and is not protected by an operating-system secret vault.
+The profile choices are `auto`, `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE`, and `ru-RU`.
 
-There is no prominent model picker in the writing overlay.
+Options communicates only with the service worker. After saving, the API key is never displayed back in full. The model and key never appear in the page or writing overlay.
 
-## 12. Errors
+Changing the API key, model, or profile cancels any active check and removes any visible suggestion. Emenda resumes on the next committed input; it does not retry the interrupted text. Origin enablement and revocation remain separate controls.
+
+There is no model picker in the writing overlay.
+
+## 8. Errors
 
 Writer-visible errors are concise, typed, and actionable:
 
-- configuration required;
-- site permission unavailable;
-- current surface unsupported;
-- correction expired because the text changed;
-- provider unavailable or timed out;
-- response could not be validated.
+| Condition | Visible action |
+| --- | --- |
+| API key or model missing | Configuration required, with **Open Settings** |
+| Site permission unavailable | Explain that Emenda could not be enabled for this site |
+| Current provider failure or timeout | Explain that the check failed and writing can continue |
+| Invalid response or fixed-profile `LanguageMismatch` | Explain that no safe suggestion could be produced |
+| Apply refusal after the writer acts | Explain that the text or surface changed and nothing was applied |
 
-Errors contain no raw request text, model body, source identity, or credential detail. A later committed input clears obsolete presentation and begins a new revision.
+Unsupported capture during ordinary typing and stale background failures remain silent. New committed input clears an obsolete error and begins a new revision.
 
-## 13. Supported and excluded surfaces
+Errors never display an API key, authorization detail, raw request context, raw model body, source identity, DOM data, or page URL.
 
-Positive V0.1 claims cover enabled top-level HTTP(S) pages with visible, focused, writable light-DOM textareas and conventional contenteditable surfaces whose mapping is lossless.
+## 9. Privacy disclosure
 
-Inputs, iframes, shadow DOM, rich, virtualized, canvas, and Google Docs-style editors, restricted pages, file URLs, PDFs, readonly or disabled surfaces, and incognito are presented as unsupported rather than unreliable.
+The options page displays this text verbatim:
 
-## 14. Visual behavior
+> Emenda sends only the current bounded text context, up to 1,200 Unicode scalars, to OpenRouter and the provider serving the configured model. It does not send the page URL, full document, source identity or DOM structure. Processing remains subject to OpenRouter’s and the model provider’s policies. The API key is stored in the browser profile, not in an operating-system secret vault.
 
-Use:
+Emenda shows no claim that browser-profile storage is an operating-system secret vault. The UI makes no telemetry, analytics, or text-history claim because V0.1 implements none.
 
-```text
-Paper       → overlay and options background
-Ink Black   → structure, text, primary action
-Graphite    → secondary text
-Steel Gray  → qualifying large text and non-text guides
-Oxblood     → rare correction or failure accent
-Inter       → functional interface
-Special Elite → restrained brand moments
-```
+## 10. Supported and unsupported surfaces
 
-Keep spacing generous, controls compact, borders precise, and movement quiet.
+Positive V0.1 claims cover explicitly enabled top-level HTTP(S) pages with a visible, focused, writable light-DOM textarea or the bounded contenteditable grammar in [`SPEC.md`](SPEC.md). Exact logical text and the replacement span must map losslessly.
 
-## 15. UX decision function
+Inputs, iframes, shadow-DOM editors, rich, virtualized, canvas, and Google Docs-style editors, restricted or extension pages, file URLs, PDFs, readonly or disabled surfaces, ambiguous contenteditable structures, and incognito are unsupported. Ordinary typing in them remains silent rather than unreliable.
 
-```text
-1. Preserve writer control and page focus.
-2. Show the exact proposed change.
-3. Keep authority and staleness understandable.
-4. Use the fewest useful actions.
-5. Preserve one-step browser Undo.
-6. Preserve meaning and Duktus.
-7. Make unsupported conditions explicit.
-8. Meet accessibility requirements.
-9. Keep the interface visually quiet.
-```
+## 11. Visual behavior
 
-## 16. V0.1 UX Definition of Done
+Apply [`BRAND.md`](BRAND.md) to a quiet functional interface: compact controls, precise borders, generous internal spacing, readable before/after text, restrained accent color, stable placement, and no decorative motion that competes with writing.
+
+The overlay does not add caret anchoring, inline underlines, multiple-suggestion review, or persistent status chrome.
+
+## 12. UX completion and boundary
+
+The future implemented experience is complete when a writer can:
 
 ```text
-writer enables an origin
-→ writes in a supported surface
-→ pauses
-→ receives at most one exact suggestion without losing focus
-→ applies or dismisses
-→ Apply is safe and reversible with one Undo
-→ writing continues
+enable one origin
+→ write in a supported surface
+→ pause
+→ receive at most one exact suggestion without losing focus
+→ Apply or Dismiss
+→ Undo an Apply in one native step
+→ continue writing without a self-triggered check
 ```
 
-## 17. Deferred UX
+Caret anchoring, inline underlines, multiple suggestions, review-all flows, inputs, complex editors, native surfaces, packaging, signing, and store-publication UX are deferred.
 
-Caret anchoring, inline underlines, geometry APIs, multiple suggestions, review-all flows, inputs, complex editors, native surfaces, packaging, signing, and store-publication UX are later evidence-led objectives.
+The current v2.0.1 objective freezes documentation only. Implementing this UX requires a separate future objective.

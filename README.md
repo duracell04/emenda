@@ -1,100 +1,58 @@
 # Emenda
 
-> **Frozen clean-room constitution, version 2.0.0**
+> **Frozen clean-room constitution, version 2.0.1**
 
 > **Preserve your Duktus**
 
-Emenda is a quiet personal writing assistant. V0.1 is one Chromium Manifest V3 extension backed by an OS-agnostic strict-TypeScript core. It observes eligible browser text, asks a user-configured OpenRouter model for zero or one structured correction, validates the response locally, and lets the writer apply the exact change explicitly.
+Emenda V0.1 is specified as a quiet personal writing assistant for Chromium. It observes committed changes on explicitly enabled sites, waits for typing to settle, sends one bounded context to a user-configured OpenRouter model, validates the structured result locally, and presents at most one exact correction for the writer to apply or dismiss.
 
-## V0.1 product model
+This branch currently contains the 13-file Markdown constitution only. Version 2.0.1 supersedes version 2.0.0, preserved at commit `a1a13607867db8e6eb2ea904f6387ba130f22ce7`. Product implementation requires a separate future objective.
 
-```text
-eligible committed input
-→ reserve current revision immediately
-→ 600 ms trailing-edge debounce
-→ capture a DOM-free snapshot
-→ select sentence focus and bounded context
-→ fixed OpenRouter structured-output request
-→ strict local validation
-├─ zero corrections → Idle
-└─ one correction → fixed overlay
-   → Apply or Dismiss
-   → verified one-step undo-aware edit or no mutation
-```
-
-Emenda supports explicitly enabled top-level HTTP(S) pages with a visible, focused, writable light-DOM `<textarea>` or conventional `contenteditable` surface that maps losslessly. Unsupported or ambiguous surfaces fail closed.
-
-## Architecture
+## Intended V0.1 experience
 
 ```text
-core/                     strict TypeScript; no browser or runtime types
-extension/content/        controller, BrowserTextSurface, overlay
-extension/worker/         permissions, trusted settings, cancellation, fetch
-extension/options/        API-key and model configuration
-tests/                    deterministic and persistent-Chromium evidence
-scripts/build-extension.mjs
+enable an exact site origin
+→ write in a supported surface
+→ pause for 600 ms
+→ receive zero or one current suggestion
+→ Apply or Dismiss
+→ continue writing with page focus and one-step Undo preserved
 ```
 
-The product uses one npm package. Zod is the only direct runtime dependency. Plain TypeScript and DOM APIs implement the overlay and options page.
+V0.1 targets Chrome 140 or newer and supports visible, focused, writable, light-DOM `<textarea>` elements and the bounded `contenteditable` grammar defined in [`SPEC.md`](SPEC.md). Inputs, iframes, shadow-DOM editors, rich or virtualized editors, Google Docs-style surfaces, restricted pages, file URLs, PDFs, readonly surfaces, and incognito are unsupported.
 
-## Privacy and permissions
+## Settings and site access
 
-- Toolbar activation requests optional permission for the exact current origin.
-- One dynamic content-script registration covers enabled origins.
-- There is no static all-sites content script and no `<all_urls>` grant.
-- The API key and model stay in `chrome.storage.local`, restricted to trusted extension contexts.
-- Content scripts receive only `hasApiKey`; raw DOM data and source identity never enter worker messages.
-- Browser-profile storage is disclosed as local browser storage, not an operating-system secret vault.
-- There is no telemetry, analytics, or persistent text cache.
+- The writer supplies an OpenRouter API key, one concrete structured-output model, and a language profile.
+- `auto` is the default profile; fixed profiles are `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE`, and `ru-RU`.
+- The toolbar requests optional permission for the exact active HTTP(S) origin.
+- Revoking an origin makes live content scripts inert and removes its registration and permission.
+- The worker owns trusted settings. Options communicates with the worker; content scripts never receive the API key or model.
 
-## Canonical implementation sequence
+## Privacy
 
-```text
-Documentation baseline + Documentation Gate
-→ strict-TypeScript domain and schemas
-→ TextSurface + MockTextSurface
-→ InferenceProvider + MockInferenceProvider
-→ controller, scheduler, context, and revision
-→ validator + presentation state
-→ complete mock product + Mock Product Gate
-→ Architecture Gate
-→ BrowserTextSurface
-→ MV3 worker, options, and overlay
-→ OpenRouterProvider + Provider Gate
-→ textarea runtime
-→ conventional contenteditable runtime
-→ Browser Integration + V0.1 Conformance Gate
-→ stop
-```
+> Emenda sends only the current bounded text context, up to 1,200 Unicode scalars, to OpenRouter and the provider serving the configured model. It does not send the page URL, full document, source identity or DOM structure. Processing remains subject to OpenRouter’s and the model provider’s policies. The API key is stored in the browser profile, not in an operating-system secret vault.
 
-## Active gates
+Emenda specifies no telemetry, analytics, correction history, persistent text cache, request logging, retry, streaming, provider fallback, or model substitution.
 
-```text
-Documentation
-→ Mock Product
-→ Architecture
-→ Provider
-→ Browser Integration
-→ V0.1 Conformance
-```
+## Constitutional authority
 
-## Documentation map
+- [`SPEC.md`](SPEC.md) defines product behavior, safety, compatibility, and failures.
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) defines ownership and dependency direction.
+- [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) defines the Documentation baseline and seven future implementation increments.
 
-1. [`PROMPT.md`](PROMPT.md): autonomous V0.1 objective
-2. [`AGENTS.md`](AGENTS.md): agent governance
-3. [`SPEC.md`](SPEC.md): product and semantic contracts
-4. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): dependency direction and extension composition
-5. [`ROADMAP.md`](ROADMAP.md): milestone sequence and later horizons
-6. [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md): ordered build increments
-7. [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md): gate evidence and conformance criteria
-8. [`docs/ENGINEERING.md`](docs/ENGINEERING.md): engineering and verification standards
-9. [`UX.md`](UX.md): writer interaction and accessibility rules
-10. [`BRAND.md`](BRAND.md): visual identity and extension assets
-11. [`docs/EVIDENCE.md`](docs/EVIDENCE.md): mutable implementation ledger template
-12. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md): freeze identity, supersession, inventory, and checksums
+Supporting documents:
 
-Together these 13 Markdown files form freeze `emenda-clean-room-v2.0.0-2026-08-14`. Version 2.0.0 supersedes version 1.0.1 while preserving the earlier constitution at Git commit `d3192b7`.
+- [`PROMPT.md`](PROMPT.md) — objective and entry point
+- [`AGENTS.md`](AGENTS.md) — repository operating constraints
+- [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) — gate verification
+- [`docs/ENGINEERING.md`](docs/ENGINEERING.md) — toolchain and evidence policy
+- [`UX.md`](UX.md) — visible behavior and accessibility
+- [`ROADMAP.md`](ROADMAP.md) — V0.1 and deferred work
+- [`BRAND.md`](BRAND.md) — visual identity
+- [`docs/EVIDENCE.md`](docs/EVIDENCE.md) — mutable empty evidence template
+- [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) — freeze identity and checksums
 
-## Explicitly deferred
+## Scope boundary
 
-Native hosts, Tauri, Rust, operating-system accessibility APIs, packaging, signing, Chrome Web Store publication, release automation, and native placeholders belong to later separately versioned objectives. Cross-OS runtime support is claimed only when independently evidenced.
+Native runtimes, native credential stores, broader editor support, packaging, signing, store publication, release automation, and commercial infrastructure are deferred. Claims remain limited to environments directly tested in a future implementation objective.

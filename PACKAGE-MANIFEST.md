@@ -1,24 +1,16 @@
-# Emenda Frozen Clean-Room Build Context
+# Emenda Frozen Clean-Room Constitution
 
-> **Frozen package manifest, version 2.0.0**
+> **Frozen package manifest, version 2.0.1**
 
-> **Freeze ID: `emenda-clean-room-v2.0.0-2026-08-14`**
+> **Freeze ID: `emenda-clean-room-v2.0.1-2026-08-14`**
 
-This documentation-only package is the canonical constitution for Emenda's browser-only TypeScript V0.1.
+This documentation-only package is the complete constitution for a future, separately authorized Emenda V0.1 implementation objective.
 
-Version 2.0.0 supersedes version 1.0.1. The historical v1.0.1 constitution remains preserved at Git commit `d3192b7`; its manifest hashes are historical and are not repaired in place. Archived implementation code remains outside `main`.
+Version 2.0.1 supersedes version 2.0.0, preserved at Git commit `a1a13607867db8e6eb2ea904f6387ba130f22ce7`. Version 2.0.0 in turn preserves the earlier v1.0.1 constitution at `d3192b74a7dd78c0029bfee44fd087876d8ce774`.
 
-## Package objective
+## Objective boundary
 
-```text
-strict-TypeScript browser-independent product semantics
-→ complete deterministic product through mocks
-→ architecture isolation
-→ Chromium MV3 leaf integration
-→ OpenRouter provider conformance
-→ textarea and contenteditable runtime conformance
-→ unpacked V0.1 completion
-```
+The v2.0.1 objective ends after these 13 Markdown files are rewritten, verified, hashed, committed, pushed, and the worktree is clean. This package contains no tracked implementation source and does not authorize implementation. Product work requires a separate future objective.
 
 ## Contents
 
@@ -26,126 +18,72 @@ strict-TypeScript browser-independent product semantics
 - `AGENTS.md`
 - `SPEC.md`
 - `docs/ARCHITECTURE.md`
-- `ROADMAP.md`
 - `docs/IMPLEMENTATION-PLAN.md`
 - `docs/ACCEPTANCE.md`
 - `docs/ENGINEERING.md`
-- `docs/EVIDENCE.md` — mutable implementation ledger, not constitutional authority
 - `UX.md`
+- `ROADMAP.md`
 - `BRAND.md`
 - `README.md`
-- `PACKAGE-MANIFEST.md`
+- `docs/EVIDENCE.md` — mutable factual ledger template
+- `PACKAGE-MANIFEST.md` — freeze identity and integrity data
 
-All 13 files are Markdown. This freeze contains no application source, dependency manifest, executable configuration, binary asset, credential, generated implementation artifact, or implementation evidence.
+The 11 immutable constitutional documents are all listed files except this manifest and `docs/EVIDENCE.md`.
 
-The 11 immutable constitutional documents are every listed file except this manifest and `docs/EVIDENCE.md`.
-
-## Reading order
-
-1. `PROMPT.md`
-2. `AGENTS.md`
-3. `SPEC.md`
-4. `docs/ARCHITECTURE.md`
-5. `ROADMAP.md`
-6. `docs/IMPLEMENTATION-PLAN.md`
-7. `docs/ACCEPTANCE.md`
-8. `docs/ENGINEERING.md`
-9. `UX.md`
-10. `BRAND.md`
-11. `README.md`
-
-`docs/EVIDENCE.md` is initialized only after this reading order and the Documentation Gate are complete.
-
-## Source-of-truth hierarchy
+## Subject authority
 
 ```text
-PROMPT.md                    autonomous objective and hard limits
-AGENTS.md                    persistent agent governance
-SPEC.md                      product and semantic contracts
-docs/ARCHITECTURE.md         dependency direction and runtime ownership
-ROADMAP.md                   milestone order
-docs/IMPLEMENTATION-PLAN.md  exact implementation increments
-docs/ACCEPTANCE.md           required gate evidence
-docs/ENGINEERING.md          engineering quality system
-UX.md                        writer interaction and accessibility
-BRAND.md                     visual identity and extension assets
-README.md                    concise orientation
-docs/EVIDENCE.md             mutable factual ledger only
+SPEC.md                      product behavior, safety, compatibility, failures
+docs/ARCHITECTURE.md         ownership, boundaries, dependency direction
+docs/IMPLEMENTATION-PLAN.md  future implementation order and gate placement
 ```
 
-## Canonical implementation sequence
+`PROMPT.md` and `AGENTS.md` define the objective and operating constraints. Acceptance and Engineering verify the authorities. UX, Roadmap, Brand, and README specialize or summarize their assigned subject without overriding them. Evidence records facts only.
 
-```text
-Documentation baseline + Documentation Gate
-→ strict-TypeScript domain and schemas
-→ TextSurface + MockTextSurface
-→ InferenceProvider + MockInferenceProvider
-→ controller, scheduler, context, and revision
-→ validator + presentation state
-→ complete mock product + Mock Product Gate
-→ Architecture Gate
-→ BrowserTextSurface
-→ MV3 worker, options, and overlay
-→ OpenRouterProvider + Provider Gate
-→ textarea runtime
-→ conventional contenteditable runtime
-→ Browser Integration + V0.1 Conformance Gate
-→ stop
-```
+## Future scope
 
-## Active gates
+The future V0.1 product is one strict-TypeScript core and one Chromium Manifest V3 extension requiring Chrome 140 or newer. It has seven numbered implementation increments and six separate gates. The Documentation Gate is the prerequisite, not an implementation increment.
 
-```text
-Documentation
-→ Mock Product
-→ Architecture
-→ Provider
-→ Browser Integration
-→ V0.1 Conformance
-```
-
-Presentation and accessibility evidence belongs to Browser Integration.
-
-## Active runtime and deferral
-
-The only active V0.1 runtime is an unpacked Chromium Manifest V3 extension backed by an OS-agnostic strict-TypeScript core.
-
-Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, packaging, signing, Chrome Web Store publication, release automation, native placeholders, and cross-OS runtime claims are deferred to separately versioned objectives.
-
-## Freeze lifecycle
-
-During implementation, the builder initializes and appends factual status to `docs/EVIDENCE.md`. The ledger may change without changing the constitution.
-
-A material change to product behavior, architecture, UX, brand, acceptance, implementation order, or agent governance requires a newly versioned package and newly staged checksums.
+Native runtimes, operating-system accessibility APIs, native credential stores, packaging, signing, store publication, release automation, commercial infrastructure, and placeholders for deferred runtimes remain outside V0.1.
 
 ## Integrity checksums
 
-The SHA-256 values below cover the exact Git-blob bytes staged for the 11 immutable documents. They exclude this manifest and the mutable evidence ledger.
+The following SHA-256 values cover the exact raw Git-blob bytes staged for the 11 immutable documents. They are individual checksums; no aggregate digest replaces them. This manifest and the mutable evidence ledger are excluded.
 
-- `AGENTS.md`: SHA-256 `6c438956abee423718e7ab349e18f0a8739629e5fb301a8f984ebe4b4a98062c`
-- `BRAND.md`: SHA-256 `546bd7848e16c8a7f58e45f867d71987a6dceeb081647a2ac71a448e5389525a`
-- `PROMPT.md`: SHA-256 `17ac5454be674dc6379123adf929f20d8056653b2ddedc436266a300b632c991`
-- `README.md`: SHA-256 `850c5cfd439b0d1937821bdcb2a1ba8ed78f525701f8e174093c81bd16f0329d`
-- `ROADMAP.md`: SHA-256 `9bbaf656c75718b24c342216094f53bda9fcb914ba89fe8c3b47f597a16b2a2b`
-- `SPEC.md`: SHA-256 `1e7426d2714a30d246895d3869ea1c3589c0e78bbb3f1f80d7ce7a2f26d04bc3`
-- `UX.md`: SHA-256 `2785e05fcc2d8fb2f13b66897fea76ca357193d5168a2f82977a3c43440faa76`
-- `docs/ACCEPTANCE.md`: SHA-256 `7f7599551abe219cf03568aaa6cd29ef4481d2aa0f9100eff85f1c2ef61f4079`
-- `docs/ARCHITECTURE.md`: SHA-256 `d10e548c2a5e7e9f1ba668d05f697fe2792845507d9b01b9532a7857aa2d0693`
-- `docs/ENGINEERING.md`: SHA-256 `e9961b9b5b837efdf838c61d03bdf53c85d820b32a0f01ad43c6d3c96dad16f3`
-- `docs/IMPLEMENTATION-PLAN.md`: SHA-256 `3a3843e4612d952d3a475dc484e707b59d64d4d661ba04448f5708127402c200`
+- `AGENTS.md`: SHA-256 `8bfefd810f30dbdec04fcc1cd21c54c4108a4dada2e723633ea7109b320b66fb`
+- `BRAND.md`: SHA-256 `59281de06330e552c7d608b56d2e742f18c9a1aa5090450a5c7800d452903c6c`
+- `PROMPT.md`: SHA-256 `b348f6896bba97c7cea52a25d6c91f961052aac573c07e4ff2c4cbbd00d8f1ef`
+- `README.md`: SHA-256 `564f369bf7a6ad12435a5b768fae7095b8e23a9acfd16bd6dd5d7a102f94ff59`
+- `ROADMAP.md`: SHA-256 `97df1f20c2f6c8007c913359e23e8f19e8e9de8f5aa95300e053a6495f14bc1c`
+- `SPEC.md`: SHA-256 `dd1a3d4c5870194cbac78a7c0cb91239e3f00a8b7e842b664f03c79a34aa4acd`
+- `UX.md`: SHA-256 `ee389558db7c70fd25a474ebc42fad5e29d7c476c532e27353f9d9ebd30672ad`
+- `docs/ACCEPTANCE.md`: SHA-256 `a9dbab367dde51c4714ba51dd6e80a0cc33aa066c45a37506b47c02c4fddc42a`
+- `docs/ARCHITECTURE.md`: SHA-256 `a05e16ebf0d9d24a2146193401c33312c404b6e7f2d9d662548e72f176aa4d14`
+- `docs/ENGINEERING.md`: SHA-256 `91f9aff96db569f7042659f56b665ff003740b783c2f207ab3519fb6b9d032c8`
+- `docs/IMPLEMENTATION-PLAN.md`: SHA-256 `e2abb8e2145178b7d1d0654f69a8457c5e994b63568777b8f2789969e21f686d`
 
 ## Freeze validation
 
-A valid v2.0.0 documentation freeze satisfies:
+A valid v2.0.1 freeze proves:
 
 ```text
-exactly 13 Markdown files are present
-→ every file identifies version 2.0.0
-→ local links resolve
-→ canonical sequences are identical
-→ native references are deferred only
-→ 11 staged Git-blob hashes match this manifest
-→ this manifest and the evidence ledger are excluded from checksums
-→ the evidence ledger contains no implementation claim
-→ git diff --check passes
+the tracked tree contains exactly the declared 13 Markdown paths
+→ every document identifies v2.0.1 and every ancestry reference is correct
+→ local Markdown links resolve
+→ every canonical-sequence occurrence is byte-identical
+→ the six gate names and ownership are consistent
+→ the 11 staged raw-blob SHA-256 values match this manifest
+→ this manifest and docs/EVIDENCE.md are excluded from those hashes
+→ the evidence ledger contains no implementation evidence
+→ the diff is documentation-only and git diff --check passes
+→ the documentation commit is pushed and remote identity is verified
+→ the worktree is clean
 ```
+
+Working-tree line-ending conversions are not the checksum boundary. Hash the staged Git blobs.
+
+## Freeze lifecycle
+
+The immutable documents remain frozen during a future implementation objective. The evidence ledger may append factual entries about already-existing tested implementation commits. Any material product, safety, architecture, UX, acceptance, implementation-order, brand, or governance change requires a newly versioned constitution and new staged checksums.
+
+The constitution resolves all product, safety, architecture, and acceptance decisions. The implementation agent retains ordinary discretion over local naming and code organization within the locked boundaries.

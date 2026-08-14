@@ -1,202 +1,86 @@
 # Emenda Engineering Standard
 
-> **Frozen engineering standard, version 2.0.0**
+> **Frozen engineering standard, version 2.0.1**
 
-## 1. Engineering objective
+## 1. Purpose
 
-Build the smallest inspectable system that makes incorrect state, stale authority, invalid external data, overbroad permissions, and unsafe mutation difficult to express.
+This document defines the V0.1 toolchain, verification policy, evidence vocabulary, and change discipline. Product behavior belongs to [`SPEC.md`](../SPEC.md), architectural ownership belongs to [`ARCHITECTURE.md`](ARCHITECTURE.md), and build order belongs to [`IMPLEMENTATION-PLAN.md`](IMPLEMENTATION-PLAN.md).
 
-V0.1 optimizes for:
+The current objective is the v2.0.1 documentation freeze. Implementation begins only under a separate future objective.
 
-```text
-semantic clarity
-→ deterministic behavior
-→ narrow browser authority
-→ strict boundaries
-→ direct runtime evidence
-→ low maintenance burden
-```
+## 2. Toolchain and dependency policy
 
-## 2. Canonical implementation sequence
+Use one npm package and strict TypeScript.
 
-```text
-Documentation baseline + Documentation Gate
-→ strict-TypeScript domain and schemas
-→ TextSurface + MockTextSurface
-→ InferenceProvider + MockInferenceProvider
-→ controller, scheduler, context, and revision
-→ validator + presentation state
-→ complete mock product + Mock Product Gate
-→ Architecture Gate
-→ BrowserTextSurface
-→ MV3 worker, options, and overlay
-→ OpenRouterProvider + Provider Gate
-→ textarea runtime
-→ conventional contenteditable runtime
-→ Browser Integration + V0.1 Conformance Gate
-→ stop
-```
+The only direct runtime dependency is Zod. Development dependencies are limited to TypeScript, esbuild, Vitest, Playwright, Chrome types, and Node types. Plain TypeScript, HTML, and CSS implement extension UI.
 
-## 3. TypeScript standard
+Do not add React, Vite, Tailwind, extension frameworks, OpenRouter SDKs, monorepo tooling, backends, databases, or code generation. Every dependency, permission, abstraction, and build output must serve a current V0.1 requirement.
 
-- Enable strict TypeScript and the strongest practical unchecked-access, override, fallthrough, and exact-optional-property checks.
-- Model states and failures as exhaustive discriminated unions.
-- Use branded or opaque types for revision, source, snapshot, suggestion, and message identifiers.
-- Prefer immutable readonly values and pure policy functions.
-- Keep scalar/UTF-16 conversion explicit at leaf boundaries.
-- Avoid type assertions at trust boundaries; parse through strict Zod schemas.
-- Make impossible transitions compile-time or local runtime failures.
+Enable strictness checks for unchecked indexed access, exact optional properties, overrides, and fallthrough. Use immutable values and exhaustive discriminated unions. Parse external data through the permitted strict Zod boundaries; do not repair or guess invalid data.
 
-`core/` has its own compilation target with no DOM, Chrome, Node, React, or extension ambient types.
+## 3. Determinism and boundary discipline
 
-## 4. Boundary validation
+- Keep policy functions and the reducer pure; drive timers with a minimal fake-clock-compatible scheduler seam.
+- Treat revision equality as authority. Cancellation saves work but never establishes correctness.
+- Check authority again at every asynchronous completion before state, presentation, or text can change.
+- Use Unicode scalar offsets in product logic and explicit lossless conversion at browser boundaries.
+- Validate messages, trusted settings, provider responses, DOM capture, range mapping, and pre-mutation state at their owning boundaries.
+- Refuse ambiguity. Do not normalize, relocate, widen, retry, heal, or recover by fuzzy or unique matching.
+- Keep the undo-aware mutation leaf isolated and prove its behavior in real Chromium.
 
-Validate at:
+## 4. Verification layers
 
-- runtime message send and receive;
-- trusted settings read;
-- model response parse;
-- provider error conversion;
-- DOM-to-semantic capture;
-- semantic-to-DOM range mapping;
-- pre-mutation current-state checks.
+### Static and compiled verification
 
-Schemas reject unknown properties. Validation never repairs, guesses, relocates, or widens authority.
+Inspect dependency, import, schema, manifest, permission, and bundle boundaries. Compile the core under a configuration without DOM, Chrome, Node, React, or extension ambient types, and compile the extension under its browser configuration.
 
-## 5. Deterministic time and concurrency
+### Deterministic verification
 
-The scheduler seam exists only to make trailing-edge timing deterministic. Tests use fake clocks.
+Use Vitest, fake clocks, deterministic surface and provider simulations, and controlled fetch/message doubles. Cover Unicode ranges, context selection, reducer transitions, configuration races, cancellation order, stale work, validation, redaction, IME commitment, Apply, Dismiss, self-authored mutation, and refusal.
 
-Revision equality is the authority mechanism. Cancellation reduces wasted work but never establishes correctness. Every asynchronous continuation checks current revision before changing state or text.
+Tests assert observable contracts rather than private helper structure. Fixtures are synthetic and domain-neutral. Timing tests control exact boundaries and completion order; arbitrary waits are not acceptable fixes for flaky tests.
 
-Provider requests, body reads, and message replies have explicit ownership and completion paths. Worker suspension or restart cannot grant stale authority.
+### Provider verification
 
-## 6. Unicode and text mapping
+Prove payload, routing, structured-output schema, timeout, incremental body limit, cancellation, local validation, and redacted error conversion with controlled doubles. At the Provider Gate, use a dedicated spend-limited key for the required live profile cases and record the configured model, UTC time, latency, and sanitized outcome without retaining request text or credentials.
 
-Core logic uses Unicode scalar offsets. Tests include Georgian, Russian, combining marks, emoji, and boundary cases.
+### Browser verification
 
-Browser adapters may use UTF-16 and DOM Range internally, but each conversion must:
+Use three distinct layers:
 
-- preserve exact logical text;
-- round-trip start and end positions;
-- distinguish insertion, deletion, and replacement;
-- refuse ambiguous node, line-break, or normalization mappings;
-- verify the exact original substring before mutation.
+1. Automated extension tests in Playwright's bundled Chromium persistent context, following its [extension-testing guidance](https://playwright.dev/docs/chrome-extensions).
+2. A direct minimum-runtime compatibility test on Chromium or Chrome for Testing 140.
+3. A manual unpacked-extension smoke in current Chrome Stable, including the actual toolbar permission prompt.
 
-## 7. Testing layers
+Browser verification uses the production unpacked build and covers supported and refused surfaces, storage isolation, activation and revocation, worker lifecycle, overlay accessibility, IME, authority races, safe Apply, and exact one-step Undo.
 
-### Unit and property-focused tests
+Record Windows Studio with current Chrome, MacBook with current Chrome, and Chromebook with current ChromeOS/Chrome as separate personal-device results. Do not infer an untested cross-OS support claim from any one result.
 
-Cover scalar utilities, context selection, schemas, validation, state transitions, message parsing, and redaction.
+## 5. Cross-platform audit entry point
 
-### Deterministic product tests
+The future implementation provides one cross-platform `scripts/audit.mjs` command that orchestrates the checks applicable to the current phase. It makes documentation validation, individual checksum verification, compilation, tests, build inspection, and final audits reachable through one entry point as those capabilities exist.
 
-Compose `MockTextSurface`, `MockInferenceProvider`, and fake clocks. Prove the entire writer loop, races, cancellation, staleness, Apply, Dismiss, and refusals.
+The audit must be read-only with respect to constitutional and implementation sources. It retains the 11 independent staged-Git-blob SHA-256 checks rather than introducing an aggregate digest. Internal helpers, presentation, and exact command output remain implementation choices; do not create parallel audit scripts.
 
-### Provider adapter tests
+## 6. Evidence policy
 
-Use controlled fetch and message doubles to prove endpoint, minimal payload, strict schema, timeout, body limit, cancellation, typed failures, and redaction.
+Use these evidence levels precisely:
 
-### Browser integration tests
+- `inspected`: static source, diff, configuration, or artifact inspection;
+- `compiled`: compiler or build completion;
+- `deterministic`: controlled automated behavior;
+- `integration`: automated persistent-Chromium extension behavior;
+- `live`: real OpenRouter behavior;
+- `runtime`: minimum-version, current-Stable, or named-device smoke.
 
-Use Playwright persistent Chromium following the official [extension-testing setup](https://playwright.dev/docs/chrome-extensions). Exercise the built unpacked extension, permission lifecycle, real editing surfaces, overlay behavior, focus, IME, and one-step Undo.
-
-### Live provider checks
-
-Use a dedicated spend-limited key only at the Provider Gate. Record the concrete model and latency. Keep credentials and raw private text out of evidence.
-
-### Final smoke
-
-Load the unpacked production build in current Chrome Stable and exercise one clean and one correction path on each supported surface class.
-
-## 8. Test quality
-
-Tests assert product invariants and observable outcomes rather than private implementation shape. Fixtures are synthetic and domain-neutral. Each regression test states the invariant it protects.
-
-Timing tests assert exact boundaries. Stale-work tests control completion order. Undo tests compare complete original text after one browser Undo.
-
-Flaky browser tests are failures. Diagnose the underlying event, focus, permission, or lifecycle contract rather than increasing arbitrary waits.
-
-## 9. Security and privacy
-
-- Request the narrowest exact-origin permission only through writer action.
-- Keep the OpenRouter host as the sole required host permission.
-- Restrict storage to trusted extension contexts.
-- Keep source identity and DOM data inside the content script.
-- Send only bounded context required for the current check.
-- Redact secrets, headers, raw context, and raw response bodies.
-- Keep executable code local.
-- Maintain zero telemetry, analytics, and persistent text cache.
-
-Treat browser-profile storage as a disclosed local convenience boundary, not as a secret vault.
-
-## 10. Provider discipline
-
-Use the fixed endpoint and a user-configured concrete structured-output model. Keep the payload minimal and non-streaming, set `provider.require_parameters: true`, and apply strict JSON Schema plus local Zod validation.
-
-Enforce:
-
-```text
-one request per current eligible revision
-eight-second timeout
-32 KiB response limit
-best-effort cancellation
-zero retry
-zero response healing
-zero fallback model
-```
-
-The adapter copies revision identity; the model never authors it.
-
-## 11. DOM mutation discipline
-
-`document.execCommand("insertText")` is a deliberately isolated, runtime-gated leaf because V0.1 requires a browser undo-aware edit. The product positively supports only fixtures and real surfaces where integration evidence proves one Undo restores exact original text.
-
-No direct-value assignment, DOM rewrite, clipboard path, simulated key path, or fallback mutation is permitted. When the leaf is unavailable or mapping is uncertain, return a typed refusal.
-
-## 12. Dependencies and build
-
-Use one npm package.
-
-Runtime:
-
-- Zod.
-
-Development:
-
-- TypeScript;
-- esbuild;
-- Vitest;
-- Playwright;
-- Chrome types;
-- Node types.
-
-Plain TypeScript, HTML, and CSS implement options and overlay. Keep React, Vite, Tailwind, extension frameworks, OpenRouter SDKs, monorepo tooling, backends, databases, and code generation outside V0.1.
-
-`scripts/build-extension.mjs` is the single explicit build entry. Review emitted assets for local executable code and minimal permissions.
-
-## 13. Change and commit discipline
-
-Each increment:
-
-- expresses one product invariant or architectural decision;
-- adds the smallest implementation and evidence needed;
-- runs focused checks before broad checks;
-- receives diff and dependency inspection;
-- appends factual evidence;
-- commits and pushes with verified identity.
-
-The constitution is immutable during implementation. A material product or architecture change creates a new version rather than an evidence-ledger edit.
-
-## 14. Evidence hygiene
-
-Evidence records:
+An evidence entry records:
 
 ```text
 UTC time
 gate or increment
-commit
-commands
+tested implementation tree
+tested implementation commit
+commands or actions
 exact result
 environment
 evidence level
@@ -204,12 +88,16 @@ limitations
 next checkpoint
 ```
 
-Record what was not tested. Separate compiler proof, deterministic proof, integration proof, live-provider proof, and runtime smoke.
+A later evidence commit records an implementation commit that already exists and was actually tested. Preserve failures and later recoveries as separate facts. State what was inspected only, what was not tested, and where claims are environment-specific.
 
-## 15. Maintenance rule
+Never record API keys, authorization headers, raw private context, raw model bodies, page URLs, source identities, or DOM structure. Logs, fixtures, snapshots, errors, and commits use synthetic domain-neutral text and redacted metadata.
 
-Prefer a small explicit core and browser leaf over generalized frameworks. Remove unused code, scripts, settings, permissions, and dependencies immediately. Maintain one obvious path for build, configuration, messaging, provider fetch, and mutation.
+## 7. Change discipline
 
-## 16. Deferred engineering
+Group work into coherent, independently verifiable decisions. Run focused checks before broad checks, inspect each diff, and append only factual evidence. There is no required commit for every component or internal refactor.
 
-Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, packaging, signing, Chrome Web Store publication, release automation, native placeholders, and cross-OS runtime matrices are deferred to separately versioned objectives.
+The immutable constitution changes only through a newly versioned documentation objective with new checksums. The evidence ledger cannot change product behavior, architecture, acceptance, UX, brand, or governance.
+
+## 8. Deferred engineering
+
+Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, packaging, signing, Chrome Web Store publication, release automation, native placeholders, and generalized cross-OS claims are outside V0.1. Do not scaffold them.

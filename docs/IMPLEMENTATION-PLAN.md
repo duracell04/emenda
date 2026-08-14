@@ -1,241 +1,91 @@
 # Emenda V0.1 Implementation Plan
 
-> **Frozen implementation plan, version 2.0.0**
+> **Frozen implementation plan, version 2.0.1**
 
-## Execution contract
+## 1. Objective boundary
 
-Complete one browser-only V0.1 objective through small, independently verifiable increments. Each increment follows:
+The current objective is documentation only: rewrite, verify, hash, commit, and push the 13 Markdown files as the v2.0.1 freeze, then stop. It creates no implementation source. Building V0.1 requires a separate future objective.
 
-```text
-inspect
-→ implement one decision
-→ run focused checks
-→ inspect the diff
-→ append factual evidence
-→ commit
-→ push
-→ verify pushed identity
-→ continue
-```
+[`SPEC.md`](../SPEC.md) owns product behavior, [`ARCHITECTURE.md`](ARCHITECTURE.md) owns boundaries and responsibility, and this document owns build order. The Documentation Gate establishes the prerequisite baseline; it is not an implementation increment.
 
-The constitution remains immutable during implementation. Only `docs/EVIDENCE.md` is updated with factual evidence.
-
-## Canonical implementation sequence
+## 2. Canonical sequence
 
 ```text
 Documentation baseline + Documentation Gate
-→ strict-TypeScript domain and schemas
-→ TextSurface + MockTextSurface
-→ InferenceProvider + MockInferenceProvider
-→ controller, scheduler, context, and revision
-→ validator + presentation state
-→ complete mock product + Mock Product Gate
-→ Architecture Gate
-→ BrowserTextSurface
-→ MV3 worker, options, and overlay
-→ OpenRouterProvider + Provider Gate
-→ textarea runtime
-→ conventional contenteditable runtime
-→ Browser Integration + V0.1 Conformance Gate
+→ Increment 1: Pure Core & Simulation
+→ Increment 2: Unified State Machine
+→ Increment 3: Mock Product + Architecture Gates
+→ Increment 4: Unified DOM Integration
+→ Increment 5: MV3 Shell + Provider
+→ Increment 6: Browser Integration
+→ Increment 7: V0.1 Conformance
 → stop
 ```
 
-Do not reorder this sequence. The increments below elaborate it without creating additional gates.
+The sequence is binding for the future implementation objective. The six gates remain distinct verification checkpoints: Documentation, Mock Product, Architecture, Provider, Browser Integration, and V0.1 Conformance.
 
-## 0. Documentation baseline + Documentation Gate
+## 3. Documentation baseline and Documentation Gate
 
-Verify:
+The present objective completes only this baseline:
 
-- exactly 13 tracked Markdown files and no implementation artifacts;
-- every header identifies version 2.0.0;
-- freeze ID and supersession statement are correct;
-- all local links resolve;
-- every canonical-sequence occurrence is byte-identical;
-- native-related terms occur only in explicitly deferred contexts;
-- 11 immutable Git-blob SHA-256 values match `PACKAGE-MANIFEST.md`;
-- `docs/EVIDENCE.md` is an empty template;
-- `git diff --check` passes.
+- preserve v2.0.0 at `a1a13607867db8e6eb2ea904f6387ba130f22ce7` and create one documentation-only child commit;
+- freeze exactly 13 tracked Markdown files as `emenda-clean-room-v2.0.1-2026-08-14`;
+- verify version and freeze identity, source-of-truth ownership, local links, and byte-identical canonical-sequence occurrences;
+- calculate and verify the 11 immutable documents' individual SHA-256 values from their staged Git blobs;
+- leave [`EVIDENCE.md`](EVIDENCE.md) as an empty template and place the inventory and checksums in [`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md);
+- inspect the documentation-only diff and pass `git diff --check`;
+- commit and push the one documentation decision, verify remote identity and v2.0.0 ancestry, and confirm a clean worktree.
 
-After the gate passes, initialize the evidence ledger with the constitution commit and exact validation results.
+Passing this gate ends the current objective. No package, script, extension asset, or implementation file is created during the freeze.
 
-## 1. strict-TypeScript domain and schemas
+## 4. Seven future implementation increments
 
-Add only the one-package toolchain and core values:
+### Increment 1: Pure Core & Simulation
 
-- opaque `RevisionId`, `SourceReference`, `SnapshotReference`, `SuggestionId`;
-- immutable `Revision`, `TextRange`, `ObservedChange`, `SurfaceSignal`, `SurfaceSnapshot`, `TextContext`, `Correction`, and request/result values;
-- state and typed failures;
-- strict Zod schemas for external and message boundaries;
-- scalar-offset utilities;
-- constants for 600 ms, 1,200 scalars, eight seconds, and 32 KiB.
+Establish one npm package, strict TypeScript domain values, typed failures, deterministic Unicode-scalar and text rules, the model-result schema, semantic ports, a minimal scheduler seam, and deterministic surface and provider simulations. Keep browser/runtime types out of the core and keep Zod at the permitted trust boundaries.
 
-Test Georgian, Russian, combining marks, emoji, bounds, and opaque-reference behavior.
+Verify scalar behavior, context selection, provider outcomes, cancellation races, surface changes, replacement acknowledgements, and refusals before building controller behavior.
 
-## 2. TextSurface + MockTextSurface
+### Increment 2: Unified State Machine
 
-Implement the locked `TextSurface` port and a deterministic mock that can:
+Implement one pure reducer for revisions, debounce, checking, validation, suggestions, Apply, Dismiss, and errors. Effects perform timers, capture, inference, storage, messaging, and mutation.
 
-- emit committed and composition signals;
-- return exact snapshots;
-- simulate source, snapshot, text, focus, writability, and mapping changes;
-- record replacement requests and return typed outcomes;
-- prove Apply and refusal without browser types.
+Prove immediate revision authority, exact 600 ms trailing debounce, cached-settings authority, settings-revision invalidation, composition-end commit semantics, terminal-input deduplication, bounded context, strict validation, stale silence, and the one-shot self-mutation contract under fake clocks.
 
-## 3. InferenceProvider + MockInferenceProvider
+### Increment 3: Mock Product + Architecture Gates
 
-Implement the locked cancelable provider port and a deterministic mock that can:
+Compose the reducer, effects, and simulations to prove the complete writer loop through suggestion, Apply or Dismiss, post-edit authority, refusal, cancellation, and error recovery without browser APIs.
 
-- resolve clean and one-correction results;
-- resolve malformed and typed failures;
-- delay results under fake-clock control;
-- record one request per revision;
-- observe cancellation without making it authoritative.
+Pass the **Mock Product Gate** first. Then pass the separate **Architecture Gate**, limited to strict core compilation, absence of browser/runtime types, permitted Zod placement, semantic ports, import direction, the dependency allowlist, and absence of native scaffolding.
 
-## 4. controller, scheduler, context, and revision
+### Increment 4: Unified DOM Integration
 
-Implement:
+Implement one `BrowserTextSurface` for textarea and the constrained contenteditable grammar. Prove exact scalar/UTF-16 conversion, recorded DOM source spans, collapsed-whitespace replacement spans, deterministic `<br>` and block-boundary newlines, boundary round trips, snapshot and source refusal, and fail-closed unsupported DOM handling.
 
-- synchronous revision reservation;
-- immediate invalidation and best-effort cancellation;
-- one trailing-edge debounce at exactly 600 ms;
-- composition invalidation and `compositionend` eligibility;
-- post-debounce capture;
-- sentence focus;
-- paragraph context or evenly balanced clamped window;
-- exact 1,200-scalar limit;
-- empty, whitespace-only, and nonlinguistic silence;
-- one provider request for each current eligible revision;
-- authoritative stale silence.
+Integrate centralized IME suppression, one-shot self-authored input consumption, runtime-gated `document.execCommand("insertText")`, safe Apply, and exact one-step browser Undo.
 
-Use fake clocks for every timing assertion.
+### Increment 5: MV3 Shell + Provider
 
-## 5. validator + presentation state
+Build the Chrome 140 Manifest V3 shell: trusted worker settings, validated protocol, exact-origin activation, zero-or-one dynamic registration, immediate idempotent injection, revocation teardown, options messaging, and the accessible fixed shadow overlay.
 
-Implement:
+Add the fixed OpenRouter adapter with one concrete model, strict structured output, explicit no-fallback routing, timeout, bounded response reading, cancellation, local validation, and redacted failures. Pass the **Provider Gate**, including message-schema enforcement and live checks for the supported profiles.
 
-- exact strict-schema acceptance;
-- zero-or-one correction behavior;
-- supported-profile and fail-closed language rules;
-- insertion, deletion, and replacement validation;
-- range, focus, original, no-op, category, and explanation checks;
-- `Idle | Debouncing | Checking | Suggestion | Applying | Error`;
-- current `SuggestionId` capabilities;
-- Apply and Dismiss commands;
-- no persistent clean state.
+### Increment 6: Browser Integration
 
-## 6. complete mock product + Mock Product Gate
+Integrate textarea and constrained contenteditable flows in the built unpacked extension. Exercise permission grant and revocation, trusted-storage isolation, worker lifecycle, settings updates, typing, IME, staleness, suggestion, Apply, Dismiss, refusal, teardown, focus, keyboard access, reduced motion, and one-step Undo.
 
-Compose the core with both mocks and prove:
+Pass the **Browser Integration Gate**, which owns the manifest, permissions, registrations, storage isolation, browser behavior, and overlay accessibility evidence.
 
-```text
-change
-→ revision
-→ debounce
-→ capture
-→ context
-→ check
-→ validation
-→ suggestion
-→ Apply or Dismiss
-→ exact replacement or no mutation
-```
+### Increment 7: V0.1 Conformance
 
-Cover cancellation races, stale results, stale failures, stale Apply, changed sources, mismatch refusals, composition, and complete state transitions.
+Run the complete deterministic and browser suites, inspect the production bundle, dependencies, permissions, secret and text leakage, and known limitations, then complete the required runtime and personal-device evidence.
 
-## 7. Architecture Gate
+Pass the **V0.1 Conformance Gate**, append factual evidence, push the final implementation commit, verify remote identity and a clean worktree, and stop. Distribution and deferred work require another objective.
 
-Before browser code:
+## 5. Future execution policy
 
-- compile `core/` with a dedicated configuration excluding DOM, Chrome, Node, React, and extension types;
-- enforce `extension → core` import direction;
-- verify the runtime and development dependency allowlists;
-- verify no browser mechanism entered shared values or ports;
-- record the gate evidence.
+Implementation commits should each express a coherent decision; there is no mandated commit per component, helper, or file. Every gate must be evaluated against [`ACCEPTANCE.md`](ACCEPTANCE.md), and factual results belong only in the mutable evidence ledger.
 
-## 8. BrowserTextSurface
+The future implementation creates one cross-platform `scripts/audit.mjs` entry point as specified in [`ENGINEERING.md`](ENGINEERING.md). Its internal organization and output format remain implementation choices.
 
-Implement leaf behavior for eligible top-level light-DOM surfaces:
-
-- event and composition observation;
-- exact textarea logical-text and selection mapping;
-- conventional contenteditable logical-text and Range mapping;
-- private source registry and opaque snapshots;
-- capture refusal for every excluded surface;
-- complete pre-apply verification;
-- runtime-gated `execCommand("insertText")` mutation;
-- no alternative mutation strategy.
-
-Unit-test mapping utilities before runtime integration.
-
-## 9. MV3 worker, options, and overlay
-
-Implement:
-
-- Chrome 102+ manifest with only locked permissions;
-- incognito disabled;
-- exact-origin toolbar activation;
-- persistent optional permissions and one dynamic registration;
-- trusted-context `chrome.storage.local` access;
-- write-only API-key and concrete-model settings;
-- content-script `hasApiKey` status only;
-- versioned strict messages;
-- fixed, unanchored shadow-root overlay;
-- display-safe state, Apply, Dismiss, Escape, Alt+Enter;
-- accessible names, visible focus, reduced motion, and WCAG 2.2 AA styles.
-
-Bundle all executable code locally with esbuild.
-
-## 10. OpenRouterProvider + Provider Gate
-
-Implement:
-
-- the fixed chat-completions endpoint;
-- minimal non-streaming payload;
-- `provider.require_parameters: true`;
-- strict JSON Schema response formatting;
-- local Zod validation;
-- adapter-copied revision identity;
-- eight-second timeout;
-- incremental 32 KiB body limit;
-- cancellation;
-- typed, redacted failures;
-- zero retry, healing, fallback, cache, telemetry, or analytics.
-
-Run deterministic provider tests. Then use a dedicated spend-limited key for one correction and one clean case for each of `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE`, and `ru-RU`, plus unsupported-language evidence. Record the concrete model, UTC time, latency, sanitized outcomes, and cost-relevant facts.
-
-## 11. textarea runtime
-
-Use Playwright's [persistent-Chromium extension setup](https://playwright.dev/docs/chrome-extensions) to prove:
-
-- permission grant and revocation;
-- capture after committed input;
-- exact debounce and stale behavior;
-- Apply and Dismiss;
-- changed-source refusal;
-- IME handling;
-- focus preservation;
-- one native Undo restoring exact original text.
-
-## 12. conventional contenteditable runtime
-
-Repeat the runtime contract for simple `contenteditable="true"` and `plaintext-only` fixtures. Prove lossless mapping, insertion, deletion, replacement, refusal for ambiguous structures, and one-step Undo.
-
-## 13. Browser Integration + V0.1 Conformance Gate
-
-Run the full unpacked build in persistent Chromium and verify:
-
-- all supported surface flows;
-- every exclusion fails closed;
-- worker restart and message validation behavior;
-- permission and trusted-storage behavior;
-- stale silence and current-authority safety;
-- overlay focus, keyboard, accessible names, visible focus, reduced motion, and contrast;
-- no secret or raw-text leakage;
-- current Chrome Stable smoke;
-- final dependency, permission, and bundle inventories.
-
-Append exact evidence, commit, push, verify local and remote commit identity, confirm a clean worktree, and stop.
-
-## Deferred work
-
-Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, packaging, signing, Chrome Web Store publication, release automation, native placeholders, and cross-OS runtime claims are not implementation increments in V0.1.
+The constitution resolves all product, safety, architecture, and acceptance decisions. The implementation agent retains ordinary discretion over local naming and code organization within the locked boundaries.
