@@ -1,10 +1,10 @@
 # Emenda UX / UI Principles
 
-> **Frozen UX system, version 1.0.0**
+> **Frozen UX system, version 1.0.1**
 
 > **Emenda observes quietly, proposes precisely, and lets the writer decide.**
 
-## 1. One product model
+## 1. Current V0.1 interaction
 
 V0.1 has one interaction model:
 
@@ -21,13 +21,30 @@ Platform bindings provide the same experience through different private mechanis
 
 V0.1 uses the ambient correction workflow exclusively. Additional interaction models belong to later evidence-driven milestones.
 
-## 2. Original context first
+## 2. Product north star
+
+Emenda becomes a continuous editorial layer across supported writing environments while the writer remains in the original application.
+
+The mature product may add richer placement, review, application preferences, personal vocabulary, and additional environment bindings when evidence earns them. Every evolution preserves the same relationship:
+
+```text
+Emenda notices quietly
+→ proposes the smallest useful change
+→ explains it precisely
+→ waits for writer intent
+→ applies only to the current source
+→ leaves authorship with the writer
+```
+
+The north star is broader reach and better judgment inside this interaction model, not a replacement editor, an autonomous rewriter, or a model-management dashboard.
+
+## 3. Original context first
 
 The writer remains in the original application.
 
 Emenda appears only when it has a useful suggestion or a meaningful state to communicate.
 
-## 3. Passive observation
+## 4. Passive observation
 
 Emenda observes eligible editable-text changes automatically.
 
@@ -41,7 +58,7 @@ Initial value:
 
 The value is one explicit product constant and changes only through measured evidence.
 
-## 4. Explicit application
+## 5. Explicit application
 
 Every source edit follows an explicit writer action.
 
@@ -52,7 +69,7 @@ suggestion
 
 Dismiss preserves the source.
 
-## 5. Smallest useful intervention
+## 6. Smallest useful intervention
 
 Prefer:
 
@@ -64,7 +81,7 @@ exact local correction
 
 The author's text remains the source of truth.
 
-## 6. One suggestion, one decision
+## 7. One suggestion, one decision
 
 Each visible suggestion represents one understandable change:
 
@@ -75,7 +92,9 @@ short explanation
 Apply   Dismiss
 ```
 
-## 7. Correct and Refine
+If the model omits an explanation, Emenda uses the deterministic category copy defined in `SPEC.md` so the interaction still contains a short reason.
+
+## 8. Correct and Refine
 
 ```text
 Correct
@@ -91,7 +110,7 @@ Correct receives stronger visual priority.
 
 Refine remains softer and individually reviewable.
 
-## 8. Compact presentation
+## 9. Compact presentation
 
 V0.1 uses one small suggestion surface.
 
@@ -101,21 +120,33 @@ When geometry is absent, the same suggestion interaction remains available in a 
 
 The interface remains subordinate to the writing application.
 
-## 9. State model
+## 10. State model
 
-Canonical states:
+The canonical product-state enum is:
 
 ```text
 Quiet
-Checking…
+Checking
 Suggestion
-Text looks good
-Connection issue
-Invalid response
-Stale result
-Protected surface
-Replacement issue
+Clean
+Error(ErrorKind)
 ```
+
+Writer-facing copy maps onto those states rather than creating a second state model:
+
+| Product state | Writer-facing representation |
+|---|---|
+| `Quiet` | no interruption |
+| `Checking` | Checking… |
+| `Suggestion` | exact correction with Apply and Dismiss |
+| `Clean` | Text looks good |
+| `Error(InferenceTransport)` | Connection issue |
+| `Error(InferenceProtocol)` | Invalid response |
+| `Error(StaleRevision)` | Stale result |
+| `Error(ProtectedSurface)` | Protected surface |
+| `Error(Replacement)` | Replacement issue |
+
+Background work that becomes stale publishes no state transition. `Error(StaleRevision)` is reserved for a writer-triggered Apply that loses a race with newer authoritative text; the current text remains untouched.
 
 Every exceptional state communicates:
 
@@ -125,13 +156,11 @@ what happened
 → next useful action
 ```
 
-## 10. Reversibility
+## 11. Reversibility
 
-Apply requests one coherent host edit whenever supported.
+Apply requests one coherent host edit. When the host exposes coherent native Undo for that edit, the binding preserves it. V0.1 does not claim an independent Emenda undo mechanism.
 
-Native Undo remains useful where the host provides it.
-
-## 11. Keyboard and accessibility
+## 12. Keyboard and accessibility
 
 Primary actions have keyboard paths:
 
@@ -152,7 +181,7 @@ reduced-motion preference
 
 Target WCAG 2.2 AA for Emenda-owned UI.
 
-## 12. Language behavior
+## 13. Language behavior
 
 Automatic language selection is the default.
 
@@ -178,7 +207,7 @@ Clearly American English maps to `en-US`.
 
 Preserve names, quotations, terminology, and short embedded passages.
 
-## 13. Model behavior
+## 14. Model behavior
 
 The normal writing experience stays model-agnostic.
 
@@ -190,7 +219,7 @@ openrouter/free
 
 Model configuration remains local infrastructure rather than a prominent writing control.
 
-## 14. Privacy visibility
+## 15. Privacy visibility
 
 Protected or ineligible surfaces produce a clear quiet state.
 
@@ -198,22 +227,23 @@ Emenda sends only the bounded context required for the current request.
 
 The UI never displays or receives native source identity.
 
-## 15. Visual behavior
+## 16. Visual behavior
 
 Use:
 
 ```text
 Paper          → primary background
 Ink Black      → primary structure
-Graphite/Steel → secondary information
+Graphite       → normal secondary text
+Steel Gray     → non-text guides or qualifying large text
 Oxblood        → rare correction/action cue
 Inter          → functional UI
 Special Elite  → restrained brand moments
 ```
 
-Use generous whitespace, precise borders, compact controls, and quiet alignment.
+Use generous whitespace, precise borders, compact controls, and quiet alignment. Normal text and controls meet WCAG 2.2 AA contrast; Steel Gray is not used for normal-size text on Paper.
 
-## 16. Cross-platform mental model
+## 17. Cross-platform mental model
 
 Every binding preserves:
 
@@ -228,7 +258,7 @@ The writer learns Emenda once.
 
 Binding mechanics remain invisible.
 
-## 17. V0.1 UX boundary
+## 18. V0.1 UX boundary
 
 V0.1 proves the ambient correction loop.
 
@@ -244,7 +274,7 @@ personal vocabulary
 
 These are future milestones rather than prebuilt alternate paths.
 
-## 18. UX decision function
+## 19. UX decision function
 
 When an interaction choice remains open, optimize in this order:
 
@@ -252,20 +282,20 @@ When an interaction choice remains open, optimize in this order:
 1. Keep the writer in the original context.
 2. Show the exact proposed change.
 3. Use the fewest useful actions.
-4. Preserve reversibility.
+4. Preserve host-native reversibility when available.
 5. Preserve authorship and Duktus.
 6. Keep state explicit and understandable.
 7. Reveal complexity only when it materially helps writing.
 8. Keep the interface visually quiet.
 ```
 
-## 19. UX Definition of Done
+## 20. UX Definition of Done
 
 ```text
 writer stays in the original application
 → Emenda detects a useful issue automatically
 → the exact proposed change is visible
 → one clear action applies or dismisses it
-→ the result remains reversible
+→ host-native Undo remains available when the host supports a coherent edit
 → writing continues immediately
 ```

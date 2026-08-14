@@ -1,6 +1,6 @@
 # Emenda AI-Native Engineering Standard
 
-> **Frozen engineering standard, version 1.0.0**
+> **Frozen engineering standard, version 1.0.1**
 
 ## 1. Purpose
 
@@ -148,7 +148,11 @@ The complete product loop passes through mocks before any native binding work.
 ## 10. Deterministic shell around probabilistic inference
 
 ```text
-deterministic state
+ObservedChange
+→ reserve RevisionId
+→ debounce
+→ capture bounded TextContext
+→ seal immutable Revision
 → explicit request
 → probabilistic model
 → machine-readable response
@@ -156,6 +160,8 @@ deterministic state
 → deterministic semantic validation
 → deterministic state transition
 ```
+
+A newly reserved `RevisionId` invalidates older work immediately. Context captured after debounce seals the immutable `Revision` for that identifier.
 
 OpenRouter handles linguistic judgment.
 
@@ -195,42 +201,41 @@ Fix the layer that violated its contract.
 
 A failed command is evidence about one gate, not a universal product verdict.
 
-## 12. Verification follows risk
+## 12. Canonical implementation and verification sequence
 
-Evidence order:
-
-```text
-domain invariants
-→ correction validity
-→ revision freshness
-→ debounce and context policy
-→ mock product loop
-→ provider contract
-→ presentation boundary
-→ architecture conformance
-→ native binding behavior
-→ real user loop
-```
-
-Test count is secondary to the invariant established.
-
-## 13. Product, host, and release gates
+Implementation and evidence advance in this order:
 
 ```text
-PRODUCT
-shared behavior and mocks
-
-PROVIDER
-external model contract
-
-HOST
-native binding on one environment
-
-RELEASE
-packaging, signing, installation, trust
+documentation baseline + Documentation Gate
+→ domain
+→ TextSurface
+→ MockTextSurface
+→ InferenceProvider + MockInferenceProvider
+→ controller, debounce, context, and revision
+→ validator + presentation state
+→ complete mock product + Mock Product Gate
+→ OpenRouterProvider + Provider Gate
+→ Tauri UI + Presentation Gate
+→ Architecture Gate
+→ current-host leaf + Current-Host Binding Gate
+→ two-app runtime + V0.1 Conformance Gate
 ```
 
-Each gate has its own stop condition and evidence.
+Verify the smallest relevant invariant at every increment. Test count is secondary to the invariant established.
+
+## 13. V0.1 checkpoints and release boundary
+
+```text
+Documentation Gate
+→ Mock Product Gate
+→ Provider Gate
+→ Presentation Gate
+→ Architecture Gate
+→ Current-Host Binding Gate
+→ V0.1 Conformance Gate
+```
+
+Each gate has its own evidence and is a checkpoint inside one autonomous V0.1 objective. Passing a gate advances work automatically. Release covers packaging, signing, installation, trust, and distribution under a later explicit objective.
 
 ## 14. Commit discipline
 
@@ -327,22 +332,26 @@ UX.md                     interaction rules
 BRAND.md                  visual system
 ```
 
-Factual status follows evidence. Constitutional changes create a new frozen package version.
+The constitutional files are immutable. After baseline verification, initialize the supplied `docs/EVIDENCE.md` for factual status and gate evidence. The mutable ledger is excluded from freeze checksums and does not become constitutional authority.
+
+Constitutional changes create a newly versioned frozen package.
 
 ## 20. Stop condition
 
-When the active gate passes:
+When an intermediate gate passes:
 
 ```text
 verify
-→ document evidence
+→ record evidence in docs/EVIDENCE.md
 → commit
 → push
-→ report
-→ stop
+→ verify pushed state
+→ continue to the next gate
 ```
 
-Further work begins under a new objective.
+Stop only after the top-level V0.1 objective and V0.1 Conformance Gate pass.
+
+If completion is genuinely blocked, first exhaust safe in-scope work and alternatives, then report the exact blocker, preserved state, evidence, and authority or external change required. Release begins under a later objective.
 
 ## 21. Canonical principle
 

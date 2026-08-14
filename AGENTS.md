@@ -1,6 +1,6 @@
 # Emenda Agent Guide
 
-> **Frozen agent governance, version 1.0.0**
+> **Frozen agent governance, version 1.0.1**
 
 Emenda is built from repository-local sources of truth.
 
@@ -22,6 +22,8 @@ Emenda is built from repository-local sources of truth.
 
 Build the smallest complete writing assistant that preserves the author's Duktus and keeps shared product behavior independent from every operating system.
 
+Own V0.1 as one autonomous objective. Complete every checkpoint in sequence without treating an intermediate gate as a new authorization boundary.
+
 ## Non-negotiable architecture
 
 The current host operating system is evidence context only.
@@ -37,18 +39,38 @@ The shared product must pass against `MockTextSurface` before any native binding
 State the active gate before beginning work:
 
 ```text
-Mock Product
-Provider
-Presentation
-Architecture
-Current-Host Binding
-V0.1 Conformance
-Release
+Documentation Gate
+→ Mock Product Gate
+→ Provider Gate
+→ Presentation Gate
+→ Architecture Gate
+→ Current-Host Binding Gate
+→ V0.1 Conformance Gate
 ```
 
 Classify every failure by the gate and subsystem that own it.
 
 A later-gate failure preserves the verified status of earlier gates.
+
+Passing a gate advances the same objective to the next checkpoint. Release is a later explicitly named objective.
+
+## Canonical implementation sequence
+
+```text
+documentation baseline + Documentation Gate
+→ domain
+→ TextSurface
+→ MockTextSurface
+→ InferenceProvider + MockInferenceProvider
+→ controller, debounce, context, and revision
+→ validator + presentation state
+→ complete mock product + Mock Product Gate
+→ OpenRouterProvider + Provider Gate
+→ Tauri UI + Presentation Gate
+→ Architecture Gate
+→ current-host leaf + Current-Host Binding Gate
+→ two-app runtime + V0.1 Conformance Gate
+```
 
 ## Increment rule
 
@@ -99,21 +121,25 @@ distribution-ready
 
 ## Documentation rule
 
-Update factual status when evidence changes.
+Keep the supplied frozen constitution immutable during implementation.
 
-Preserve the frozen principles and contracts. A material constitutional change creates a new documentation-package version rather than a silent in-place reinterpretation.
+After baseline verification, initialize the supplied `docs/EVIDENCE.md` ledger and update it when factual status or gate evidence changes. This mutable implementation ledger is excluded from the frozen constitution and its checksums.
+
+Preserve the frozen principles and contracts. A material constitutional change creates a newly versioned documentation package rather than a silent in-place reinterpretation.
 
 ## Stop rule
 
-When the active gate's definition of done is satisfied:
+When an intermediate gate's definition of done is satisfied:
 
 ```text
 verify
 → document factual evidence
 → commit
 → push
-→ report
-→ stop
+→ verify pushed state
+→ continue to the next gate
 ```
 
-Further work begins under a new explicitly named objective.
+Stop only when the top-level V0.1 objective and V0.1 Conformance Gate pass.
+
+If completion is genuinely blocked, exhaust safe in-scope work and alternatives before reporting the precise blocker, preserved state, evidence, and authority or external change required. Distribution and Release begin under a new explicitly named objective.

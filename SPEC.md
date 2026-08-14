@@ -1,6 +1,6 @@
 # Emenda V0.1 Specification
 
-> **Frozen product specification, version 1.0.0**
+> **Frozen product specification, version 1.0.1**
 
 ## 1. Product goal
 
@@ -12,8 +12,10 @@ Emenda is a small deterministic control layer around OpenRouter:
 
 ```text
 observe
+→ reserve revision ID
 → debounce
-→ select context
+→ capture context
+→ seal immutable revision
 → infer
 → validate
 → suggest
@@ -29,17 +31,18 @@ Emenda performs observation policy, revision control, context selection, validat
 
 > **Every shared domain type, state transition, interface, test, and presentation behavior is designed without reference to a particular operating system. Platform APIs exist exclusively in replaceable leaf bindings. The current host is a verification environment, not a design premise.**
 
-The shared product must operate unchanged against:
+The Rust desktop core must operate unchanged against:
 
 ```text
 MockTextSurface
 WindowsTextSurface
 MacTextSurface
 LinuxTextSurface
-BrowserTextSurface
 ```
 
-The Rust desktop application owns one semantic `TextSurface` port. A browser implementation provides equivalent semantics in strict TypeScript.
+The Rust desktop application owns one semantic `TextSurface` port implemented by those desktop surfaces.
+
+The browser is a separate strict-TypeScript implementation. It implements the same versioned, language-neutral schemas and is verified with the same versioned conformance fixtures, but it does not implement the Rust trait or share desktop runtime code. Cross-environment compatibility means schema and fixture conformance, not a common binary.
 
 ## 3. V0.1 user outcome
 
@@ -47,8 +50,9 @@ The Rust desktop application owns one semantic `TextSurface` port. A browser imp
 writer types ordinary editable text
 → writer pauses briefly
 → Emenda receives an ObservedChange
-→ Emenda creates a new RevisionId
+→ Emenda immediately reserves a new RevisionId
 → Emenda requests the smallest useful TextContext
+→ Emenda seals an immutable Revision from that ID and context
 → Emenda sends that context to OpenRouter
 → OpenRouter returns structured corrections
 → Emenda validates the response
@@ -67,7 +71,7 @@ Application is explicit.
 V0.1 local intelligence answers six questions:
 
 ```text
-Did eligible text change?
+Did current nonempty context meaningfully change?
 Has typing settled?
 What is the smallest useful context?
 Is the result still current?
@@ -85,15 +89,28 @@ The names below describe product meaning. Exact field decomposition may remain m
 
 ### 5.1 `RevisionId`
 
-A monotonically increasing session identifier for authoritative product state.
+A monotonically increasing session identifier reserved synchronously on every `ObservedChange`. Reserving a newer ID immediately invalidates every older debounce, context request, inference result, suggestion, and Apply action.
 
-### 5.2 `SourceReference`
+### 5.2 `Revision`
+
+An immutable value sealed only after the 500 ms debounce has settled and current context capture succeeds:
+
+```ts
+type Revision = {
+  id: RevisionId;
+  context: TextContext;
+};
+```
+
+The ID is the one reserved by the originating `ObservedChange`; context capture never allocates a replacement ID. A sealed revision is the only input to inference and correction validation.
+
+### 5.3 `SourceReference`
 
 An opaque token created and understood by the active `TextSurface` implementation.
 
 Shared code may store, compare for equality where required, and return the token to the same port. Shared code never parses native identity.
 
-### 5.3 `SourceDisplay`
+### 5.4 `SourceDisplay`
 
 Display-safe information such as:
 
@@ -104,25 +121,41 @@ optional context label
 
 It contains no native handle, process identifier, executable path, DOM reference, or accessibility object.
 
-### 5.4 `ObservedChange`
+### 5.5 `ObservedChange`
 
 A semantic notification that eligible editable text may have changed.
 
 It identifies the opaque source and carries only the minimum generic information required to request current context.
 
-### 5.5 `ContextRequest`
+### 5.6 `SurfaceSignal`
 
-A platform-neutral request describing the bounded context policy, for example:
+The subscription signal delivered by `TextSurface`:
 
 ```text
-maximum Unicode scalar length
+Changed(ObservedChange)
+or
+Unavailable { optional SourceDisplay, SurfaceError }
+```
+
+`Unavailable` communicates an ineligible, protected, or temporarily unsupported surface without exposing text or `SourceReference`. It gives the controller one typed path to invalidate an older suggestion and publish a safe error state.
+
+### 5.7 `ContextRequest`
+
+A platform-neutral request describing the bounded context policy:
+
+```text
+maximum Unicode scalar length = MAX_CONTEXT_SCALARS
 preferred sentence or local-paragraph boundary
 change-centered selection
 ```
 
-The core owns this policy.
+The core owns this policy. V0.1 defines:
 
-### 5.6 `TextContext`
+```text
+MAX_CONTEXT_SCALARS = 2000
+```
+
+### 5.8 `TextContext`
 
 The current bounded text associated with an observed change.
 
@@ -138,11 +171,13 @@ opaque surface version or verification token when useful
 
 The active binding may include opaque verification material without exposing its mechanism.
 
-### 5.7 `TextRange`
+Once a `TextContext` is sealed into a `Revision`, it is immutable.
+
+### 5.9 `TextRange`
 
 A half-open Unicode scalar-value range inside `TextContext.text`.
 
-### 5.8 `TextGeometry`
+### 5.10 `TextGeometry`
 
 Optional platform-neutral screen geometry for a text range.
 
@@ -153,12 +188,13 @@ x
 y
 width
 height
-coordinate-space identifier when required
 ```
+
+These four values are finite logical pixels relative to the active Emenda presentation root. `width` and `height` are non-negative; `x` and `y` may be negative for a valid multi-display desktop layout. A binding converts native coordinates before returning geometry. The root is implicit in the composed presentation, so no native coordinate system, monitor identifier, transform, scale factor, or coordinate-space token crosses the port.
 
 Geometry enriches placement. It does not create an alternate product workflow.
 
-### 5.9 `Correction`
+### 5.11 `Correction`
 
 One exact proposed change:
 
@@ -174,7 +210,7 @@ type Correction = {
 };
 ```
 
-### 5.10 `Suggestion`
+### 5.12 `Suggestion`
 
 An internal current-revision proposal containing the validated correction and the product state required to apply it safely.
 
@@ -192,7 +228,7 @@ A conceptual shape is:
 trait TextSurface: Send + Sync {
     fn subscribe(
         &self,
-        sink: ChangeSink,
+        sink: SurfaceSink,
     ) -> Result<Subscription, SurfaceError>;
 
     async fn context(
@@ -217,7 +253,7 @@ trait TextSurface: Send + Sync {
 }
 ```
 
-The exact Rust representation may use channels, streams, callbacks, or async traits according to the smallest idiomatic implementation.
+`SurfaceSink` receives `SurfaceSignal`. The exact Rust representation may use channels, streams, callbacks, or async traits according to the smallest idiomatic implementation.
 
 Every public word describes Emenda semantics.
 
@@ -236,12 +272,22 @@ replacement
 native permission and protection checks
 ```
 
+A binding emits an `ObservedChange` only when all three eligibility conditions hold:
+
+```text
+surface is editable
++ access is permitted
++ surface is not secure or protected
+```
+
+Ineligible surfaces emit `SurfaceSignal::Unavailable` with display-safe context where available and do not expose text or opaque identity to the core.
+
 ### 6.2 Application ownership
 
 The shared product owns:
 
 ```text
-change eligibility policy
+meaningful-change policy after context capture
 context policy
 debounce
 revision authority
@@ -273,18 +319,23 @@ The complete product loop must pass against these mocks before any platform-spec
 
 ## 8. Observation and debounce
 
-The active binding emits semantic `ObservedChange` values for eligible editable-text changes.
+The active binding emits `SurfaceSignal::Changed(ObservedChange)` only for editable, access-permitted, non-secure surfaces. It may emit `SurfaceSignal::Unavailable` to communicate a protected, ineligible, or temporarily unsupported surface without reading its text.
+
+On `Unavailable`, the controller reserves the next `RevisionId`, invalidates older work, publishes the corresponding `Error(ErrorKind)`, and performs no debounce, context request, or inference call.
 
 The controller:
 
 ```text
 receives change
-→ increments RevisionId
+→ synchronously reserves the next RevisionId
+→ immediately invalidates all older work and visible suggestions
 → restarts one debounce timer
-→ requests current bounded context after the timer settles
+→ requests current bounded context after 500 ms settles
+→ discards the capture if the reserved ID is no longer current
+→ seals immutable Revision { id, context }
 ```
 
-Recommended initial debounce:
+V0.1 debounce:
 
 ```text
 500 ms
@@ -292,20 +343,38 @@ Recommended initial debounce:
 
 Store it as one explicit constant.
 
-A newer change becomes authoritative immediately.
+ID reservation and invalidation happen before debounce. Context capture and revision sealing happen after debounce. A newer change therefore becomes authoritative immediately even while older context or inference work is still in flight.
+
+After a current context is captured, the core classifies it as meaningful only when all three conditions hold:
+
+```text
+context is nonempty
++ reserved RevisionId is still current
++ TextContext differs from the last authoritative TextContext
+```
+
+Only meaningful current context proceeds to inference. Duplicate, empty, or stale captures do not call the provider.
+
+For this comparison, `TextContext` identity is its semantic source, text, and focus/change range. A changed binding-private verification token alone does not make unchanged text meaningful.
 
 ## 9. Context selection
 
 The shared core owns the smallest-useful-context policy.
 
-Initial policy:
+V0.1 uses Unicode scalar positions and the constant:
 
 ```text
-current sentence where boundaries are reliable
-otherwise local paragraph window
-hard Unicode scalar maximum
-centered around the changed range
+MAX_CONTEXT_SCALARS = 2000
 ```
+
+Given the eligible source text and changed range, selection is deterministic:
+
+1. If the changed range itself exceeds 2000 Unicode scalars, return `ContextTooLarge` and do not call inference.
+2. Use the sentence enclosing the changed range when both sentence boundaries are reliable and the sentence is at most 2000 Unicode scalars.
+3. Otherwise use the local paragraph enclosing the changed range when both paragraph boundaries are reliable and the paragraph is at most 2000 Unicode scalars.
+4. Otherwise create a window containing the complete changed range. Divide the remaining scalar capacity evenly before and after the range, give an odd spare scalar to the trailing side, clamp at the document edges, and backfill unused capacity from the other side.
+
+No selected context exceeds `MAX_CONTEXT_SCALARS`.
 
 The policy remains one small pure component.
 
@@ -313,7 +382,18 @@ The binding retrieves text according to the semantic request. Platform APIs do n
 
 ## 10. Revision model
 
-Every inference request carries the `RevisionId` that produced it.
+Every `ObservedChange` synchronously reserves the next monotonically increasing `RevisionId`. This reservation is the authoritative freshness boundary; it invalidates older timers, captures, requests, results, suggestions, and pending Apply actions before the debounce runs.
+
+After debounce, context capture uses the already-reserved ID. If that ID is still current, the controller seals:
+
+```text
+Revision {
+  id: reserved RevisionId,
+  context: captured TextContext
+}
+```
+
+The sealed revision is immutable. Every inference request carries its `RevisionId`, and the provider wrapper correlates its result with that same ID.
 
 Core rule:
 
@@ -321,7 +401,7 @@ Core rule:
 result.revision_id == current_revision_id
 ```
 
-An older result becomes `StaleRevision` and cannot enter visible suggestion state or trigger replacement.
+Freshness is checked after every asynchronous boundary and again on Apply. An older result becomes `StaleRevision` and cannot enter visible suggestion state or trigger replacement.
 
 ## 11. Correction validation
 
@@ -329,17 +409,21 @@ A correction is applicable when:
 
 ```text
 revision is current
+response contains exactly one correction
 range is within TextContext.text
 original matches the scalar range
 replacement is valid text
 category is valid
 confidence is valid
-corrections do not overlap
 ```
 
 A unique exact-original recovery may resolve a model range mismatch when the original occurs exactly once in the context.
 
 Ambiguous identity produces a typed non-applicable result.
+
+A zero-width range is valid only for insertion: `start == end`, `original == ""`, and `replacement != ""`. A nonzero range requires a nonempty `original`; its `replacement` may be empty for deletion. Exact-original recovery is disabled for empty `original`, and an empty-to-empty change is always a no-op failure.
+
+A schema-valid result with zero corrections deterministically enters `Clean`. A schema-valid result with one correction enters `Suggestion` only after that correction passes every semantic check above. No other provider output enters either state.
 
 ## 12. Correct and Refine
 
@@ -439,6 +523,23 @@ Keep explanations concise and useful.
 
 Use one narrow `InferenceProvider` port.
 
+The exact application-level contract is:
+
+```ts
+type CheckRequest = {
+  revision_id: RevisionId;
+  text: string;
+};
+
+type CheckResult = {
+  revision_id: RevisionId;
+  language_profile: "de-CH" | "en-GB" | "en-US" | "fr-FR" | "ka-GE" | "ru-RU";
+  corrections: Correction[]; // zero or one item
+};
+```
+
+`CheckRequest.text` is exactly the bounded text from the immutable revision. It contains no `SourceReference`, `SourceDisplay`, geometry, native identity, or application metadata. The provider wrapper copies `CheckRequest.revision_id` into `CheckResult.revision_id`; the model does not author or echo revision identity.
+
 Conceptually:
 
 ```rust
@@ -449,6 +550,56 @@ trait InferenceProvider {
     ) -> Result<CheckResult, InferenceError>;
 }
 ```
+
+The model-authored portion of `CheckResult` must validate against this exact minimal JSON Schema before semantic validation:
+
+```json
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["language_profile", "corrections"],
+  "properties": {
+    "language_profile": {
+      "type": "string",
+      "enum": ["de-CH", "en-GB", "en-US", "fr-FR", "ka-GE", "ru-RU"]
+    },
+    "corrections": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "start",
+          "end",
+          "original",
+          "replacement",
+          "category",
+          "confidence"
+        ],
+        "properties": {
+          "start": { "type": "integer", "minimum": 0 },
+          "end": { "type": "integer", "minimum": 0 },
+          "original": { "type": "string" },
+          "replacement": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["spelling", "grammar", "punctuation", "style"]
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
+          },
+          "explanation": { "type": "string" }
+        }
+      }
+    }
+  }
+}
+```
+
+`additionalProperties: false` applies at both object levels. `explanation` is optional; every other correction field is required. Provider-enforced structured output is used when supported, but Emenda always performs the same local schema validation.
 
 Implementations:
 
@@ -467,6 +618,16 @@ Use structured output when the selected route supports the required schema.
 
 Every response passes deterministic local parsing and semantic validation.
 
+V0.1 performs one provider request per sealed revision. It uses no automatic retry, fallback model, or silent substitution. A transport, protocol, or semantic failure remains typed and observable; a later product version may add a measured retry policy without changing revision authority or validation.
+
+State mapping is deterministic:
+
+```text
+zero corrections            → Clean
+one semantically valid item → Suggestion
+schema or semantic failure  → Error(ErrorKind)
+```
+
 ## 16. Controller
 
 The controller is pure application orchestration.
@@ -474,9 +635,11 @@ The controller is pure application orchestration.
 It owns:
 
 ```text
-current revision
+immediate RevisionId reservation
 debounce state
 context request
+immutable Revision sealing
+meaningful-change decision
 inference request
 stale-result rejection
 validated suggestion session
@@ -504,15 +667,22 @@ HTML
 CSS
 ```
 
-Primary states:
+The product state enum is exactly:
 
 ```text
-Quiet
-Checking
-Suggestion
-Clean
-Error
+State =
+  Quiet
+  | Checking
+  | Suggestion
+  | Clean
+  | Error(ErrorKind)
 ```
+
+The `Suggestion` state carries the current `SuggestionView`; `SuggestionView` is data, not another state discriminant.
+
+Phrases such as `Text looks good`, `Connection issue`, `Invalid response`, `Stale result`, `Protected surface`, and `Replacement issue` are presentation copy derived from `Clean` or `Error(ErrorKind)`. They are not additional product states.
+
+A stale background completion publishes no transition. `Error(StaleRevision)` is reserved for a writer-triggered Apply that loses a race with a newer authoritative revision; no replacement occurs.
 
 A suggestion displays:
 
@@ -525,7 +695,11 @@ Apply
 Dismiss
 ```
 
+When `Correction.explanation` is absent, the presentation derives concise deterministic copy from the category: `Spelling correction.`, `Grammar correction.`, `Punctuation correction.`, or `Style refinement.` The UI never asks the model for a second explanation.
+
 The presentation receives display-safe DTOs only.
+
+A current schema-valid result with no correction enters `Clean`. Exactly one current, schema-valid, semantically valid correction enters `Suggestion`. Validation never promotes any other shape into either state.
 
 Apply sends `SuggestionId`. The Rust controller resolves the internal source and context state.
 
@@ -548,7 +722,7 @@ The active binding verifies the source and expected text immediately before one 
 
 A verification failure leaves the current source unchanged and returns a typed result.
 
-Native Undo remains useful where the host supports coherent replacement.
+Apply is reversible through native Undo only when the host and active binding support one coherent undoable replacement. Where that guarantee is unavailable, Emenda makes no reversibility claim; source-current verification and explicit writer approval remain mandatory.
 
 ## 19. Configuration
 
@@ -577,6 +751,7 @@ Use typed outcomes:
 Configuration
 Observation
 Context
+ContextTooLarge
 InferenceTransport
 InferenceProtocol
 InferenceSemantic
@@ -597,8 +772,8 @@ what happened
 
 ## 21. Privacy and security
 
-- Observe eligible editable text only through the active binding.
-- Exclude protected or secure surfaces through typed binding outcomes.
+- The active binding treats a surface as eligible only when it is editable, access is permitted, and it is not secure or protected.
+- Ineligible surfaces expose no text to the core and return typed binding outcomes where a state must be communicated.
 - Send only the bounded context required for the current correction request.
 - Keep API credentials outside presentation state and logs.
 - Treat OpenRouter data as untrusted until validation succeeds.
@@ -618,6 +793,8 @@ Zod
 JSON Schema
 OpenRouter
 ```
+
+Rust implements the desktop core and desktop `TextSurface` bindings. Strict TypeScript separately implements browser semantics against the same versioned language-neutral schemas and conformance fixtures; neither runtime imports the other's platform implementation.
 
 A UI framework becomes justified when measured presentation complexity makes the total repository simpler with it.
 
@@ -673,9 +850,9 @@ MockInferenceProvider
 OpenRouterProvider
 meaningful change orchestration
 500 ms debounce
-bounded context policy
-revision authority
-structured Correction[]
+MAX_CONTEXT_SCALARS = 2000 deterministic context policy
+immediate RevisionId reservation and immutable Revision sealing
+structured zero-or-one Correction[]
 deterministic validation
 tiny suggestion presentation
 Apply

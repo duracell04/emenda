@@ -1,10 +1,12 @@
 # Build Emenda
 
-> **Frozen clean-room build objective, version 1.0.0**
+> **Frozen clean-room build objective, version 1.0.1**
 
 Build Emenda from this documentation package.
 
 Read the complete documentation set before implementation. Treat it as the product constitution.
+
+Own the complete V0.1 outcome as one autonomous implementation objective. Acceptance gates are checkpoints inside that objective, not reasons to stop and request a new objective.
 
 ## Hard architectural invariant
 
@@ -34,16 +36,20 @@ The complete product outcome is:
 ```text
 editable text changes
 → ObservedChange
+→ reserve RevisionId
 → short debounce
 → bounded TextContext
-→ immutable Revision
+→ seal immutable Revision
 → OpenRouter
-→ validated Correction[]
-→ Suggestion
-→ explicit Apply or Dismiss
-→ TextSurface.replace_if_current(...)
-→ continue writing
+→ validated corrections: [] | [Correction]
+├─ [] → Clean → continue writing
+└─ [Correction] → Suggestion
+   → explicit Apply or Dismiss
+   → TextSurface.replace_if_current(...) or no edit
+   → continue writing
 ```
+
+Reserving a newer `RevisionId` immediately makes all older work stale. The bounded context captured after debounce seals the immutable `Revision` associated with that reserved identifier.
 
 ## Application-owned semantics
 
@@ -51,6 +57,7 @@ The shared product owns:
 
 ```text
 ObservedChange
+SurfaceSignal
 TextContext
 ContextRequest
 TextRange
@@ -58,9 +65,12 @@ TextGeometry
 SourceReference
 SourceDisplay
 RevisionId
+Revision
 Correction
+CheckRequest
+CheckResult
 Suggestion
-controller state
+State
 validation
 presentation behavior
 typed outcomes
@@ -81,17 +91,18 @@ replacement mechanics
 native permissions and protected surfaces
 ```
 
-The application must operate unchanged against:
+The Rust desktop core operates unchanged against:
 
 ```text
 MockTextSurface
 WindowsTextSurface
 MacTextSurface
 LinuxTextSurface
-BrowserTextSurface
 ```
 
-Desktop bindings implement the Rust semantic port. A browser implementation provides the equivalent contract in strict TypeScript.
+Desktop bindings implement the Rust semantic port.
+
+A browser product is a separate strict-TypeScript implementation of versioned, language-neutral semantic schemas. It is not the same executable as the Rust desktop core. Shared conformance fixtures verify that the browser implementation preserves the equivalent `TextSurface` behavior.
 
 ## Mock-first product gate
 
@@ -107,9 +118,10 @@ Before native binding work begins, prove this complete deterministic loop:
 
 ```text
 mock text change
+→ reserve RevisionId
 → debounce
 → context selection
-→ revision
+→ seal immutable Revision
 → inference result
 → validation
 → suggestion view
@@ -126,7 +138,7 @@ Use the documented stack:
 - Tauri 2 for the desktop shell;
 - safe Rust for the shared desktop application and native bindings;
 - strict TypeScript, HTML, and CSS for the compact presentation;
-- Serde and Zod for runtime boundaries;
+- Serde, Zod, and JSON Schema for runtime boundaries;
 - OpenRouter for linguistic intelligence.
 
 Use:
@@ -167,6 +179,24 @@ remove an unnecessary requirement
 
 Implement through small verified increments defined in `docs/IMPLEMENTATION-PLAN.md`.
 
+Use this canonical implementation sequence:
+
+```text
+documentation baseline + Documentation Gate
+→ domain
+→ TextSurface
+→ MockTextSurface
+→ InferenceProvider + MockInferenceProvider
+→ controller, debounce, context, and revision
+→ validator + presentation state
+→ complete mock product + Mock Product Gate
+→ OpenRouterProvider + Provider Gate
+→ Tauri UI + Presentation Gate
+→ Architecture Gate
+→ current-host leaf + Current-Host Binding Gate
+→ two-app runtime + V0.1 Conformance Gate
+```
+
 For each independently meaningful increment:
 
 ```text
@@ -180,10 +210,11 @@ inspect
 → continue
 ```
 
-The active gate controls scope:
+Advance through these checkpoints within the same V0.1 objective:
 
 ```text
-Mock Product Gate
+Documentation Gate
+→ Mock Product Gate
 → Provider Gate
 → Presentation Gate
 → Architecture Gate
@@ -191,7 +222,9 @@ Mock Product Gate
 → V0.1 Conformance Gate
 ```
 
-A later gate cannot redefine the result of an earlier verified gate.
+A later gate cannot redefine the result of an earlier verified gate. When a checkpoint passes, record its evidence and continue automatically to the next checkpoint.
+
+The supplied frozen constitution remains immutable during implementation. After verifying the baseline, initialize the supplied `docs/EVIDENCE.md` ledger with the starting commit and use it for factual status and gate evidence; this mutable ledger is not part of the frozen constitution and is excluded from its checksums. A constitutional change requires a newly versioned documentation package.
 
 ## Scope boundary
 
@@ -215,7 +248,8 @@ Complete every V0.1 criterion in `docs/ACCEPTANCE.md`.
 Finish with:
 
 ```text
-mock product conformance
+documentation conformance
+→ mock product conformance
 → provider conformance
 → presentation conformance
 → architecture conformance
@@ -226,5 +260,7 @@ mock product conformance
 → final verified commit
 → stop
 ```
+
+Stop only after the top-level V0.1 objective passes. If completion is genuinely blocked, first exhaust safe in-scope work and alternatives, then report the precise blocker, preserved state, evidence collected, and authority or external change required to continue. Release and distribution remain a later explicit objective.
 
 Report the exact commits and evidence that establish the working product.

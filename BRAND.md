@@ -1,6 +1,6 @@
 # Emenda Brand System
 
-> **Frozen brand system, version 1.0.0**
+> **Frozen brand system, version 1.0.1**
 
 > **Preserve your Duktus**
 
@@ -171,8 +171,8 @@ release assets
 | Name | Hex | Role |
 |---|---:|---|
 | **Ink Black** | `#0E0F10` | primary typography, iconography, strong outlines |
-| **Graphite** | `#2B2D2F` | secondary dark structure |
-| **Steel Gray** | `#7A7F85` | secondary text and guides |
+| **Graphite** | `#2B2D2F` | secondary text and dark structure |
+| **Steel Gray** | `#7A7F85` | non-text guides and qualifying large text |
 | **Paper** | `#F4F2EE` | primary light background |
 | **Oxblood** | `#5A1A1F` | rare correction/action accent |
 
@@ -183,6 +183,8 @@ The system is predominantly monochrome.
 Oxblood communicates meaningful editorial action.
 
 Paper creates a warm writing surface.
+
+Ink Black or Graphite carries normal-size text on Paper. Steel Gray does not meet the normal-text contrast threshold on Paper, so use it only for non-text construction detail, disabled decoration, or text whose size and weight independently meet WCAG 2.2 AA. Color never carries meaning alone.
 
 ## 9. Typography
 
@@ -241,7 +243,8 @@ The compact suggestion surface uses:
 ```text
 Paper background
 Ink Black text and primary control
-Graphite / Steel secondary detail
+Graphite secondary text
+Steel Gray non-text construction detail
 Oxblood correction/action cue
 subtle precise borders
 compact spacing
@@ -332,7 +335,7 @@ Typography
 
 ## 14. Design decision function
 
-When a visual choice remains open, choose the option that feels:
+Every visual choice first meets legibility, keyboard-focus, and WCAG 2.2 AA contrast requirements. Among conforming options, choose the one that feels:
 
 ```text
 more precise

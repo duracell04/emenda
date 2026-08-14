@@ -1,290 +1,346 @@
 # Emenda Roadmap
 
-> **Frozen roadmap, version 1.0.0**
+> **Frozen V0.1 execution constitution, version 1.0.1. Supersedes version 1.0.0.**
 
-The roadmap follows dependency direction. Product semantics become complete before environment-specific mechanisms enter the repository.
+## Role
+
+This roadmap fixes product outcomes, dependency order, and evidence order.
+
+docs/IMPLEMENTATION-PLAN.md defines the commit-sized execution work. docs/ACCEPTANCE.md defines the evidence that makes each checkpoint pass.
 
 ## North star
 
-```text
-writer continues using the original application
-→ Emenda notices a useful issue quietly
-→ the exact proposed change appears
-→ one deliberate action applies or dismisses it
-→ authorship and flow remain with the writer
-```
+~~~text
+Emenda works across supported writing environments
+→ learns only through explicitly authorized product capabilities
+→ notices the highest-value local issue quietly
+→ proposes the smallest precise change in the original application
+→ waits for one deliberate writer decision
+→ preserves authorship, Duktus, privacy, and flow
+~~~
 
-## Roadmap rule
+V0.1 proves the first ambient correction loop inside this broader direction. `UX.md` is authoritative for the Product North Star, current interaction, future boundary, and UX decision function.
 
-Each milestone starts from verified output produced by the previous milestone.
+## One-run rule
 
-A milestone adds one new axis of product value or evidence.
+V0.1 is one autonomous implementation run. Gates are evidence checkpoints inside that run, never stop points or requests for renewed permission.
 
-Infrastructure and alternate workflows enter only when measured product limitations make them necessary.
+At each checkpoint:
 
-## Milestone 0: Frozen clean-room constitution
+~~~text
+run the required checks
+→ repair any in-scope failure
+→ rerun the checkpoint
+→ append evidence to docs/EVIDENCE.md
+→ continue immediately
+~~~
 
-Deliverables:
+Only a genuine external blocker or completed V0.1 conformance ends the run. Release work is a later objective.
 
-```text
-Markdown-only canonical package
+## Canonical sequence
+
+~~~text
+0. Documentation baseline + Documentation Gate
+1. Domain
+2. TextSurface
+3. MockTextSurface
+4. InferenceProvider + Mock
+5. Controller, debounce, context, and revision
+6. Validator + presentation state
+7. Complete mock product + Mock Product Gate
+8. OpenRouterProvider + Provider Gate
+9. Tauri UI + Presentation Gate
+10. Architecture Gate
+11. Current-host leaf + Current-Host Binding Gate
+12. Two-app runtime + V0.1 Conformance Gate
+13. Release later
+~~~
+
+No OpenRouter implementation, credential use, network request, or live evidence occurs before the Mock Product Gate is recorded as passing.
+
+## Milestone 0: Documentation baseline + Documentation Gate
+
+Verify the already-frozen version 1.0.1 constitution at the starting commit, then initialize the supplied appendable implementation ledger without changing any constitutional file.
+
+Establish:
+
+~~~text
+canonical Markdown package
+resolved reading order and cross-references
+baseline checksums
 hard operating-system invariant
-semantic domain model
-mock-first requirement
-acceptance gates
-roadmap and implementation plan
-brand and UX system
-```
+docs/EVIDENCE.md implementation ledger
+~~~
+
+The constitution remains frozen during implementation. The ledger records factual implementation evidence without rewriting policy.
 
 Exit evidence:
 
-```text
-all package files present
-cross-references valid
-checksums recorded
-archive contains Markdown only
-```
+~~~text
+baseline files and checksums recorded
+archive verified as Markdown-only
+ledger identifies constitution version and baseline commit
+~~~
 
-## Milestone 1: Semantic foundation
+## Milestone 1: Domain
 
-Build the smallest platform-neutral Rust core scaffold and implement:
+Build the smallest safe-Rust, platform-neutral core and its schemas:
 
-```text
+~~~text
 RevisionId
+immutable Revision
 SourceReference
 SourceDisplay
 ObservedChange
+SurfaceSignal
 ContextRequest
 TextContext
 TextRange
-TextGeometry
+normalized TextGeometry
 Correction
 Suggestion
-error taxonomy
-```
+SuggestionView
+CheckRequest
+CheckResult
+State
+typed errors and product outcomes
+~~~
+
+Create shared serialization and conformance fixtures usable by Rust, strict TypeScript, and the future browser binding.
 
 Exit evidence:
 
-```text
-pure domain tests pass
-Unicode scalar semantics pass
-no Tauri, native text dependency, target branch, or platform-named product type shapes the core
-```
+~~~text
+pure domain and Unicode-scalar tests pass
+geometry normalization tests pass
+shared fixtures contain no host mechanism
+no Tauri, native text dependency, or target-specific product type exists
+~~~
 
-## Milestone 2: Application-owned ports and mocks
+## Milestone 2: TextSurface
 
-Build:
+Define the application-owned semantic port:
 
-```text
-TextSurface
-MockTextSurface
-InferenceProvider
-MockInferenceProvider
-```
-
-Exit evidence:
-
-```text
-mock can emit changes
-mock can return context and geometry
-mock can record safe replacement requests
-mock can simulate changed and protected sources
-provider can return deterministic success and failure outcomes
-```
-
-## Milestone 3: Deterministic product engine
-
-Build:
-
-```text
-meaningful-change handling
-debounce
-revision authority
-context policy
-correction validation
-suggestion session
-Apply / Dismiss transitions
-```
+~~~text
+subscribe
+context
+geometry
+replace_if_current
+~~~
 
 Exit evidence:
 
-```text
+~~~text
+port contract compiles
+typed outcomes are semantic
+opaque identity remains binding-owned
+unavailable signals expose no text or opaque identity
+public contracts contain no environment mechanism
+~~~
+
+## Milestone 3: MockTextSurface
+
+Implement deterministic surface behavior for changed and unavailable signals, bounded context, optional geometry, safe replacement, changed sources, protected sources, and unsupported operations.
+
+Exit evidence:
+
+~~~text
+surface contract tests pass
+replacement requests are inspectable
+all success and failure outcomes are deterministic
+~~~
+
+## Milestone 4: InferenceProvider + Mock
+
+Define the semantic inference port and MockInferenceProvider.
+
+The result contract contains exactly zero or one correction in the required array field:
+
+~~~text
+corrections: [] | [Correction]
+~~~
+
+An empty array means no correction and later maps to `Clean`. A one-item array carries the only candidate for semantic validation. Every other cardinality is a protocol failure.
+
+Exit evidence:
+
+~~~text
+mock success, no-correction, and typed failure tests pass
+request and result types contain no provider protocol
+no OpenRouter code, dependency, configuration, or live evidence exists
+~~~
+
+## Milestone 5: Controller, debounce, context, and revision
+
+Implement one deterministic orchestration path.
+
+An eligible change reserves a new RevisionId immediately and invalidates older work before debounce begins. After bounded current context is returned, the controller seals one immutable Revision for that reserved ID.
+
+Use:
+
+~~~text
+500 ms default debounce
+MAX_CONTEXT_SCALARS = 2000
+deterministic sentence/local-paragraph selection
+Unicode-scalar-safe fallback containing the complete changed range
+typed ContextTooLarge when the changed range alone exceeds the cap
+stale checks at every asynchronous boundary
+~~~
+
+Exit evidence:
+
+~~~text
 rapid changes coalesce
-stale results are rejected
-valid corrections become suggestions
-invalid corrections remain fail-closed
-```
+revision authority changes immediately
+sealed revisions never mutate
+context never exceeds the cap
+stale work cannot publish or replace
+~~~
 
-## Milestone 4: OpenRouter provider boundary
+## Milestone 6: Validator + presentation state
 
-Build:
+Implement deterministic correction validation and the display-safe product state machine.
 
-```text
-OpenRouterProvider
-minimal structured request
-bounded response handling
-typed transport/protocol/semantic outcomes
-environment configuration
-```
+Canonical states:
 
-Exit evidence:
+~~~text
+Quiet
+Checking
+Suggestion
+Clean
+Error(ErrorKind)
+~~~
 
-```text
-provider request and parsing tests pass
-one strict live request records a valid correction or correctly typed external failure
-source text remains untouched on invalid output
-```
-
-## Milestone 5: Tiny presentation
-
-Build:
-
-```text
-minimal Tauri composition shell
-compact suggestion surface
-strict TypeScript state
-Zod boundary
-Apply
-Dismiss
-keyboard access
-brand styling
-```
+Exactly one valid correction maps to `Suggestion`; a valid empty correction array maps to `Clean`; stale work publishes no transition; typed failures map explicitly to `Error(ErrorKind)`.
 
 Exit evidence:
 
-```text
-presentation states render correctly
-frontend receives display-safe data only
-Tauri shell contains composition rather than text-surface mechanisms
-```
+~~~text
+range, identity, ambiguity, and no-op tests pass
+state mapping is exhaustive
+frontend DTOs contain SourceDisplay but never SourceReference
+~~~
 
-## Milestone 6: Complete mock product
+## Milestone 7: Complete mock product + Mock Product Gate
 
 Connect:
 
-```text
+~~~text
 MockTextSurface
 → controller
 → MockInferenceProvider
 → validator
 → presentation state
 → Apply / Dismiss
-→ MockTextSurface replacement
-```
+→ MockTextSurface.replace_if_current
+~~~
 
 Exit evidence:
 
-```text
-Mock Product Gate passes
-Presentation Gate passes
-complete product behavior exists without any native binding
-```
+~~~text
+complete product behavior passes without Tauri, OpenRouter, or a native binding
+Apply performs one exact current replacement
+Dismiss performs none
+Clean, stale, protected, changed-source, and invalid-output paths fail closed
+Mock Product Gate is recorded in docs/EVIDENCE.md
+~~~
 
-This is the critical architecture milestone.
+This is the dependency boundary after which external provider work may begin.
 
-## Milestone 7: Architecture freeze before native work
+## Milestone 8: OpenRouterProvider + Provider Gate
 
-Audit:
+Implement the provider adapter using the exact zero-or-one structured-output schema in `SPEC.md`, bounded response handling, typed failure classification, and environment configuration.
 
-```text
-shared domain
-controller
-context policy
-provider port
-presentation DTOs
-Tauri composition
-tests
-dependencies
-```
+Only now run strict live evidence.
 
 Exit evidence:
 
-```text
-shared code has zero OS mechanics
-native source identity cannot cross the port
-complete product still passes through mocks
-no speculative capability or alternate-workflow framework exists
-```
+~~~text
+request construction and parsing tests pass
+no native identity leaves the provider boundary
+invalid output leaves source text untouched
+one successful strict live correction is recorded
+Provider Gate is recorded in docs/EVIDENCE.md
+~~~
 
-Native binding work begins only after this gate passes.
+## Milestone 9: Tauri UI + Presentation Gate
 
-## Milestone 8: Current-host binding
-
-Implement one leaf binding for the available runtime verification environment.
-
-The owner's present environment is Windows, so current runtime work may produce `WindowsTextSurface` after Milestone 7.
-
-Binding responsibilities:
-
-```text
-observe editable-text changes
-retain native identity privately
-retrieve requested context
-return optional geometry
-verify current source and text
-perform one exact replacement
-report typed protection and support outcomes
-```
+Add a thin Tauri composition shell and compact strict-TypeScript presentation for the canonical states and actions.
 
 Exit evidence:
 
-```text
-binding-level tests pass
-one real editable application produces ObservedChange and safe replacement
-shared contracts remain unchanged
-```
+~~~text
+Rust, Tauri, and strict TypeScript compile
+shared Rust/TypeScript conformance fixtures pass
+Zod boundary and state rendering tests pass
+keyboard, focus, labels, reduced motion, and brand contrast pass
+normalized geometry is used only for optional placement
+Presentation Gate is recorded in docs/EVIDENCE.md
+~~~
 
-## Milestone 9: V0.1 runtime validation
+## Milestone 10: Architecture Gate
 
-Verify the complete loop in:
+Audit the complete mock product, provider adapter, presentation boundary, dependencies, fixtures, and composition root before native work.
 
-```text
+Exit evidence:
+
+~~~text
+shared code contains zero operating-system mechanics
+controller depends only on semantic ports
+frontend receives display-safe values only
+Tauri remains composition only
+browser conformance fixtures preserve the shared contract
+no native text dependency or target-specific shared abstraction exists
+Architecture Gate is recorded in docs/EVIDENCE.md
+~~~
+
+Fix audit failures and continue; the gate is not a stopping point.
+
+## Milestone 11: Current-host leaf + Current-Host Binding Gate
+
+Implement exactly one leaf binding for the available verification host. The owner's present host permits a WindowsTextSurface, but Windows remains private to that leaf, its tests, and its evidence.
+
+The binding owns observation, private identity, context retrieval, native-to-scalar translation, geometry normalization, source revalidation, coherent replacement, and typed protection/support outcomes.
+
+Exit evidence:
+
+~~~text
+binding contract and native fixture tests pass
+changed and protected sources remain untouched
+geometry crosses the port only in normalized form
+one coherent edit is produced
+Undo is verified when the exercised host exposes it, otherwise the limitation is recorded
+Current-Host Binding Gate is recorded in docs/EVIDENCE.md
+~~~
+
+## Milestone 12: Two-app runtime + V0.1 Conformance Gate
+
+Run the complete ambient flow in:
+
+~~~text
 one simple editable application
 +
 one additional ordinary editable application
-```
+~~~
+
+Verify observation, one debounced current request, live provider result, exact suggestion, Apply, Dismiss, stale safety, changed-source safety, and conditional host Undo.
+
+Then run the complete architecture, dependency, UX, brand, documentation, and repository health review.
 
 Exit evidence:
 
-```text
-ambient observation
-one debounced current request
-valid suggestion
-Apply
-Dismiss
-stale-result safety
-changed-source safety
-```
+~~~text
+both application runs are recorded
+all prior gate evidence is linked
+V0.1 Conformance passes
+verified implementation commit is identified
+worktree is clean
+~~~
 
-## Milestone 10: V0.1 conformance freeze
+## Milestone 13: Release later
 
-Complete:
+Packaging, signing, installers, publisher trust, update delivery, and public distribution begin only under a separately authorized release objective.
 
-```text
-architecture audit
-dependency audit
-UX audit
-brand audit
-documentation status update
-clean worktree
-final verified commit
-```
+Release evidence neither blocks nor redefines V0.1 product conformance.
 
-Then stop.
-
-## Future roadmap
-
-Future milestones are chosen from measured product evidence:
-
-```text
-additional host bindings
-browser binding
-richer geometry and inline indication
-per-application behavior
-personal vocabulary
-model-quality controls
-local inference
-public distribution
-```
-
-Each future milestone begins under a new explicit objective and preserves the shared product semantics established in V0.1.
+Future product breadth is likewise chosen from measured evidence and preserves the shared semantics frozen by V0.1.

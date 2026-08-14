@@ -4,22 +4,24 @@
 
 Emenda is a quiet local writing assistant that observes editable text, delegates linguistic judgment to OpenRouter, validates every proposal locally, and lets the writer apply each change explicitly.
 
-This package is the frozen clean-room constitution for rebuilding Emenda from an empty implementation context.
+This package is the frozen clean-room constitution, version 1.0.1, for rebuilding Emenda from an empty implementation context.
 
 ## Product model
 
 ```text
 editable text changes
+→ reserve a current RevisionId
 → short debounce
 → smallest useful context
-→ immutable revision
+→ seal an immutable Revision
 → OpenRouter
-→ structured corrections
+→ zero or one structured correction
 → deterministic validation
-→ compact suggestion
-→ Apply or Dismiss
-→ safe current-source replacement
-→ continue writing
+├─ no correction → Clean → continue writing
+└─ one correction → compact suggestion
+   → Apply or Dismiss
+   → safe current-source replacement or no edit
+   → continue writing
 ```
 
 Emenda keeps local intelligence deliberately small:
@@ -38,18 +40,19 @@ OpenRouter handles linguistic judgment.
 ## Hard architecture rule
 
 ```text
-                         EMENDA
-
-                  OS-AGNOSTIC PRODUCT
-                            │
-                    semantic TextSurface
-                            │
-             ┌──────────────┼──────────────┐
-             ▼              ▼              ▼
-       native binding  native binding  browser binding
+          LANGUAGE-NEUTRAL EMENDA SEMANTICS
+          versioned schemas + conformance fixtures
+                        │
+            ┌───────────┴───────────┐
+            ▼                       ▼
+   safe-Rust desktop core   strict-TypeScript browser core
+            │                       │
+      semantic TextSurface      BrowserTextSurface
+            │                       │
+       mock or native leaf       browser-native leaf
 ```
 
-Shared code contains zero knowledge of:
+Platform-neutral desktop and browser product code contains zero knowledge of environment mechanisms:
 
 ```text
 Windows
@@ -66,6 +69,8 @@ DOM nodes
 
 Those mechanisms belong to replaceable leaf bindings.
 
+The Rust desktop core runs unchanged against mock and native desktop bindings. A future browser product separately implements the same versioned semantic schemas in strict TypeScript and must pass the same language-neutral conformance fixtures; it is not the Rust executable coupled to a browser adapter.
+
 The current host operating system is a runtime verification environment, not an architectural input.
 
 ## Mock-first build model
@@ -78,7 +83,7 @@ MockTextSurface
 MockInferenceProvider
 ```
 
-Only after the mock product loop and architecture gate pass does the project add a binding for the available runtime host.
+Only after the Mock Product, Provider, Presentation, and Architecture gates pass does the project add a binding for the available runtime host.
 
 In the owner's present environment, runtime evidence may be collected through a Windows binding. That environmental fact may appear only in binding-specific code, tests, and evidence.
 
@@ -90,6 +95,7 @@ In the owner's present environment, runtime evidence may be collected through a 
 - HTML and CSS
 - Serde
 - Zod
+- JSON Schema
 - OpenRouter
 
 The stack is selected to make the compiler, type system, runtime schemas, and capability boundaries part of the correctness system.
@@ -122,6 +128,7 @@ The shared product must already satisfy that loop deterministically through mock
 8. [`docs/ENGINEERING.md`](docs/ENGINEERING.md): AI-native engineering standard
 9. [`UX.md`](UX.md): interaction rules and product north star
 10. [`BRAND.md`](BRAND.md): visual identity and brand system
-11. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md): freeze identity, contents, and checksums
+11. [`docs/EVIDENCE.md`](docs/EVIDENCE.md): mutable implementation evidence ledger
+12. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md): freeze identity, contents, and checksums
 
 Together these Markdown documents are sufficient to reconstruct the intended product without access to an earlier implementation.
