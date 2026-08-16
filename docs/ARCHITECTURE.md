@@ -1,12 +1,12 @@
 # Emenda V0.1 Architecture
 
-> **Frozen architecture, version 2.0.1**
+> **Frozen architecture, version 2.0.2**
 
 ## 1. Authority and objective boundary
 
 [`SPEC.md`](../SPEC.md) defines product behavior. This document defines ownership, boundaries, import direction, and runtime data flow. [`IMPLEMENTATION-PLAN.md`](IMPLEMENTATION-PLAN.md) defines build order.
 
-The current objective ends when the v2.0.1 Markdown constitution is rewritten, verified, hashed, committed, and pushed. Product implementation requires a separate future objective.
+The current objective preserves the v2.0.1 freeze at `d70b277998a23663ee6befc77dd6bb0da50ebcca` and ends when its direct-child v2.0.2 Markdown constitution is rewritten, verified, hashed, committed, and pushed. Product implementation requires a separate future objective.
 
 ## 2. System shape
 
@@ -43,8 +43,8 @@ There is one `BrowserTextSurface` implementation supporting both `<textarea>` an
 
 | Concern | Owner | Boundary rule |
 | --- | --- | --- |
-| Domain values, deterministic text policy, reducer, context, validation, and semantic ports | `core/` | Pure TypeScript; no DOM, Chrome, Node, React, or extension types; no Zod |
-| Model-authored result schema | `core/provider-schema/` | Zod is permitted only for this external model boundary |
+| Domain values, deterministic text policy, reducer, context, scalar correction derivation, validation, and semantic ports | `core/` | Pure TypeScript; no DOM, Chrome, Node, React, or extension types; no Zod |
+| Model-facing input and model-authored result schemas | `core/provider-schema/` | Zod is permitted only for this external model boundary |
 | Runtime message schemas | `extension/protocol/` | Versioned, discriminated, strict Zod schemas |
 | Controller instance, revision lifetime, cached public configuration, source registries, and presentation | content script | Raw source identity and DOM data remain here |
 | Capture, scalar-to-DOM mapping, and mutation safety | `BrowserTextSurface` in `extension/content/` | Browser types are confined to the adapter |
@@ -101,6 +101,8 @@ enabledOrigins
 
 `profileMode` defaults to `auto`.
 
+The model setting uses the default and advanced concrete-model override defined in [`SPEC.md`](../SPEC.md#9-provider-request). Existing valid overrides remain trusted settings.
+
 At worker initialization, it must await:
 
 ```text
@@ -126,10 +128,10 @@ Every content-to-worker check carries the cached `settingsRevision`. Before usin
 For an eligible revision:
 
 1. The content script captures an opaque snapshot through `BrowserTextSurface` after debounce.
-2. Pure core policy selects the deterministic focus and a context of at most 1,200 Unicode scalars.
-3. The content script sends only the bounded context, selected profile, request identity, and `settingsRevision` to the worker.
-4. The worker revalidates origin, configuration revision, and message shape, then uses its private model and credential for one OpenRouter request.
-5. The worker validates the external result and returns a typed, versioned outcome.
+2. Pure core policy selects the deterministic focus and bounded context under the canonical limits in [`SPEC.md`](../SPEC.md#3-v01-runtime-and-limits).
+3. The content script sends only that bounded logical context, its exact focus range, selected profile, request identity, and `settingsRevision` to the worker.
+4. The worker revalidates origin, configuration revision, and message shape, splits the context into the model-facing `before`, `focus`, and `after` fields, then uses its private model and credential for one OpenRouter request.
+5. The worker strictly validates the external result, invokes pure scalar derivation, and returns only the trusted derived correction or typed failure in a versioned outcome. Model-authored `correctedFocus` never crosses into the content script.
 6. The reducer accepts the outcome only for the current revision and either returns to `Idle`, presents one suggestion, or enters `Error` according to the specification.
 
 The page URL, full document, source identity, snapshot identity, DOM structure, API key, and model identifier do not cross boundaries that do not own them.
@@ -169,15 +171,9 @@ Revocation first marks the origin disabled so new messages fail. It then cancels
 
 ## 11. Provider boundary
 
-The worker calls only `https://openrouter.ai/api/v1/chat/completions`, using one concrete configured model and no `models` array. Routing is explicit:
+The worker alone owns the endpoint, credential, trusted model setting, routing, cancellation, response reading, external Zod parsing, and conversion from the external result into the trusted derived correction. It implements the canonical model-facing and provider contracts in [`SPEC.md`](../SPEC.md#8-model-facing-contract-and-local-derivation) and [`SPEC.md`](../SPEC.md#9-provider-request) without adding payload fields.
 
-```text
-provider.require_parameters: true
-provider.allow_fallbacks: false
-provider.data_collection: "deny"
-```
-
-The request is non-streaming and uses strict structured output. The adapter enforces an eight-second timeout, incrementally stops above 32 KiB, supports cancellation, validates locally with Zod, and exposes only typed redacted failures. Emenda performs no retry, healing, streaming, caching, telemetry, provider failover, or model substitution.
+Provider fallback remains inside the single OpenRouter request. Emenda neither retries at application level nor sends a `models` array. The adapter applies the canonical deadline and response bound, exposes only typed redacted outcomes, and keeps the selected model identifier available only where sanitized live evidence requires it.
 
 ## 12. Gate ownership
 

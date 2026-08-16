@@ -1,12 +1,12 @@
 # Emenda
 
-> **Frozen clean-room constitution, version 2.0.1**
+> **Frozen clean-room constitution, version 2.0.2**
 
 > **Preserve your Duktus**
 
-Emenda V0.1 is specified as a quiet personal writing assistant for Chromium. It observes committed changes on explicitly enabled sites, waits for typing to settle, sends one bounded context to a user-configured OpenRouter model, validates the structured result locally, and presents at most one exact correction for the writer to apply or dismiss.
+Emenda V0.1 is specified as a quiet personal writing assistant for Chromium. It observes committed changes on explicitly enabled sites, waits for typing to settle, sends one split bounded context through the default `openrouter/free` route or an advanced concrete-model override, validates the model's complete corrected focus, derives at most one Unicode-scalar edit locally, and presents that exact correction for the writer to apply or dismiss.
 
-This branch currently contains the 13-file Markdown constitution only. Version 2.0.1 supersedes version 2.0.0, preserved at commit `a1a13607867db8e6eb2ea904f6387ba130f22ce7`. Product implementation requires a separate future objective.
+This branch currently contains the 13-file Markdown constitution only. Version 2.0.2 supersedes version 2.0.1, preserved at commit `d70b277998a23663ee6befc77dd6bb0da50ebcca`; version 2.0.0 remains preserved at `a1a13607867db8e6eb2ea904f6387ba130f22ce7`. Product implementation requires a separate future objective in the separate implementation repository.
 
 ## Intended V0.1 experience
 
@@ -23,17 +23,18 @@ V0.1 targets Chrome 140 or newer and supports visible, focused, writable, light-
 
 ## Settings and site access
 
-- The writer supplies an OpenRouter API key, one concrete structured-output model, and a language profile.
+- The writer supplies an OpenRouter API key and a language profile. The model route defaults to `openrouter/free`; advanced users may override it with a concrete model ID.
 - `auto` is the default profile; fixed profiles are `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE`, and `ru-RU`.
+- A fixed profile is authoritative. `auto` permits supported-profile detection.
 - The toolbar requests optional permission for the exact active HTTP(S) origin.
 - Revoking an origin makes live content scripts inert and removes its registration and permission.
 - The worker owns trusted settings. Options communicates with the worker; content scripts never receive the API key or model.
 
 ## Privacy
 
-> Emenda sends only the current bounded text context, up to 1,200 Unicode scalars, to OpenRouter and the provider serving the configured model. It does not send the page URL, full document, source identity or DOM structure. Processing remains subject to OpenRouter’s and the model provider’s policies. The API key is stored in the browser profile, not in an operating-system secret vault.
+Emenda sends only the bounded context defined in [`SPEC.md`](SPEC.md), not the page URL, full document, source identity, or DOM structure. Provider routing requests data-collection denial, but that is not a guarantee of zero retention. The exact options-page disclosure is owned by [`UX.md`](UX.md).
 
-Emenda specifies no telemetry, analytics, correction history, persistent text cache, request logging, retry, streaming, provider fallback, or model substitution.
+Emenda specifies no telemetry, analytics, correction history, persistent text cache, application-level retry, streaming, or persistent private-text logging. A check has a 15-second deadline. OpenRouter may select or fall back among eligible providers inside that single request, and the default free route may select different eligible models between requests; Emenda itself does not retry.
 
 ## Constitutional authority
 

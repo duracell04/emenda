@@ -1,12 +1,12 @@
 # Emenda V0.1 Product Specification
 
-> **Frozen product authority, version 2.0.1**
+> **Frozen product authority, version 2.0.2**
 
 ## 1. Authority and objective boundary
 
 This file is authoritative for what Emenda V0.1 does. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) owns architectural boundaries, and [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) owns future build order.
 
-The v2.0.1 objective is documentation-only. It ends after the 13-document package is rewritten, verified, hashed, committed, and pushed. Product implementation requires a separate future objective.
+The v2.0.2 objective is documentation-only. It preserves the v2.0.1 freeze at commit `d70b277998a23663ee6befc77dd6bb0da50ebcca` and ends after the 13-document package is rewritten, verified, hashed, committed, and pushed as its direct child. Product implementation requires a separate future objective.
 
 ## 2. Product goal
 
@@ -22,8 +22,10 @@ V0.1 is one strict-TypeScript product core and one Chromium Manifest V3 extensio
 minimum_chrome_version: "140"
 DEBOUNCE_MS: 600
 MAX_CONTEXT_SCALARS: 1200
-PROVIDER_TIMEOUT_MS: 8000
-MAX_RESPONSE_BYTES: 32768
+MAX_FOCUS_SCALARS: 256
+PROVIDER_TIMEOUT_MS: 15000
+MAX_PROVIDER_RESPONSE_BYTES: 32768
+DEFAULT_MODEL: "openrouter/free"
 ```
 
 The state union is:
@@ -76,6 +78,8 @@ profileMode
 settingsRevision
 enabledOrigins
 ```
+
+New settings records use `openrouter/free` as the model. The options page exposes an advanced concrete-model override, and a valid existing override remains authoritative until the writer changes it.
 
 The options page communicates with the worker and never reads or writes this storage area directly.
 
@@ -133,13 +137,26 @@ The core does not use `Intl.Segmenter`.
 
 A focus is nonlinguistic when it contains no Unicode Letter scalar (`\p{L}`). Empty, whitespace-only, and nonlinguistic focus cause no request.
 
-Context contains the complete focus and at most 1,200 scalars. It is exactly 1,200 only when at least that much logical document context is available. If the focus itself exceeds 1,200 scalars, capture fails closed and no inference occurs.
+Context contains the complete focus and at most 1,200 scalars. The focus contains at most 256 scalars. A longer focus fails closed and returns silently to `Idle` without inference. Context is exactly 1,200 scalars only when at least that much logical document context is available.
 
 If the complete paragraph fits, it is the context. Otherwise, after including the focus, divide remaining capacity evenly between preceding and trailing text. An odd spare scalar goes to the trailing side. Clamp at document boundaries and backfill unused capacity from the available side.
 
-## 8. Model result and local validation
+## 8. Model-facing contract and local derivation
 
-The model-authored result has exactly this information:
+The model-facing user message has exactly this information:
+
+```ts
+type ProviderInput = {
+  profileMode: "auto" | "de-CH" | "en-GB" | "en-US" | "fr-FR" | "ka-GE" | "ru-RU";
+  before: string;
+  focus: string;
+  after: string;
+};
+```
+
+`before + focus + after` exactly reproduces the bounded logical context. The focus is complete, not a fragment. The three text fields total at most 1,200 Unicode scalars and `focus` totals at most 256. No offsets, revisions, URL, document identity, DOM data, API key, settings revision, or unrelated text enters this linguistic payload.
+
+The strict model-authored result has exactly this information:
 
 ```ts
 type ModelResult = {
@@ -154,33 +171,36 @@ type ModelResult = {
   corrections:
     | []
     | [{
-        range: { start: number; end: number };
-        original: string;
-        replacement: string;
+        correctedFocus: string;
         category: "spelling" | "grammar" | "punctuation" | "style";
         explanation: string;
       }];
 };
 ```
 
-`range` is half-open, uses Unicode scalar offsets relative to `TextContext.text`, and must remain wholly inside the context's focus range. Revision identity is never model-authored; the provider adapter attaches the request's authoritative revision identity to the local result.
+Every object property is required, every object rejects extra properties, and `corrections` has zero or one item. `correctedFocus` contains at most 256 Unicode scalars. Category is one declared value and explanation is nonempty.
 
-Local validation is strict and rejects extra properties. A correction is accepted only when:
+In `auto`, any supported returned profile or `unsupported` is valid. In a fixed mode, the result must name that exact fixed profile or `unsupported`; a different supported profile is invalid provider output. `unsupported` is valid only with `corrections: []` and returns silently to `Idle`. An empty array also represents a clean focus or the absence of one clear safe correction.
 
-- the attached revision is current;
-- the configured and returned language rules pass;
-- the result contains exactly one correction;
-- scalar offsets are integral, ordered, in bounds, and inside focus;
-- `original` exactly equals the context substring at the range;
-- `replacement` differs from `original`;
-- category is allowed and explanation is nonempty;
-- the insertion, deletion, or replacement maps losslessly to the captured snapshot.
+The worker treats the result as untrusted. It compares the exact original focus and `correctedFocus` as Unicode scalar sequences without normalization, fuzzy search, or relocation. Derivation uses minimum scalar edit distance. When equally minimal alignments exist, it scans from the beginning and prefers exact match, then substitution, deletion, and insertion. Adjacent edit operations form one hunk; an exact match separates hunks. Zero hunks is an invalid unchanged correction, and more than one hunk is invalid.
 
-The controller maps an accepted context-relative correction once to snapshot-relative scalar coordinates.
+For exactly one hunk, worker-side local code derives the half-open focus-relative range, exact `original`, and exact `replacement`; proves that applying them recreates `correctedFocus`; and translates the range to context-relative scalar coordinates exactly once. The content controller then maps that trusted context-relative correction to snapshot-relative coordinates exactly once and requires lossless mapping. The correction item in the trusted worker-to-content result remains:
 
-In `auto`, any supported returned profile or `unsupported` is valid. In a fixed mode, the returned profile must be that exact profile or `unsupported`. `unsupported` is accepted only with `corrections: []` and returns silently to `Idle`. A different supported profile is the typed failure `LanguageMismatch` and produces no suggestion.
+```ts
+type Correction = {
+  range: { start: number; end: number };
+  original: string;
+  replacement: string;
+  category: "spelling" | "grammar" | "punctuation" | "style";
+  explanation: string;
+};
+```
 
-There is no fuzzy match, unique-match search, offset recovery, correction relocation, confidence threshold, or response healing.
+The model-authored `correctedFocus` never crosses the worker boundary. Revision identity remains Emenda-authored and is attached to the trusted local outcome. The existing versioned runtime envelope need not change merely because the external provider contract changed.
+
+A single hunk proves only one structural edit. It cannot prove that the model preserved meaning or avoided translation. The prompt requires semantic preservation, and the overlay shows the writer exact before and after text for judgment before Apply.
+
+The observable alignment and hunk rules are binding; matrix representation, traceback storage, substitution representation, helper design, and equivalent implementation choices are not. There is no unique-match search, offset recovery, correction relocation, confidence threshold, or response healing.
 
 ## 9. Provider request
 
@@ -190,19 +210,32 @@ The worker sends one non-streaming request to:
 POST https://openrouter.ai/api/v1/chat/completions
 ```
 
-The request contains one concrete user-configured model, the bounded context and focus coordinates, the selected profile, one system instruction, and strict structured-output schema. Emenda has no compiled model default. The request contains no `models` fallback array and uses:
+The request uses the trusted model setting, whose default is `openrouter/free`, and permits an advanced concrete-model override. It contains the split linguistic payload in Section 8, one system instruction, and the strict structured-output schema. It contains no `models` fallback array. The complete provider contract is:
 
 ```text
+model: trusted setting, default "openrouter/free"
+advanced concrete-model override: allowed
+stream: false
+temperature: 0
+strict structured output: required
 provider.require_parameters: true
-provider.allow_fallbacks: false
+provider.allow_fallbacks: true
 provider.data_collection: "deny"
+application retries: 0
+deadline: 15 seconds
 ```
 
 `settingsRevision` is an internal Emenda authority value and is never sent to OpenRouter.
 
-The worker incrementally enforces the eight-second timeout and 32 KiB response-body limit, then validates locally with Zod. Cancellation is best-effort. Provider, transport, timeout, size, HTTP, parse, and schema failures are typed and redacted.
+The builder uses the currently supported OpenRouter generation-limit parameter and the smallest output budget that safely accommodates the 256-scalar corrected focus, category, concise explanation, and JSON envelope. Deterministic request tests pin the selected parameter and value for the implementation under test; this constitution does not preserve a deprecated field name.
 
-Only a route that supports the required structured-output parameters and denies provider data collection is eligible. Emenda performs no retry, response repair, streaming, caching, telemetry, analytics, provider failover, or model substitution. The routing values remain explicit because OpenRouter's defaults differ; see [provider routing](https://openrouter.ai/docs/guides/routing/provider-selection).
+The 15-second deadline begins when the adapter dispatches the request and ends only when body reading, transport parsing, strict Zod validation, and the semantic derivation in Section 8 produce a terminal outcome. The worker also stops response reading incrementally above 32 KiB. Cancellation is best-effort. Provider, transport, timeout, size, HTTP, parse, schema, and semantic failures are typed and redacted.
+
+Only a route that supports the required structured-output parameters and denies provider data collection is eligible. Emenda performs no application-level retry, response repair, streaming, caching, telemetry, analytics, `models`-array failover, or application-level model substitution. `allow_fallbacks` permits OpenRouter to try eligible provider endpoints inside the same request; it guarantees neither immediate fallback, a different model, nor completion before Emenda's deadline. The `openrouter/free` router may select different eligible models across requests independently of fallback. See [free-router behavior](https://openrouter.ai/docs/guides/routing/routers/free-router) and [provider routing](https://openrouter.ai/docs/guides/routing/provider-selection).
+
+The canonical system instruction is:
+
+> You are Emenda, a conservative proofreader. The user message contains `profileMode`, `before`, `focus`, and `after`; the three text fields form one bounded context. Use `before` and `after` only as context and change only `focus`. Preserve the writer’s language, meaning, names, quotations, terminology, register, rhythm, and voice. Never translate. In a fixed profile, use that profile or report `unsupported` when the focus cannot safely be proofread under it; in `auto`, report the matching supported profile or `unsupported`. Return no correction when the focus is already correct or no single clear local correction exists. Otherwise return exactly one correction containing the complete corrected focus, its category, and a concise explanation. Return only data matching the supplied schema.
 
 ## 10. Apply contract
 
@@ -316,7 +349,7 @@ Unregistering does not remove code already injected into a page, so teardown is 
 | Stale settings revision | Resynchronize cached settings, do not retry that revision |
 | Missing configuration | `Error`, with Open Settings |
 | Current provider timeout or failure | `Error` |
-| Invalid current provider response or `LanguageMismatch` | `Error` |
+| Invalid current provider response, including unchanged or multi-hunk output, an over-limit `correctedFocus`, or a fixed-profile contradiction | `Error` |
 | Current Apply refusal after writer action | `Error` |
 | New committed input | Clear current `Error`, reserve a revision, and debounce |
 
@@ -326,9 +359,7 @@ Errors contain no API key, authorization header, raw context, model body, source
 
 The content script owns a fixed, unanchored shadow-root overlay. It appears only for a current suggestion or writer-visible error, never autofocuses, and offers exact before/after text, category, concise explanation, Apply, and Dismiss. `Escape` dismisses and `Alt+Enter` applies only a current suggestion without interfering with IME or host editing.
 
-The options page must display this disclosure verbatim:
-
-> Emenda sends only the current bounded text context, up to 1,200 Unicode scalars, to OpenRouter and the provider serving the configured model. It does not send the page URL, full document, source identity or DOM structure. Processing remains subject to OpenRouter’s and the model provider’s policies. The API key is stored in the browser profile, not in an operating-system secret vault.
+The options page displays the single verbatim disclosure owned by [`UX.md`](UX.md#9-privacy-disclosure). It states accurately that only bounded context is sent, the default free route may select different eligible models, an advanced override may request a concrete model, provider data-collection denial is not a zero-retention guarantee, and the API key is stored in the browser profile rather than an operating-system secret vault.
 
 Emenda stores no text history or persistent text cache and emits no telemetry or analytics. Tests and evidence use synthetic domain-neutral text.
 

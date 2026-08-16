@@ -1,14 +1,14 @@
 # Emenda V0.1
 
-> **Frozen clean-room constitution, version 2.0.1**
+> **Frozen clean-room constitution, version 2.0.2**
 
 This repository contains the documentation-only constitution for Emenda V0.1. It does not authorize implementation by itself.
 
 ## Current objective
 
-The v2.0.1 objective ends when the 13 Markdown documents are rewritten, verified, hashed, committed, pushed, and the worktree is clean. Do not create implementation files during this objective. Building the product requires a separate future objective.
+The v2.0.2 objective ends when the 13 Markdown documents are rewritten, verified, hashed, committed, pushed, and the worktree is clean. Do not create implementation files during this objective. Building the product requires a separate future objective in the separate implementation repository.
 
-Version 2.0.0 remains preserved at Git commit `a1a13607867db8e6eb2ea904f6387ba130f22ce7`.
+Version 2.0.1 remains preserved at Git commit `d70b277998a23663ee6befc77dd6bb0da50ebcca`. Version 2.0.0 remains preserved at Git commit `a1a13607867db8e6eb2ea904f6387ba130f22ce7`.
 
 ## Future product objective
 
@@ -16,7 +16,8 @@ When separately authorized, build the smallest complete Emenda V0.1 as:
 
 - one strict-TypeScript product core;
 - one Chromium Manifest V3 extension requiring Chrome 140 or newer;
-- one bounded correction at a time through a user-configured OpenRouter model;
+- one bounded correction at a time through the default `openrouter/free` route or an advanced concrete-model override;
+- one locally derived Unicode-scalar edit from the model's complete corrected focus;
 - explicit writer approval before any verified, one-step-undoable edit.
 
 Emenda preserves the writer's meaning, terminology, register, rhythm, and Duktus. It performs no translation, telemetry, persistent text logging, automatic rewriting, or unsupported-surface fallback.
@@ -29,7 +30,7 @@ Read the complete package before implementation. The three subject authorities a
 2. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — ownership, boundaries, and dependency direction.
 3. [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) — implementation order and gate placement.
 
-Supporting documents may summarize or verify these authorities but cannot change them. [`AGENTS.md`](AGENTS.md) defines repository operating constraints.
+Supporting documents may summarize or verify these authorities but cannot change them. [`SPEC.md`](SPEC.md) is the sole canonical home of the model prompt, provider schemas, limits, and provider contract. [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) is the sole canonical home of the live qualification corpus. [`AGENTS.md`](AGENTS.md) defines repository operating constraints.
 
 ## Canonical future sequence
 

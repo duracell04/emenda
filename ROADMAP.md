@@ -1,10 +1,10 @@
 # Emenda Roadmap
 
-> **Frozen product roadmap, version 2.0.1**
+> **Frozen product roadmap, version 2.0.2**
 
 ## 1. Roadmap boundary
 
-The current objective ends with the verified, hashed, committed, and pushed v2.0.1 documentation freeze. It does not authorize product implementation. A separate future objective may build the smallest complete browser V0.1 through the ordered increments below.
+The current objective ends with the verified, hashed, committed, and pushed v2.0.2 documentation freeze. It does not authorize product implementation. A separate future objective must identify the implementation repository, baseline, branch, and pull-request target before building the smallest complete browser V0.1 through the ordered increments below.
 
 V0.1 proves one correction loop before any expansion. Gates are evidence checkpoints, not releases or parallel work streams.
 
@@ -26,10 +26,10 @@ The Documentation Gate is the prerequisite baseline, not an eighth implementatio
 
 ## 3. Documentation baseline
 
-The v2.0.1 baseline consists of:
+The v2.0.2 baseline consists of:
 
-- exactly 13 Markdown files frozen as `emenda-clean-room-v2.0.1-2026-08-14`;
-- one documentation-only child commit of v2.0.0 at `a1a13607867db8e6eb2ea904f6387ba130f22ce7`;
+- exactly 13 Markdown files frozen as `emenda-clean-room-v2.0.2-2026-08-16`;
+- one documentation-only child commit of v2.0.1 at `d70b277998a23663ee6befc77dd6bb0da50ebcca`, with v2.0.0 preserved at `a1a13607867db8e6eb2ea904f6387ba130f22ce7`;
 - 11 immutable documents verified by individual staged-Git-blob SHA-256 values;
 - an empty mutable evidence-ledger template;
 - no implementation source or unsupported product claim.
@@ -42,7 +42,7 @@ After the freeze commit is pushed, its remote identity and clean worktree are ve
 2. **Unified State Machine** — implement the reducer/effect architecture, revisions, settings authority, debounce, context, validation, presentation, Apply, Dismiss, and errors.
 3. **Mock Product + Architecture Gates** — prove the full loop with simulations and fake clocks, pass the Mock Product Gate, then separately prove the Architecture Gate.
 4. **Unified DOM Integration** — implement one safe browser surface for textarea and bounded contenteditable, including deterministic mapping, IME handling, self-mutation consumption, and one-step Undo.
-5. **MV3 Shell + Provider** — add the Chrome 140 shell, trusted settings, origin lifecycle, protocol, options, overlay, and fixed OpenRouter adapter, then pass the Provider Gate.
+5. **MV3 Shell + Provider** — add the Chrome 140 shell, trusted settings, origin lifecycle, protocol, options, overlay, corrected-focus provider contract, and OpenRouter adapter, then pass the Provider Gate.
 6. **Browser Integration** — integrate both supported surface classes and verify permissions, storage isolation, teardown, accessibility, authority races, and editing behavior before passing the Browser Integration Gate.
 7. **V0.1 Conformance** — run final audits and compatibility evidence, pass the V0.1 Conformance Gate, push and verify the final implementation, and stop.
 
@@ -56,6 +56,8 @@ The six gates are therefore placed as follows:
 | Provider | At the end of Increment 5 |
 | Browser Integration | At the end of Increment 6 |
 | V0.1 Conformance | At the end of Increment 7 |
+
+The Provider Gate requires all deterministic checks to pass and one complete sequential live qualification whose factual results remain visible. [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) owns the corpus and evidence requirements; the live run is not a reliability guarantee.
 
 ## 5. V0.1 evidence endpoint
 

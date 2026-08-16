@@ -1,12 +1,12 @@
 # Emenda Engineering Standard
 
-> **Frozen engineering standard, version 2.0.1**
+> **Frozen engineering standard, version 2.0.2**
 
 ## 1. Purpose
 
 This document defines the V0.1 toolchain, verification policy, evidence vocabulary, and change discipline. Product behavior belongs to [`SPEC.md`](../SPEC.md), architectural ownership belongs to [`ARCHITECTURE.md`](ARCHITECTURE.md), and build order belongs to [`IMPLEMENTATION-PLAN.md`](IMPLEMENTATION-PLAN.md).
 
-The current objective is the v2.0.1 documentation freeze. Implementation begins only under a separate future objective.
+The current objective is the v2.0.2 documentation freeze, created as one documentation-only child of v2.0.1 commit `d70b277998a23663ee6befc77dd6bb0da50ebcca`. Implementation begins only under a separate future objective.
 
 ## 2. Toolchain and dependency policy
 
@@ -40,9 +40,13 @@ Use Vitest, fake clocks, deterministic surface and provider simulations, and con
 
 Tests assert observable contracts rather than private helper structure. Fixtures are synthetic and domain-neutral. Timing tests control exact boundaries and completion order; arbitrary waits are not acceptable fixes for flaky tests.
 
+Every deterministic gate assertion must pass; live-provider qualification is recorded separately and does not lower that standard.
+
 ### Provider verification
 
-Prove payload, routing, structured-output schema, timeout, incremental body limit, cancellation, local validation, and redacted error conversion with controlled doubles. At the Provider Gate, use a dedicated spend-limited key for the required live profile cases and record the configured model, UTC time, latency, and sanitized outcome without retaining request text or credentials.
+Prove the canonical payload, routing, structured-output schema, generation limit, timeout, incremental body limit, cancellation, local derivation, and redacted error conversion with controlled doubles. Use the currently supported OpenRouter generation-limit field; deterministic request tests pin the field and value chosen by the implementation. Deterministic Provider Gate tests require 100% success.
+
+Run the canonical 15-case corpus from [`ACCEPTANCE.md`](ACCEPTANCE.md) once, strictly sequentially, through the production validation path. Do not retry or replace an official case. Record `case`, the selected model or `unavailable`, latency, outcome, failure reason when any, and linguistic correctness, then report the factual success count as `x/15`. Diagnostic reruns are separate evidence and do not rewrite the official result. The live run qualifies observed behavior without claiming a reliability guarantee.
 
 ### Browser verification
 
@@ -56,9 +60,9 @@ Browser verification uses the production unpacked build and covers supported and
 
 Record Windows Studio with current Chrome, MacBook with current Chrome, and Chromebook with current ChromeOS/Chrome as separate personal-device results. Do not infer an untested cross-OS support claim from any one result.
 
-## 5. Cross-platform audit entry point
+## 5. Cross-platform audit capability
 
-The future implementation provides one cross-platform `scripts/audit.mjs` command that orchestrates the checks applicable to the current phase. It makes documentation validation, individual checksum verification, compilation, tests, build inspection, and final audits reachable through one entry point as those capabilities exist.
+The future implementation provides one cross-platform audit command that orchestrates the checks applicable to the current phase. It makes documentation validation, individual checksum verification, compilation, tests, build inspection, and final audits reachable through one entry point as those capabilities exist. Its filename, path, and internal script structure are builder choices.
 
 The audit must be read-only with respect to constitutional and implementation sources. It retains the 11 independent staged-Git-blob SHA-256 checks rather than introducing an aggregate digest. Internal helpers, presentation, and exact command output remain implementation choices; do not create parallel audit scripts.
 
@@ -95,6 +99,8 @@ Never record API keys, authorization headers, raw private context, raw model bod
 ## 7. Change discipline
 
 Group work into coherent, independently verifiable decisions. Run focused checks before broad checks, inspect each diff, and append only factual evidence. There is no required commit for every component or internal refactor.
+
+The constitution fixes observable behavior, safety, privacy, compatibility, reliability requirements, and deterministic outcomes. Builders retain discretion over algorithms, storage layout, helper structure, pacing code, test organization, and other internal choices that satisfy those contracts; prefer the simplest clear implementation.
 
 The immutable constitution changes only through a newly versioned documentation objective with new checksums. The evidence ledger cannot change product behavior, architecture, acceptance, UX, brand, or governance.
 

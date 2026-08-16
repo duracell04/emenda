@@ -1,6 +1,6 @@
 # Emenda V0.1 Acceptance
 
-> **Frozen acceptance contract, version 2.0.1**
+> **Frozen acceptance contract, version 2.0.2**
 
 ## 1. Role and evidence standard
 
@@ -26,6 +26,8 @@ tested implementation commit:
 
 An evidence commit records an already-existing implementation commit that was actually tested. Later success does not erase an earlier failure; record failure and recovery separately. Never record credentials, authorization headers, raw private text, full provider bodies, source identities, or DOM data.
 
+Every deterministic assertion required by a gate must pass; there is no partial deterministic pass. The Provider Gate's live qualification has the separate factual standard in Section 6.3.
+
 ## 2. Gates and current stop boundary
 
 The six gates are:
@@ -39,15 +41,15 @@ Documentation
 → V0.1 Conformance
 ```
 
-The current v2.0.1 objective ends after the Documentation Gate: rewrite, verify, hash, commit, and push the 13 Markdown files, confirm remote identity and a clean worktree, then stop. All implementation gates require a separate future objective.
+The current v2.0.2 objective ends after the Documentation Gate: preserve v2.0.1, rewrite, verify, hash, commit, and push its direct-child 13-file Markdown freeze, confirm remote identity and a clean worktree, then stop. All implementation gates require a separate future objective.
 
 ## 3. Documentation Gate
 
 The gate passes only when:
 
-- the commit is a documentation-only child of v2.0.0 commit `a1a13607867db8e6eb2ea904f6387ba130f22ce7`;
+- the commit is a documentation-only direct child of v2.0.1 commit `d70b277998a23663ee6befc77dd6bb0da50ebcca`, while v2.0.0 commit `a1a13607867db8e6eb2ea904f6387ba130f22ce7` remains in its ancestry;
 - the tracked Markdown inventory is exactly the 13 paths declared by `PACKAGE-MANIFEST.md`, with no implementation source added;
-- all documents identify version 2.0.1, and every freeze-ID occurrence is `emenda-clean-room-v2.0.1-2026-08-14`;
+- all documents identify version 2.0.2, and every freeze-ID occurrence is `emenda-clean-room-v2.0.2-2026-08-16`;
 - `SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/IMPLEMENTATION-PLAN.md` remain the authorities for behavior, architecture, and build order, with supporting documents introducing no contradiction;
 - every occurrence of the canonical sequence is byte-identical and describes a Documentation baseline followed by seven implementation increments numbered 1 through 7;
 - the Documentation Gate is a prerequisite rather than an implementation increment, and the six gate names and order are unchanged;
@@ -88,18 +90,21 @@ Pure tests cover ASCII, Georgian, Russian, combining sequences, emoji, and suppl
 - `.`, `!`, and `?` terminate only before Unicode `White_Space`, LF, or end; trailing `Pe`/`Pf` punctuation and U+0022/U+0027 quotation marks remain in the sentence;
 - intersentence whitespace belongs to the preceding nonempty sentence, while paragraph-leading whitespace belongs to the following sentence;
 - a focus without a Unicode Letter scalar (`\p{L}`) produces no request;
-- a complete paragraph of at most 1,200 scalars is the context; otherwise context is at most 1,200 scalars, is exactly 1,200 only when sufficient document context exists, divides spare capacity evenly with an odd scalar trailing, clamps at document edges, and backfills from the available side;
-- the complete focus is present, and a focus longer than 1,200 scalars fails closed without inference;
-- correction offsets map from context-relative to snapshot-relative coordinates exactly once and remain inside the focus.
+- context and focus obey the canonical scalar limits in [`SPEC.md`](../SPEC.md#3-v01-runtime-and-limits), with the complete focus present, deterministic surrounding-context allocation, and silent refusal above the focus limit;
+- complete paragraphs, truncation, even division, odd trailing allocation, boundary clamping, and backfill behave exactly as specified;
+- model-authored corrected focus is compared as Unicode scalars without normalization or relocation, and a derived correction maps from focus-relative to context-relative to snapshot-relative coordinates exactly once.
 
 ### 4.3 Validation, failures, and presentation
 
 Semantic validation and mock-provider cases prove:
 
 - clean, empty, nonlinguistic, unsupported-language, over-limit-focus, non-collapsed-selection, and ordinary unsupported-capture outcomes return silently to `Idle`;
-- supported `auto` results are accepted, fixed mode accepts only its exact profile or `unsupported`, `unsupported` is accepted only with an empty correction list and returns to `Idle`, and a different supported profile becomes `LanguageMismatch` with no suggestion and `Error`;
-- zero or one correction is handled; its only fields are `range.start`, `range.end`, `original`, `replacement`, `category`, and `explanation`;
-- insertion, deletion, and replacement validate exact range, focus containment, original substring, replacement, category, explanation, and no-op refusal;
+- supported `auto` results are accepted, fixed mode accepts only its exact profile or `unsupported`, `unsupported` is accepted only with an empty correction list and returns to `Idle`, and a different supported profile is invalid provider output with no suggestion and `Error`;
+- the external result accepts only the strict shape in [`SPEC.md`](../SPEC.md#8-model-facing-contract-and-local-derivation), while the worker-to-content result contains only the trusted derived correction and never model-authored `correctedFocus`;
+- minimum Unicode-scalar edit distance produces the specified deterministic result for insertion, deletion, substitution, adjacent edits, repeated-character ties, combining sequences, emoji, and supplementary-plane scalars;
+- unchanged `correctedFocus`, separated edit hunks, excess corrected-focus length, malformed language combinations, and non-reconstructing or unmappable derivations are rejected;
+- one accepted hunk derives the exact half-open range, `original`, and `replacement`, remains inside focus, and reconstructs `correctedFocus` exactly;
+- a whole-focus translation-shaped replacement can satisfy the structural one-hunk rule, but the system never represents that fact as proof of semantic preservation;
 - missing configuration enters `Error` with Open Settings;
 - current timeout, provider failure, invalid response, and Apply refusal enter `Error`;
 - stale completion or cancellation causes no presentation change;
@@ -135,39 +140,56 @@ Deterministic worker tests prove:
 
 - runtime messages use versioned, discriminated, strict Zod envelopes, and reject unknown versions, unknown types, extra properties, malformed payloads, and disallowed senders;
 - trusted settings accept exactly `schemaVersion`, `apiKey`, `model`, `profileMode`, `settingsRevision`, and `enabledOrigins` with fail-closed migration or corruption handling;
-- `profileMode` defaults to `auto`;
+- new settings use the canonical default model and `profileMode: auto`, valid existing concrete-model overrides remain authoritative, and the advanced model option can change that trusted setting;
 - public configuration messages contain exactly `hasApiKey`, `profileMode`, and `settingsRevision`;
 - settings-change messages are validated and delivered to every live enabled content script, API-key/model/profile changes increment the revision and cancel current requests, and origin changes follow separate lifecycle messages;
 - every check carries `settingsRevision`, the worker rejects a stale value before using the key or model, cache resynchronization is possible, and the rejected revision is not retried;
 - `settingsRevision` is absent from the OpenRouter payload;
-- external model JSON is accepted only through the strict `core/provider-schema/` schema before semantic validation.
+- external model JSON is accepted only through the strict canonical schema before semantic derivation;
+- the provider-authored corrected focus cannot enter the worker-to-content envelope, whose trusted derived correction shape remains unchanged.
 
 ### 6.2 OpenRouter transport tests
 
 Tests inspect the exact outbound request and prove:
 
-- the endpoint is `https://openrouter.ai/api/v1/chat/completions`;
-- one concrete configured model is present and no `models` fallback array exists;
-- `stream` is disabled and strict structured output is requested;
-- routing contains `require_parameters: true`, `allow_fallbacks: false`, and `data_collection: "deny"`;
-- the body contains only the bounded linguistic payload and never a URL, full document, source or snapshot identity, DOM structure, API key, or Emenda settings revision;
-- the response may contain only zero or one correction using exactly `range.start`, `range.end`, `original`, `replacement`, `category`, and `explanation`, plus a supported profile or `unsupported` at result level; extra properties are rejected;
-- local Zod validation follows transport parsing, while request identity remains Emenda-authored;
-- timeout occurs at eight seconds, response reading stops incrementally above 32 KiB, and cancellation has a typed outcome;
-- HTTP, transport, timeout, size, parse, schema, and unsupported outcomes are typed and redacted;
+- the endpoint and every request field match the canonical provider contract in [`SPEC.md`](../SPEC.md#9-provider-request);
+- the canonical default route and an advanced concrete-model override are each sent as the one trusted model value, with no `models` array;
+- the model-facing user payload is exactly the split bounded input in [`SPEC.md`](../SPEC.md#8-model-facing-contract-and-local-derivation) and excludes URL, full document, source or snapshot identity, DOM structure, API key, and Emenda settings metadata;
+- the strict structured-output schema rejects missing or extra properties and any correction count above one;
+- the implementation uses a currently supported generation-limit parameter with a tested budget sufficient for the maximum corrected focus and schema envelope; the exact selected parameter and value are asserted by its deterministic request test;
+- temperature, routing, one-request behavior, zero application retries, deadline, incremental response bound, and cancellation match the canonical contract;
+- local Zod validation and semantic derivation follow transport parsing, while request and revision identity remain Emenda-authored;
+- HTTP, transport, timeout, size, parse, schema, semantic, and unsupported outcomes are typed and redacted;
 - authorization headers, credentials, raw contexts, and raw response bodies cannot enter logs, snapshots, errors, or telemetry;
-- there is no retry, healing, streaming, response cache, telemetry, provider fallback, model substitution, or OpenRouter SDK.
+- there is no healing, streaming, response cache, telemetry, OpenRouter SDK, application-level retry, `models`-array failover, or application-level model substitution;
+- within-request provider fallback is enabled without being represented as a guarantee of immediate fallback, a changed model, or completion inside the deadline;
+- a successful response's selected model is available to the live evidence path, while pre-response failure records it as unavailable.
 
 ### 6.3 Live provider evidence
 
-Using a dedicated spend-limited key and the configured structured-output model through the production validation path, record UTC time, concrete model, latency, and sanitized outcome for:
+Run the following corpus once through the production parsing and derivation path using the canonical default `openrouter/free` route. In every case, `before` and `after` are empty and the Focus column is the complete focus. Calls are strictly sequential: a case does not start until the preceding case terminates. An official case is neither retried nor replaced. Runs using an advanced model override and reruns of failed cases are separate diagnostics and do not alter the official result.
 
-- one correction and one clean case for each of `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE`, and `ru-RU`;
-- supported-profile detection in `auto`;
-- fixed-profile mismatch;
-- one unsupported-language case.
+| Case | `profileMode` | Focus | Required result |
+| --- | --- | --- | --- |
+| `de-CH-correction` | `de-CH` | `Dies ist ein synthetischer Satzz.` | one `spelling` correction to `Dies ist ein synthetischer Satz.` |
+| `de-CH-clean` | `de-CH` | `Dies ist ein synthetischer Satz.` | `de-CH` with no correction |
+| `en-GB-correction` | `en-GB` | `This is a synthetik sentence.` | one `spelling` correction to `This is a synthetic sentence.` |
+| `en-GB-clean` | `en-GB` | `This is a synthetic sentence.` | `en-GB` with no correction |
+| `en-US-correction` | `en-US` | `This is a synthetik sentence.` | one `spelling` correction to `This is a synthetic sentence.` |
+| `en-US-clean` | `en-US` | `This is a synthetic sentence.` | `en-US` with no correction |
+| `fr-FR-correction` | `fr-FR` | `Ceci est une phrase synthétiqe.` | one `spelling` correction to `Ceci est une phrase synthétique.` |
+| `fr-FR-clean` | `fr-FR` | `Ceci est une phrase synthétique.` | `fr-FR` with no correction |
+| `ka-GE-correction` | `ka-GE` | `ეს არის სინთეზური წინადადება..` | one `punctuation` correction to `ეს არის სინთეზური წინადადება.` |
+| `ka-GE-clean` | `ka-GE` | `ეს არის სინთეზური წინადადება.` | `ka-GE` with no correction |
+| `ru-RU-correction` | `ru-RU` | `Это синтетическое предложение..` | one `punctuation` correction to `Это синтетическое предложение.` |
+| `ru-RU-clean` | `ru-RU` | `Это синтетическое предложение.` | `ru-RU` with no correction |
+| `auto-fr-FR` | `auto` | `Ceci est une phrase synthétique.` | `fr-FR` with no correction |
+| `fixed-en-GB-German` | `en-GB` | `Dies ist ein synthetischer Satz.` | `unsupported` with no correction |
+| `auto-unsupported-Japanese` | `auto` | `これは合成の文です。` | `unsupported` with no correction |
 
-No live record contains the credential or raw private text.
+The Provider Gate requires 100% of its deterministic assertions and one complete 15-case live run. A case counts as a success only when it completes inside the canonical deadline, passes the strict schema and local semantic derivation, matches the table's required result, and is linguistically correct. The live run is qualification evidence rather than a reliability guarantee or an all-or-nothing success threshold. Report the factual success count as `x/15`; provider failures remain visible while deterministic fail-closed behavior protects the writer. Missing credentials, exhausted quota, or an interrupted corpus leaves the gate incomplete.
+
+For each case record only the case identifier, selected model or `unavailable`, complete request latency, outcome, failure reason when any, and linguistic correctness. General evidence metadata from Section 1 still applies. Do not calculate percentiles, selected-model distributions, repeated-round statistics, or a stochastic pass percentage. Do not run a concurrent stress corpus as part of this gate. No live record contains the credential or raw private text.
 
 ## 7. Browser Integration Gate
 
@@ -236,7 +258,7 @@ Bundle and runtime inspection prove source references, snapshot references, full
 The final gate requires all prior evidence to remain valid for the tested implementation tree and commit, plus:
 
 - the complete deterministic suite and Playwright bundled-Chromium persistent-context suite pass from a clean checkout;
-- the production extension build and the single cross-platform `scripts/audit.mjs` command pass;
+- the production extension build and the implementation's single cross-platform audit command pass;
 - dependency, bundle, permission, manifest, registration, and secret/text-leakage inspections match the constitution;
 - direct compatibility smoke passes on Chromium or Chrome for Testing 140, with exact browser build and host recorded;
 - a manual unpacked-extension smoke passes on current Chrome Stable, including the actual toolbar permission prompt, enablement, inference, Apply, Undo, revocation, and teardown;

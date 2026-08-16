@@ -1,6 +1,6 @@
 # Emenda V0.1 UX
 
-> **Frozen interaction authority, version 2.0.1**
+> **Frozen interaction authority, version 2.0.2**
 
 ## 1. Interaction promise
 
@@ -36,7 +36,7 @@ These outcomes are deliberately silent:
 - empty or nonlinguistic focus;
 - unsupported language;
 - a non-collapsed selection;
-- context whose focus exceeds the 1,200-scalar bound;
+- a focus that exceeds its Unicode-scalar limit in [`SPEC.md`](SPEC.md);
 - an unsupported or ambiguous surface encountered during ordinary typing;
 - stale or cancelled background work.
 
@@ -66,6 +66,8 @@ Style
 ```
 
 Style suggestions remain local and restrained. Explanations describe the defect without judging the writer.
+
+The exact before-and-after display is also the writer's semantic safeguard. Local validation proves that the proposal is one structural edit; it cannot prove that the model preserved language and meaning.
 
 ## 5. Apply and Dismiss
 
@@ -109,12 +111,12 @@ Suggestions and errors must be available to assistive technology without repeate
 The options page provides:
 
 - a write-only OpenRouter API-key field;
-- a required concrete structured-output model field;
+- a model route field defaulting to `openrouter/free`, with an advanced concrete-model override;
 - profile selection, defaulting to `auto`;
 - enabled-origin review and revocation;
 - the privacy disclosure below.
 
-The profile choices are `auto`, `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE`, and `ru-RU`.
+The profile choices are `auto`, `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE`, and `ru-RU`. A fixed profile is authoritative; `auto` asks the model to identify a supported profile. Text that cannot safely be handled under the selected mode produces no suggestion.
 
 Options communicates only with the service worker. After saving, the API key is never displayed back in full. The model and key never appear in the page or writing overlay.
 
@@ -130,11 +132,13 @@ Writer-visible errors are concise, typed, and actionable:
 | --- | --- |
 | API key or model missing | Configuration required, with **Open Settings** |
 | Site permission unavailable | Explain that Emenda could not be enabled for this site |
-| Current provider failure or timeout | Explain that the check failed and writing can continue |
-| Invalid response or fixed-profile `LanguageMismatch` | Explain that no safe suggestion could be produced |
+| Current provider failure or 15-second timeout | Explain that the check failed and writing can continue |
+| Invalid profile result or otherwise unsafe provider result | Explain that no safe suggestion could be produced |
 | Apply refusal after the writer acts | Explain that the text or surface changed and nothing was applied |
 
 Unsupported capture during ordinary typing and stale background failures remain silent. New committed input clears an obsolete error and begins a new revision.
+
+Any provider fallback occurs inside the same OpenRouter request. Emenda does not retry a failed or timed-out check at the application level.
 
 Errors never display an API key, authorization detail, raw request context, raw model body, source identity, DOM data, or page URL.
 
@@ -142,7 +146,7 @@ Errors never display an API key, authorization detail, raw request context, raw 
 
 The options page displays this text verbatim:
 
-> Emenda sends only the current bounded text context, up to 1,200 Unicode scalars, to OpenRouter and the provider serving the configured model. It does not send the page URL, full document, source identity or DOM structure. Processing remains subject to OpenRouter’s and the model provider’s policies. The API key is stored in the browser profile, not in an operating-system secret vault.
+> Emenda sends only the current bounded text context to OpenRouter and the provider selected for that request. By default, `openrouter/free` may select different eligible models between requests; an advanced override requests a specific model. Emenda does not send the page URL, full document, source identity, or DOM structure. Emenda requests provider routing that denies data collection, but this is not a guarantee of zero retention; processing remains subject to OpenRouter’s and the selected provider’s policies. The API key is stored in the browser profile, not in an operating-system secret vault.
 
 Emenda shows no claim that browser-profile storage is an operating-system secret vault. The UI makes no telemetry, analytics, or text-history claim because V0.1 implements none.
 
@@ -174,4 +178,4 @@ enable one origin
 
 Caret anchoring, inline underlines, multiple suggestions, review-all flows, inputs, complex editors, native surfaces, packaging, signing, and store-publication UX are deferred.
 
-The current v2.0.1 objective freezes documentation only. Implementing this UX requires a separate future objective.
+The current v2.0.2 objective freezes documentation only. Implementing this UX requires a separate future objective.

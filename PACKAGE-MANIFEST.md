@@ -1,16 +1,16 @@
 # Emenda Frozen Clean-Room Constitution
 
-> **Frozen package manifest, version 2.0.1**
+> **Frozen package manifest, version 2.0.2**
 
-> **Freeze ID: `emenda-clean-room-v2.0.1-2026-08-14`**
+> **Freeze ID: `emenda-clean-room-v2.0.2-2026-08-16`**
 
 This documentation-only package is the complete constitution for a future, separately authorized Emenda V0.1 implementation objective.
 
-Version 2.0.1 supersedes version 2.0.0, preserved at Git commit `a1a13607867db8e6eb2ea904f6387ba130f22ce7`. Version 2.0.0 in turn preserves the earlier v1.0.1 constitution at `d3192b74a7dd78c0029bfee44fd087876d8ce774`.
+Version 2.0.2 supersedes version 2.0.1, preserved at Git commit `d70b277998a23663ee6befc77dd6bb0da50ebcca`. Version 2.0.1 preserves version 2.0.0 at `a1a13607867db8e6eb2ea904f6387ba130f22ce7`; version 2.0.0 in turn preserves the earlier v1.0.1 constitution at `d3192b74a7dd78c0029bfee44fd087876d8ce774`.
 
 ## Objective boundary
 
-The v2.0.1 objective ends after these 13 Markdown files are rewritten, verified, hashed, committed, pushed, and the worktree is clean. This package contains no tracked implementation source and does not authorize implementation. Product work requires a separate future objective.
+The v2.0.2 objective ends after these 13 Markdown files are rewritten, verified, hashed, committed as one direct child of v2.0.1, pushed, and the worktree is clean. This package contains no tracked implementation source and does not authorize implementation. Product work requires a separate future objective that identifies its implementation repository and baseline.
 
 ## Contents
 
@@ -50,25 +50,25 @@ Native runtimes, operating-system accessibility APIs, native credential stores, 
 
 The following SHA-256 values cover the exact raw Git-blob bytes staged for the 11 immutable documents. They are individual checksums; no aggregate digest replaces them. This manifest and the mutable evidence ledger are excluded.
 
-- `AGENTS.md`: SHA-256 `8bfefd810f30dbdec04fcc1cd21c54c4108a4dada2e723633ea7109b320b66fb`
-- `BRAND.md`: SHA-256 `59281de06330e552c7d608b56d2e742f18c9a1aa5090450a5c7800d452903c6c`
-- `PROMPT.md`: SHA-256 `b348f6896bba97c7cea52a25d6c91f961052aac573c07e4ff2c4cbbd00d8f1ef`
-- `README.md`: SHA-256 `564f369bf7a6ad12435a5b768fae7095b8e23a9acfd16bd6dd5d7a102f94ff59`
-- `ROADMAP.md`: SHA-256 `97df1f20c2f6c8007c913359e23e8f19e8e9de8f5aa95300e053a6495f14bc1c`
-- `SPEC.md`: SHA-256 `dd1a3d4c5870194cbac78a7c0cb91239e3f00a8b7e842b664f03c79a34aa4acd`
-- `UX.md`: SHA-256 `ee389558db7c70fd25a474ebc42fad5e29d7c476c532e27353f9d9ebd30672ad`
-- `docs/ACCEPTANCE.md`: SHA-256 `a9dbab367dde51c4714ba51dd6e80a0cc33aa066c45a37506b47c02c4fddc42a`
-- `docs/ARCHITECTURE.md`: SHA-256 `a05e16ebf0d9d24a2146193401c33312c404b6e7f2d9d662548e72f176aa4d14`
-- `docs/ENGINEERING.md`: SHA-256 `91f9aff96db569f7042659f56b665ff003740b783c2f207ab3519fb6b9d032c8`
-- `docs/IMPLEMENTATION-PLAN.md`: SHA-256 `e2abb8e2145178b7d1d0654f69a8457c5e994b63568777b8f2789969e21f686d`
+- `AGENTS.md`: SHA-256 `a4ee3bc0041ce66fb5e7ed0ea3f72841fd94027aa96c037a4f679c504aeb0a15`
+- `BRAND.md`: SHA-256 `195d1630b6fd9568bb4b93bd1c3419cbf3a0050ba8eca353ee075340f718c149`
+- `PROMPT.md`: SHA-256 `1fa622eabff6f59927fc0638c51cab921f43a1550c32571d258d33464bd968f4`
+- `README.md`: SHA-256 `7e4bf282c9f6e66b08e686588ffc813524c33f96fa005194d855754ac5662694`
+- `ROADMAP.md`: SHA-256 `cf68fbc9405723f85691f1d32885feb47d2bfc3c3060c9a7ad996a3869bb8423`
+- `SPEC.md`: SHA-256 `a65f543e34b508067e34856dc64fb83633d44e346ddbb30ff2f2e86f85d2da8e`
+- `UX.md`: SHA-256 `41e200f4327fe287365339f58b9ba4081ff3549bdec4910f798f24b9e03fe20d`
+- `docs/ACCEPTANCE.md`: SHA-256 `5c6386c6d6ce94898e18f630296740a99f44bcb79a0a7c80f46ad7a10ae988c5`
+- `docs/ARCHITECTURE.md`: SHA-256 `fb826154a135d5ee244016230f433b2b63b5f2c31ba2ccf5fd4ccfbf910a852a`
+- `docs/ENGINEERING.md`: SHA-256 `7a08c6deeccc1d23aad83b9166e8a850e4f5d874bf73efcdd5a2bcb179f24004`
+- `docs/IMPLEMENTATION-PLAN.md`: SHA-256 `fec6613f8c94fcfe40d473d951fa4e5fdec4b0b32d7fb7917566cf8da917707a`
 
 ## Freeze validation
 
-A valid v2.0.1 freeze proves:
+A valid v2.0.2 freeze proves:
 
 ```text
 the tracked tree contains exactly the declared 13 Markdown paths
-→ every document identifies v2.0.1 and every ancestry reference is correct
+→ every document identifies v2.0.2, the commit is a direct child of v2.0.1, and every ancestry reference is correct
 → local Markdown links resolve
 → every canonical-sequence occurrence is byte-identical
 → the six gate names and ownership are consistent

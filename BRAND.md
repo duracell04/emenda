@@ -1,6 +1,6 @@
 # Emenda Brand System
 
-> **Frozen brand system, version 2.0.1**
+> **Frozen brand system, version 2.0.2**
 
 > **Preserve your Duktus**
 
@@ -34,7 +34,7 @@ The overlay is a fixed, unanchored editorial card. It shows one category, exact 
 
 ### Options
 
-The options page is a calm, narrow configuration surface for the API key, concrete model, profile, enabled origins, revocation, save state, errors, and the exact privacy disclosure owned by [`UX.md`](UX.md). The API key is write-only and never displayed back in full.
+The options page is a calm, narrow configuration surface for the API key, model route and advanced concrete-model override, profile, enabled origins, revocation, save state, errors, and the exact privacy disclosure owned by [`UX.md`](UX.md). The API key is write-only and never displayed back in full.
 
 ## Visual system
 

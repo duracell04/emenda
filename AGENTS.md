@@ -1,12 +1,12 @@
 # Emenda Agent Guide
 
-> **Frozen agent governance, version 2.0.1**
+> **Frozen agent governance, version 2.0.2**
 
 Emenda is governed by repository-local documentation. The existence of this package does not authorize product implementation.
 
 ## Objective boundary
 
-The active v2.0.1 objective is documentation only. Rewrite, verify, hash, commit, and push the 13 Markdown files, confirm the remote commit and a clean worktree, then stop. Implementation requires a separate future objective.
+The active v2.0.2 objective is documentation only. Preserve v2.0.1 at Git commit `d70b277998a23663ee6befc77dd6bb0da50ebcca`, create one documentation-only child commit containing the 13 Markdown files, verify it, hash it, push it, confirm the remote commit and a clean worktree, then stop. Implementation requires a separate future objective.
 
 When that future objective is explicitly supplied, own the complete V0.1 outcome through the seven increments and six gates defined in [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) and [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md).
 
@@ -28,9 +28,10 @@ When that future objective is explicitly supplied, own the complete V0.1 outcome
 
 ## Subject authority
 
-- `SPEC.md` controls product behavior, safety, compatibility, and failures.
+- `SPEC.md` controls product behavior, safety, compatibility, failures, and the canonical provider prompt, schema, and constants.
 - `docs/ARCHITECTURE.md` controls ownership, dependency direction, and runtime boundaries, subject to the specification.
 - `docs/IMPLEMENTATION-PLAN.md` controls build order and gate placement, subject to both.
+- `docs/ACCEPTANCE.md` controls the gate criteria and canonical live-provider corpus, subject to those authorities.
 - Supporting documents verify or summarize these authorities and cannot override them.
 
 ## Active-gate discipline
@@ -57,6 +58,7 @@ Classify a failure by its owning gate and subsystem. Later-gate failure preserve
 - Push and verify remote identity at required checkpoints.
 - Preserve unrelated and ignored workspace state.
 - Record failures and later recoveries as separate factual evidence.
+- Implement observable contracts exactly, while choosing the simplest internal technique when equivalent implementations do not change behavior, safety, privacy, compatibility, or reliability.
 
 ## Locked boundaries
 
@@ -87,5 +89,5 @@ Product, architecture, UX, acceptance, implementation-order, brand, or governanc
 
 ## Stop rules
 
-- Present objective: stop after the verified v2.0.1 documentation commit is pushed and the worktree is clean.
+- Present objective: stop after the verified v2.0.2 documentation commit is pushed and the worktree is clean.
 - Future implementation objective: stop after V0.1 Conformance passes, the tested implementation commit is pushed and verified, and the worktree is clean.
