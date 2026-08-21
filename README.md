@@ -1,12 +1,12 @@
 # Emenda
 
-> **Frozen clean-room constitution, version 2.0.2**
+> **Frozen clean-room constitution, version 2.0.3**
 
 > **Preserve your Duktus**
 
-Emenda V0.1 is specified as a quiet personal writing assistant for Chromium. It observes committed changes on explicitly enabled sites, waits for typing to settle, sends one split bounded context through the default `openrouter/free` route or an advanced concrete-model override, validates the model's complete corrected focus, derives at most one Unicode-scalar edit locally, and presents that exact correction for the writer to apply or dismiss.
+Emenda V0.1 is specified as a quiet personal writing assistant for Chromium. It observes committed changes on explicitly enabled sites, waits for typing to settle, sends one split bounded context through OpenRouter using the writer's configured model ID, validates the model's complete corrected focus, derives at most one Unicode-scalar edit locally, and presents that exact correction for the writer to apply or dismiss.
 
-This branch currently contains the 13-file Markdown constitution only. Version 2.0.2 supersedes version 2.0.1, preserved at commit `d70b277998a23663ee6befc77dd6bb0da50ebcca`; version 2.0.0 remains preserved at `a1a13607867db8e6eb2ea904f6387ba130f22ce7`. Product implementation requires a separate future objective in the separate implementation repository.
+This branch currently contains the 13-file Markdown constitution only. Version 2.0.3 supersedes version 2.0.2, preserved at commit `6a4ddc65fa9067f94023f87aebe48840e1b88bc2`; version 2.0.1 remains preserved at `d70b277998a23663ee6befc77dd6bb0da50ebcca`. Product implementation requires a separate future objective in the separate implementation repository.
 
 ## Intended V0.1 experience
 
@@ -19,22 +19,24 @@ enable an exact site origin
 → continue writing with page focus and one-step Undo preserved
 ```
 
-V0.1 targets Chrome 140 or newer and supports visible, focused, writable, light-DOM `<textarea>` elements and the bounded `contenteditable` grammar defined in [`SPEC.md`](SPEC.md). Inputs, iframes, shadow-DOM editors, rich or virtualized editors, Google Docs-style surfaces, restricted pages, file URLs, PDFs, readonly surfaces, and incognito are unsupported.
+V0.1 targets Chrome 140 or newer and supports only active, visible, writable, midpoint-exposed, sequentially keyboard-focusable light-DOM `<textarea>` elements with a collapsed caret in a visible, window-focused top-level page. Ordinary checks require the browser's paired trusted `beforeinput` and `input`; unpaired or synthetic changes create no request. Inputs, contenteditable hosts, iframes, shadow-DOM editors, rich or virtualized editors, Google Docs-style surfaces, restricted pages, file URLs, PDFs, hidden, DOM-hit-test-covered, or offscreen surfaces, readonly or disabled surfaces, and incognito are unsupported.
 
 ## Settings and site access
 
-- The writer supplies an OpenRouter API key and a language profile. The model route defaults to `openrouter/free`; advanced users may override it with a concrete model ID.
+- The writer supplies an OpenRouter API key, one base model-shaped ID without a variant suffix, and a language profile. There is no compiled router-model default or application-level model substitution; a result is accepted only when its model ID exactly matches the request, while syntax alone cannot identify an internally routing catalog service. Live qualification uses and records a documented direct model.
+- Provider calls use the writer's OpenRouter quota and may incur charges under that account.
 - `auto` is the default profile; fixed profiles are `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE`, and `ru-RU`.
 - A fixed profile is authoritative. `auto` permits supported-profile detection.
-- The toolbar requests optional permission for the exact active HTTP(S) origin.
-- Revoking an origin makes live content scripts inert and removes its registration and permission.
+- The toolbar requests optional permission for the exact active HTTP(S) origin and explicit port.
+- Enable only trusted origins: one-use paired-input provenance blocks unattended synthetic changes but cannot fully distinguish page work piggybacked on the same genuine editing event, and DOM hit-testing cannot detect every page-controlled visual cover over inline approval controls.
+- Revoking an origin immediately removes its authority, then best-effort tears live scripts down and reconciles registration and permission cleanup.
 - The worker owns trusted settings. Options communicates with the worker; content scripts never receive the API key or model.
 
 ## Privacy
 
-Emenda sends only the bounded context defined in [`SPEC.md`](SPEC.md), not the page URL, full document, source identity, or DOM structure. Provider routing requests data-collection denial, but that is not a guarantee of zero retention. The exact options-page disclosure is owned by [`UX.md`](UX.md).
+The only page text Emenda-authored provider traffic sends is the bounded context defined in [`SPEC.md`](SPEC.md), not the page URL, a separate or unbounded full-document field, source identity, DOM structure, or Chrome sender metadata. On a short document, that bounded context can equal all of its text. Within-request fallback may expose it to more than one eligible provider endpoint for the same model, and each attempted provider's policy applies. Provider routing requests data-collection denial, but that is not a guarantee of zero retention. The exact options-page disclosure is owned by [`UX.md`](UX.md).
 
-Emenda specifies no telemetry, analytics, correction history, persistent text cache, application-level retry, streaming, or persistent private-text logging. A check has a 15-second deadline. OpenRouter may select or fall back among eligible providers inside that single request, and the default free route may select different eligible models between requests; Emenda itself does not retry.
+Emenda specifies no telemetry, analytics, correction history, persistent text cache, application-level retry, streaming, or private-text logging. Raw private text never enters logs. A check has a 15-second deadline. OpenRouter may try eligible provider endpoints for the same configured model inside that single request; Emenda itself does not retry or substitute another model.
 
 ## Constitutional authority
 

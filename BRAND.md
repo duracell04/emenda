@@ -1,6 +1,6 @@
 # Emenda Brand System
 
-> **Frozen brand system, version 2.0.2**
+> **Frozen brand system, version 2.0.3**
 
 > **Preserve your Duktus**
 
@@ -18,23 +18,22 @@ Future implementation derives locally bundled 16, 32, 48, and 128 pixel extensio
 
 ### Toolbar action
 
-The action communicates three states without relying on color alone:
+The action communicates two commands without relying on color alone:
 
 ```text
-inactive origin
-enabled origin
-configuration required
+Enable on this site
+Reactivate on this site
 ```
 
-Its accessible name states the available action. Disabled, unavailable, and configuration-required conditions remain distinguishable by text, shape, or icon treatment.
+Its accessible name states Enable or Reactivate as applicable. Disabled, unavailable, and configuration-required status remains distinguishable by text, shape, or icon treatment; incomplete configuration opens Settings only after the writer's activation command finishes.
 
 ### Overlay
 
-The overlay is a fixed, unanchored editorial card. It shows one category, exact before and after text, a concise explanation, Apply, and Dismiss. It never autofocuses, tracks the caret, or obscures state through decorative animation.
+The overlay is a fixed, unanchored editorial card. It shows the complete original and corrected focus with the single changed hunk marked, one category, a concise explanation, Apply, and Dismiss. It never autofocuses, tracks the caret, or obscures state through decorative animation.
 
 ### Options
 
-The options page is a calm, narrow configuration surface for the API key, model route and advanced concrete-model override, profile, enabled origins, revocation, save state, errors, and the exact privacy disclosure owned by [`UX.md`](UX.md). The API key is write-only and never displayed back in full.
+The options page is a calm, narrow configuration surface for the write-only API key, required base model ID, profile, enabled origins, revocation, save state, errors, and the exact privacy disclosure owned by [`UX.md`](UX.md). The API key is never displayed back in full.
 
 ## Visual system
 

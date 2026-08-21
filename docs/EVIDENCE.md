@@ -1,8 +1,8 @@
 # Emenda Implementation Evidence
 
-> **Mutable evidence-ledger template for constitution version 2.0.2**
+> **Mutable evidence-ledger template for constitution version 2.0.3**
 
-This ledger is not constitutional authority and is excluded from the immutable checksums in `PACKAGE-MANIFEST.md`. It remains empty in the documentation-only v2.0.2 freeze.
+This ledger is not constitutional authority and is excluded from the immutable checksums in `PACKAGE-MANIFEST.md`. It remains empty in the documentation-only v2.0.3 freeze.
 
 Implementation evidence may be added only under a separately authorized future implementation objective. Each entry identifies an already-existing implementation commit that was actually tested. The later evidence commit records that fact; it does not claim to have tested itself.
 
@@ -25,7 +25,7 @@ UTC time:
 gate or increment:
 tested implementation tree:
 tested implementation commit:
-commands:
+commands or actions:
 exact results:
 evidence level: inspected | compiled | deterministic | integration | live | runtime
 environment:
@@ -33,22 +33,29 @@ limitations or failures:
 next checkpoint:
 ```
 
-Preserve failures and later recoveries as separate entries. Never record credentials, authorization headers, raw private text, page URLs, source identity, DOM structures, or raw provider bodies.
+Preserve failures and later recoveries as separate entries. Never record credentials, authorization headers, raw private text, page URLs, tab/frame/document metadata, source identity, DOM structures, or raw provider bodies.
 
 ## Live provider evidence extension
 
-For each official Provider Gate case, append only:
+For each complete Provider Gate run, append once:
+
+```text
+requested model:
+enforced provider plugin policy: none
+```
+
+For each official case in that run, append only:
 
 ```text
 case:
 selected model: <model ID | unavailable>
-latency:
+complete request latency:
 outcome:
 failure reason: <reason | none>
 linguistic correctness:
 ```
 
-After the 15 sequential cases, report `success count: x/15`. Do not retry or replace an official case. Record any diagnostic rerun separately without changing the original result.
+After the 15 sequential cases, report `success count: x/15`. Do not retry or replace a case within the run. Preserve a failed run; record a complete recovery run separately after an implementation, configuration, or external-service change.
 
 ## Browser evidence extension
 
@@ -58,13 +65,11 @@ For browser or device evidence, append only the relevant fields:
 browser and exact version:
 operating system and version:
 device:
-extension commit:
 tester:
-timestamp:
 checklist results:
 failures or limitations:
 ```
 
 ## Evidence entries
 
-No implementation evidence is recorded in the documentation-only v2.0.2 freeze.
+No implementation evidence is recorded in the documentation-only v2.0.3 freeze.

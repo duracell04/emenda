@@ -1,12 +1,12 @@
 # Emenda Agent Guide
 
-> **Frozen agent governance, version 2.0.2**
+> **Frozen agent governance, version 2.0.3**
 
 Emenda is governed by repository-local documentation. The existence of this package does not authorize product implementation.
 
 ## Objective boundary
 
-The active v2.0.2 objective is documentation only. Preserve v2.0.1 at Git commit `d70b277998a23663ee6befc77dd6bb0da50ebcca`, create one documentation-only child commit containing the 13 Markdown files, verify it, hash it, push it, confirm the remote commit and a clean worktree, then stop. Implementation requires a separate future objective.
+The active v2.0.3 objective is documentation only. Preserve v2.0.2 at Git commit `6a4ddc65fa9067f94023f87aebe48840e1b88bc2`, create one documentation-only direct child containing the 13 Markdown files, verify it, hash it, push it, confirm the remote commit and a clean worktree, then stop. Implementation requires a separate future objective.
 
 When that future objective is explicitly supplied, own the complete V0.1 outcome through the seven increments and six gates defined in [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) and [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md).
 
@@ -67,13 +67,17 @@ Classify a failure by its owning gate and subsystem. Later-gate failure preserve
 - Zod is confined to the declared model, protocol, and trusted-settings boundaries.
 - The service worker owns permissions, trusted settings, cancellation, and OpenRouter traffic.
 - The content script owns page text, source identity, controller state, DOM mapping, and presentation.
-- Controller revision authority and surface mutation safety remain separate.
+- Controller revision authority, immediate worker Apply authorization, and surface mutation safety remain separate.
+- Runtime messages are one-shot, sender-class-authorized, and versioned; Chrome sender metadata remains ephemeral.
+- Permission, registration, worker, BFCache, and prerender lifecycle changes fail closed and reconcile.
+- Only the specified trusted `beforeinput`/`input` provenance and foreground/exposure checks may start inference; rejected editor classes are not read.
+- Page and model strings render only through text nodes or `textContent`.
 - Stale work is silent and cannot mutate page text.
-- Unsupported or ambiguous surfaces fail closed.
+- V0.1 supports only the specified light-DOM textarea surface; contenteditable and every other unsupported or ambiguous surface fail closed.
 
 ## Dependency and scope rule
 
-The future product is one npm package. The only permitted direct runtime dependency is Zod. Development dependencies are limited to TypeScript, esbuild, Vitest, Playwright, and Chrome/Node types.
+The future product is one npm package with exact direct versions and a committed npm lockfile verified with `npm ci`. The only permitted direct runtime dependency is Zod. Development dependencies are limited to TypeScript, esbuild, Vitest, Playwright, and Chrome/Node types.
 
 Do not add native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, packaging, signing, store publication, release automation, commercial infrastructure, or placeholders for deferred runtimes.
 
@@ -81,7 +85,7 @@ Do not add native hosts, Tauri, Rust, operating-system accessibility APIs, nativ
 
 Use the exact levels `inspected`, `compiled`, `deterministic`, `integration`, `live`, and `runtime`. Report what ran, the already-existing implementation tree and commit tested, exact environment, failures, limitations, and what remains unverified.
 
-Keep credentials, raw private text, URLs, source identity, DOM structures, authorization headers, and raw provider bodies out of logs, fixtures, snapshots, commits, and evidence.
+Keep credentials, raw private text, URLs, tab/frame/document metadata, source identity, DOM structures, authorization headers, and raw provider bodies out of logs, fixtures, snapshots, commits, and evidence.
 
 ## Constitution changes
 
@@ -89,5 +93,5 @@ Product, architecture, UX, acceptance, implementation-order, brand, or governanc
 
 ## Stop rules
 
-- Present objective: stop after the verified v2.0.2 documentation commit is pushed and the worktree is clean.
-- Future implementation objective: stop after V0.1 Conformance passes, the tested implementation commit is pushed and verified, and the worktree is clean.
+- Present objective: stop after the verified v2.0.3 documentation commit is pushed and the worktree is clean.
+- Future implementation objective: stop after the tested implementation commit and its later factual evidence commit are both pushed and verified, V0.1 Conformance passes, and the worktree is clean.
