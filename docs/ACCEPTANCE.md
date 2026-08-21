@@ -1,10 +1,10 @@
 # Emenda V0.1 Acceptance
 
-> **Frozen acceptance contract, version 2.1.0**
+> **Frozen acceptance contract, version 2.1.1**
 
 ## 1. Role and evidence standard
 
-This document derives verifiable gates from [`SPEC.md`](../SPEC.md), [`ARCHITECTURE.md`](ARCHITECTURE.md), and [`IMPLEMENTATION-PLAN.md`](IMPLEMENTATION-PLAN.md). It does not define a separate product or build order.
+This document derives verifiable gates from [`SPEC.md`](../SPEC.md), [`ARCHITECTURE.md`](ARCHITECTURE.md), and [`IMPLEMENTATION-PLAN.md`](IMPLEMENTATION-PLAN.md). SPEC supplies product behavior, Architecture supplies ownership boundaries, and the Implementation Plan supplies build order.
 
 A gate passes only through reproducible evidence recorded at the tested state. Use these evidence levels precisely:
 
@@ -27,9 +27,9 @@ tested implementation tree:
 tested implementation commit:
 ```
 
-An evidence commit records an already-existing implementation commit that was actually tested. Later success does not erase an earlier failure; record failure and recovery separately. Never record credentials, authorization headers, raw private text, page URLs, tab/frame/document metadata, full provider bodies, source identities, or DOM data.
+An evidence commit records an already-existing implementation commit that was actually tested. Record each failure and later recovery as separate entries. Evidence admits exactly the sanitized fields defined here; the active credential, provider, and browser-authorization boundaries retain their private runtime values.
 
-Every deterministic assertion required by a gate must pass; there is no partial deterministic pass. The Provider Gate's live qualification has the separate factual standard in Section 6.3.
+A deterministic gate passes when every required deterministic assertion passes. The Provider Gate's live qualification has the separate factual standard in Section 6.3.
 
 ## 2. Gates and current stop boundary
 
@@ -44,31 +44,31 @@ Documentation
 → V0.1 Conformance
 ```
 
-The v2.1.0 documentation objective ends after its exact 14-file candidate passes the Documentation Gate, becomes one atomic two-parent Markdown freeze, is pushed to its authorized remote refs, and remote identity, ancestry, and tracked-worktree cleanliness are verified. All implementation gates require a separate future objective.
+The v2.1.1 documentation objective ends after its exact 13-file candidate passes the Documentation Gate, becomes one atomic single-parent Markdown freeze whose ancestry retains the v2.1.0 convergence, reaches its authorized remote refs, and satisfies remote identity, ancestry, and tracked-worktree cleanliness. A separate future objective authorizes implementation gates.
 
 ## 3. Documentation Gate
 
-The gate passes only when:
+The gate passes when:
 
-- the atomic documentation commit has first parent v2.0.3 `5295799c637f89a5db12b2971dee12ead7977270` and second parent logo proposal `05eadea4dc05e02b715618c458f7df4bbd9c0b10`, preserving v2.0.2 and v2.0.1 ancestry;
-- the tracked inventory is exactly the 14 Markdown paths classified by `PACKAGE-MANIFEST.md`, and the candidate contains no implementation source;
-- all constitutional documents identify version 2.1.0, every freeze-ID occurrence is `emenda-clean-room-v2.1.0-2026-08-21`, and external `docs/LOGO.md` is explicitly non-authoritative;
-- `SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/IMPLEMENTATION-PLAN.md` remain the authorities for behavior, architecture, and build order, with supporting documents introducing no contradiction;
+- the atomic documentation commit has the sole parent v2.1.0 `39c243b8a9652ccf0e65db1683e32e13e4f6eac0`, whose ancestry retains v2.0.3 `5295799c637f89a5db12b2971dee12ead7977270` and logo proposal `05eadea4dc05e02b715618c458f7df4bbd9c0b10` as its two parents;
+- the tracked inventory is exactly the 13 Markdown paths classified by `PACKAGE-MANIFEST.md`, and the candidate tree consists exclusively of that documentation package;
+- every constitutional, supplemental, and evidence document identifies version 2.1.1, and every freeze-ID occurrence is `emenda-clean-room-v2.1.1-2026-08-21`;
+- `SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/IMPLEMENTATION-PLAN.md` supply behavior, architecture, and build order, and supporting documents resolve through those subject homes;
 - every occurrence of the canonical sequence is byte-identical and describes a Documentation baseline followed by seven implementation increments numbered 1 through 7;
-- the Documentation Gate is a prerequisite rather than an implementation increment, and the six gate names and order are unchanged;
+- the Documentation Gate remains the prerequisite, and the six gate names and order remain unchanged;
 - every local Markdown link resolves;
-- all 18 active critical requirement IDs are unique, remain in `SPEC.md`, and map to acceptance coverage in Section 3.1;
-- review against v2.0.3 finds no observable change to constants, state/profile unions, provider input/result schemas, request body, canonical prompt, live corpus, Unicode/context derivation, paired-input/IME provenance, exact-origin permission and lifecycle behavior, supported textarea/exposure, Apply authorization and mutation, text-only rendering, failure mapping, or the verbatim privacy disclosure;
-- deferred work remains classified as Deferred rather than represented by current scaffolding;
-- the 12 immutable tracked files match individual SHA-256 values computed from exact final staged Git-blob bytes;
-- `PACKAGE-MANIFEST.md` and the empty `docs/EVIDENCE.md` ledger template are excluded from the checksum table;
-- the evidence template uses `tested implementation tree` and `tested implementation commit` and makes no implementation claim;
-- inspection finds no duplicated normative rule that conflicts with its owning authority;
-- `git diff --check` passes and the staged candidate contains exactly the declared 14 Markdown files;
+- all 18 active critical requirement IDs remain unique in `SPEC.md` and retain their acceptance mappings in Section 3.1;
+- review against v2.1.0 confirms that the delta consists exactly of affirmative agent governance, simplified compiler governance and its Architecture Gate evidence, version and lineage metadata, manifest inventory and hashes, active logo-reference removal, and deletion of `docs/LOGO.md`; product-defining sections, critical requirements and mappings, provider/browser contracts, and active brand rules carry forward;
+- Deferred work remains assigned to future authorized objectives;
+- the 11 immutable tracked files match individual SHA-256 values computed from exact final staged Git-blob bytes;
+- the checksum table covers those 11 files, while `PACKAGE-MANIFEST.md` follows its self-referential exclusion and `docs/EVIDENCE.md` follows its mutable-ledger procedure;
+- the evidence template retains `tested implementation tree` and `tested implementation commit` and remains an empty factual template;
+- each normative rule resolves to one owning authority;
+- `git diff --check` passes and the staged candidate contains exactly the declared 13 Markdown files;
 - one final exact-tree audit validates consistency, authority, links, inventory, traceability, wording, staged hashes, and substantive implementability after text convergence;
-- the documentation commit is pushed to the authorized freeze branch and canonical remote ref, local and remote commit identities match, both parents and ancestry are verified, and the tracked worktree is clean while pre-existing ignored state remains preserved.
+- the documentation commit reaches `origin/docs/v2.1.1-freeze` and `origin/main`, local and remote commit identities match, its sole parent and preserved ancestry are verified, and the tracked worktree is clean while pre-existing ignored state remains preserved.
 
-The permitted objective delta is the declared Markdown-only freeze. No implementation evidence is claimed.
+The permitted objective delta is the declared Markdown freeze. The evidence ledger remains an empty factual template.
 
 ### 3.1 Critical-requirement traceability
 
@@ -155,21 +155,21 @@ An exact expected self-mutation updates the post-edit baseline, emits no new obs
 
 ## 5. Architecture Gate
 
-This gate verifies only the architecture that exists before browser integration:
+This gate verifies the architecture established before browser integration:
 
 - `constitution/` preserves every frozen path and byte; strict `constitution.lock.json` has exactly the schema/version, repository URL, freeze ID, 40-lowercase-hex commit, and 40-lowercase-hex tree fields defined by the Implementation Plan, while the copied manifest supplies and verifies inventory and independent hashes without duplicated lock data;
-- `core/` compiles under strict TypeScript while DOM, Chrome, Node, React, and extension types are unavailable;
-- the committed exact Node/npm/TypeScript tuple, package-manager metadata, engine metadata, exact direct versions, and npm lockfile agree, and the audit rejects a canonical-toolchain mismatch;
-- domain values, text policy, reducer, context, validation, and semantic ports contain no Zod or runtime mechanisms;
-- the authored-TypeScript compiler and AST audit deterministically enforce the syntax, scope, annotation grammar, placeholder rejection, and exhaustive-never rules in [`ENGINEERING.md`](ENGINEERING.md#4-compiler-enforced-safety), while Architecture Gate review records the required inspected judgments about assertion necessity, narrowness, and runtime basis;
-- a repository-wide import scan proves Zod appears only in `core/provider-schema/`, `extension/protocol/`, and the worker-owned trusted-settings boundary, with no re-export or indirect wrapper that broadens those locations;
-- imports point from extension composition and adapters toward core, and core never imports `extension/`;
-- public core declarations expose semantic capabilities and opaque references rather than browser, timer, transport, storage, or UI objects;
+- `core/` compiles under strict TypeScript with exactly its ECMAScript library types and core-authored declarations;
+- the committed exact Node/npm/TypeScript tuple, package-manager metadata, engine metadata, exact direct versions, and npm lockfile agree, and the audit passes under that canonical tuple;
+- domain values, text policy, reducer, context, validation, and semantic ports use pure TypeScript and the core-owned semantic dependency set;
+- every committed TypeScript configuration passes with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noImplicitOverride`, and `noFallthroughCasesInSwitch`; inspection confirms precise types and narrowly justified exceptional external boundaries, and focused compile-time or deterministic runtime tests establish the basis of each exception as required by [`ENGINEERING.md`](ENGINEERING.md#4-compiler-enforced-safety);
+- a repository-wide import scan proves that the Zod location allowlist is exactly `core/provider-schema/`, `extension/protocol/`, and the worker-owned trusted-settings boundary;
+- imports point from extension composition and adapters toward core, and the core import set consists of core modules and permitted external-boundary dependencies;
+- public core declarations expose exactly semantic capabilities and opaque references;
 - the repository remains one npm package with exact direct dependency versions, a committed npm lockfile, and a clean `npm ci` install under recorded Node and npm versions;
-- Zod is the only direct runtime dependency, and the development dependency set is exactly TypeScript, esbuild, Vitest, Playwright, Chrome types, and Node types, all at exact direct versions;
-- no React, UI framework, OpenRouter SDK, monorepo tool, backend, database, code generation, native scaffold, or deferred-runtime placeholder exists.
+- the direct runtime dependency allowlist is exactly Zod, and the development dependency allowlist is exactly TypeScript, esbuild, Vitest, Playwright, Chrome types, and Node types, all at exact direct versions;
+- React, UI frameworks, the OpenRouter SDK, monorepo tooling, backends, databases, code generation, native scaffolds, and deferred-runtime placeholders remain assigned to future authorized objectives.
 
-Runtime-message behavior and external-schema enforcement are not Architecture Gate criteria. Manifest, permissions, registrations, storage isolation, DOM runtime behavior, and overlay accessibility are not Architecture Gate criteria.
+The Provider Gate owns runtime-message behavior and external-schema enforcement. The Browser Integration Gate owns manifest, permissions, registrations, storage isolation, DOM runtime behavior, and overlay accessibility.
 
 ## 6. Provider Gate
 

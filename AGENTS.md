@@ -1,6 +1,6 @@
 # Emenda Agent Guide
 
-> **Frozen agent governance, version 2.1.0**
+> **Frozen agent governance, version 2.1.1**
 
 This guide is the agent-agnostic control plane for Emenda work. Repository-local authority applies equally to every coding system. A tool-specific compatibility file contains only the integration details that tool requires and points here for project rules.
 
@@ -14,7 +14,7 @@ Use these labels consistently:
 | **Builder choice** | A local technique whose alternatives preserve every required observable contract |
 | **Deferred** | Work assigned to a later versioned objective |
 | **Evidence** | A factual result tied to an exact tree, commit, environment, and procedure |
-| **Rationale** | A concise explanation for a non-obvious constraint; it adds no separate requirement |
+| **Rationale** | A concise explanation bounded to the adjacent constraint; that constraint carries the requirement |
 
 SPEC owns product requirements. Architecture owns component responsibility. The Implementation Plan owns sequence. Acceptance derives verification. Engineering owns construction and evidence policy. Supporting text points to those homes.
 
@@ -25,7 +25,7 @@ Establish the supplied objective before mutation. [PROMPT.md](PROMPT.md) owns it
 - A documentation objective changes this Markdown-only repository through one versioned constitutional freeze.
 - An implementation objective names the separate implementation repository, baseline, branch, frozen constitution identity, active increment and gate, required verification, and terminal state.
 - The frozen constitutional and supplemental files remain read-only throughout implementation. The mutable evidence ledger changes only through the ledger-only procedure in the evidence policy.
-- A genuine specification defect becomes a new documentation objective. Implementation resumes only from the resulting new freeze.
+- A genuine specification defect becomes a new documentation objective. Implementation resumes from the resulting new freeze.
 
 The existence of this repository authorizes inspection. Repository mutation follows the explicit objective and its positive permitted-change set.
 
@@ -59,25 +59,25 @@ Begin with [PROMPT.md](PROMPT.md) and this guide. Then load the authority needed
 | Visible interaction or accessibility | [UX.md](UX.md), subject to SPEC |
 | Visual identity | [BRAND.md](BRAND.md) |
 
-Load supporting material when it materially affects the current decision. The manifest classifies every tracked document; supplemental and external material gain no authority through inclusion or repetition.
+Load supporting material when it materially affects the current decision. Use the manifest classification to treat supplemental and external material as context or evidence, and resolve the decision through the authoritative subject home.
 
 ## 5. Authority and ambiguity
 
 Resolve an interpretation through the subject hierarchy and the nearest authoritative requirement.
 
-- **Required:** Preserve the valid candidate state and identify the exact unresolved requirement when two authoritative statements materially conflict or the constitution cannot determine a safety-, behavior-, architecture-, or acceptance-significant choice.
+- **Required:** Preserve the valid candidate state and identify the exact unresolved requirement when authoritative statements conflict or leave a safety-, behavior-, architecture-, or acceptance-significant choice unresolved.
 - **Required:** Route that ambiguity into a human-authorized versioned documentation decision under the accountability rule in [PROMPT.md](PROMPT.md#entry-point).
 - **Builder choice:** Select names, helper structure, algorithms, file organization, internal test organization, and equivalent techniques when observable behavior, safety, privacy, compatibility, reliability, and architecture remain unchanged.
 
-An implementation difficulty supplies learning. It changes no constitutional requirement by itself.
+Treat implementation difficulty as learning. Change constitutional requirements through a human-authorized versioned documentation objective.
 
 ## 6. Instruction and construction control
 
 - **Required:** State implementation-agent instructions as the desired action, state, behavior, scope, owner, permitted mechanism, verification, and completion condition. Give each instruction one direction, one interpretation, and one authoritative home.
 - **Required:** Apply the smallest-sufficient, present-purpose, concrete-first, low-interaction construction rules in [`docs/ENGINEERING.md`](docs/ENGINEERING.md#2-smallest-sufficient-implementation).
-- **Required:** Attach one concise Rationale to a non-obvious engineering or security constraint and keep self-evident rules concise.
+- **Required:** Attach one concise Rationale when the reason for an engineering or security constraint materially aids construction, and keep self-evident rules concise.
 
-Quality and effort follow the completion and verification standards in Engineering rather than visible activity or output volume.
+Measure quality and effort against the completion and verification standards in Engineering.
 
 ## 7. Gates and verification
 
@@ -106,7 +106,7 @@ Use primary sources and direct runtime evidence for time-sensitive platform beha
 - contradictory authoritative requirements;
 - a security, privacy, correctness, or reproducibility failure;
 - an unimplementable required contract;
-- missing acceptance coverage for a required invariant;
+- an active required invariant with an open acceptance-coverage field;
 - materially incorrect platform behavior;
 - a demonstrated failure of the current candidate.
 
@@ -129,6 +129,6 @@ Evidence vocabulary, fields, sanitization, failure/recovery history, and ephemer
 
 ## 12. Completion and stop
 
-[PROMPT.md](PROMPT.md#completion) owns the objective completion state. Acceptance derives its gate criteria, and the manifest supplies the exact freeze identity and lifecycle facts. Apply those documents without redefining the terminal state here.
+[PROMPT.md](PROMPT.md#completion) supplies the terminal-state definition. Derive gate criteria from Acceptance and take freeze identity and lifecycle facts from the manifest.
 
-When the owned completion state holds, declare the objective complete and stop. Continue safe in-scope work while it remains unmet; request new human authority when completion requires a different objective.
+When the owned completion state holds, declare the objective complete and stop. Continue safe in-scope work while required completion fields remain open. A different objective requires new human authority.

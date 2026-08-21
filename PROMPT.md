@@ -1,16 +1,16 @@
 # Emenda V0.1
 
-> **Frozen clean-room constitution, version 2.1.0**
+> **Frozen clean-room constitution, version 2.1.1**
 
-This repository is the Markdown-only constitution for Emenda V0.1. It defines the product, architecture, implementation sequence, verification, interaction, brand, and agent operating contract. It contains no product implementation and grants no standing implementation authorization.
+This repository is the Markdown constitution for Emenda V0.1. It defines the product, architecture, implementation sequence, verification, interaction, brand, and agent operating contract. Product implementation belongs in a separately authorized implementation repository, and implementation mutation begins under the product objective defined below.
 
 ## Entry point
 
 Every agent begins with this file and [AGENTS.md](AGENTS.md), completes the proportional preflight defined there, states the active gate, and then loads the authoritative documents relevant to the current decision. This progressive-disclosure path is the canonical reading method.
 
-This file owns objective authorization and completion conditions. A human objective owner authorizes every product, architecture, safety, UX, acceptance, implementation-order, brand, or governance change. Agents may surface evidence and draft proposals; they cannot authorize adoption.
+This file owns objective authorization and completion conditions. A human objective owner authorizes every product, architecture, safety, UX, acceptance, implementation-order, brand, or governance change. Agents surface evidence and draft proposals for adoption by that owner.
 
-A documentation objective may revise this repository only through a new versioned atomic freeze. A product objective identifies a separate implementation repository, exact baseline, branch, frozen constitution commit and tree, and completion target before implementation mutation begins.
+A documentation objective revises this repository through one new versioned atomic freeze. A product objective identifies a separate implementation repository, exact baseline, branch, frozen constitution commit and tree, and completion target before implementation mutation begins.
 
 ## Governing construction objective
 
@@ -29,7 +29,7 @@ The constitution is agent-agnostic and architecture-specific. Codex, Claude, Cop
 - [UX.md](UX.md) owns visible interaction and accessibility; [BRAND.md](BRAND.md) owns visual identity.
 - [AGENTS.md](AGENTS.md) owns preflight, objective execution, agent coordination, audit handling, Git discipline, and post-completion stop discipline.
 
-Supporting and external documents introduce no authority over those homes. [PACKAGE-MANIFEST.md](PACKAGE-MANIFEST.md) records the exact freeze, lineage, document classification, and integrity data. [docs/EVIDENCE.md](docs/EVIDENCE.md) records facts only.
+The subject homes above govern decisions. Treat supporting and external documents as classified context or evidence. [PACKAGE-MANIFEST.md](PACKAGE-MANIFEST.md) records the exact freeze, lineage, document classification, and integrity data. [docs/EVIDENCE.md](docs/EVIDENCE.md) records facts through its ledger procedure.
 
 ## Future V0.1 outcome
 

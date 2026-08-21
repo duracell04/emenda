@@ -1,6 +1,6 @@
 # Emenda Roadmap
 
-> **Frozen supplemental roadmap, version 2.1.0**
+> **Frozen supplemental roadmap, version 2.1.1**
 
 This non-authoritative roadmap orients future objectives. [SPEC.md](SPEC.md) owns product scope, [docs/IMPLEMENTATION-PLAN.md](docs/IMPLEMENTATION-PLAN.md) owns the seven-increment sequence and six-gate placement, [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md) owns gate criteria, and [PACKAGE-MANIFEST.md](PACKAGE-MANIFEST.md) owns freeze identity and lineage.
 

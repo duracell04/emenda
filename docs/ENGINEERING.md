@@ -1,6 +1,6 @@
 # Emenda Engineering Standard
 
-> **Frozen engineering standard, version 2.1.0**
+> **Frozen engineering standard, version 2.1.1**
 
 ## 1. Authority
 
@@ -15,37 +15,27 @@ This document owns implementation quality, the canonical toolchain policy, verif
 - **Required:** Prefer direct typed code and explicit boundary conversion over defensive machinery spread through trusted internals.
 - **Deferred:** Future runtime families, product surfaces, infrastructure, and speculative extension points enter only through their future objectives.
 
-Maintenance burden is an acceptance concern. Local elegance does not justify a larger global interaction surface.
+Maintenance burden is an acceptance concern. Keep the global interaction surface at the smallest size that satisfies the frozen contract, and add surface when a present requirement justifies it.
 
 ## 3. Canonical toolchain and dependency set
 
 At future implementation preflight, select one exact Node, npm, and TypeScript version tuple. Commit that tuple before product source through exact engine metadata, an exact packageManager value, the exact TypeScript development dependency, and the implementation's toolchain record. Generate and commit the npm lockfile under that tuple.
 
-That tuple is canonical for the objective. The audit command verifies the running versions and refuses a mismatch. A separately labelled compatibility run may use another environment; it does not replace canonical conformance evidence. Package scripts invoke committed local tools, so verification never depends on a global compiler or a download-at-run-time executable.
+That tuple is canonical for the objective. The audit passes when the running versions match it. Label another-environment run as compatibility evidence; canonical conformance comes from the canonical tuple. Package scripts and verification resolve executables from committed, lockfile-installed local tools.
 
 The direct runtime dependency set is exactly Zod. The development dependency set is exactly TypeScript, esbuild, Vitest, Playwright, Chrome types, and Node types. Every direct version is exact. Clean verification starts with npm ci from a clean checkout and validates that package metadata, direct versions, lockfile, and installed graph agree.
 
-The product is one npm package implemented with plain TypeScript, HTML, and CSS. The allowed set supplies no UI framework, extension framework, provider SDK, monorepo layer, backend, database, code generator, native scaffold, or remote executable code.
+The product is one npm package implemented with plain TypeScript, HTML, and CSS and the exact dependency set above. UI and extension frameworks, provider SDKs, monorepo layers, backends, databases, code generators, native scaffolds, and remote executable code belong to future authorized objectives.
 
 ## 4. Compiler-enforced safety
 
-Enable strict TypeScript plus unchecked-indexed-access, exact-optional-property, override, and fallthrough checks. Use immutable domain values, narrow interfaces, exhaustive discriminated unions, and explicit conversions at external boundaries.
+Enable TypeScript `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noImplicitOverride`, and `noFallthroughCasesInSwitch`. Use precise immutable domain values, narrow interfaces, exhaustive discriminated unions, and explicit conversions at external boundaries. Represent unchecked external input as `unknown` until its owning boundary validates and converts it.
 
-The deterministic compiler audit covers every repository-authored TypeScript file, including product, tests, configuration, and build scripts, while excluding installed dependencies, build output, and the copied constitution. It enforces:
+Ordinary `tsc` compilation covers every repository-authored TypeScript file in product source, tests, configuration, and build scripts under the committed configurations. The core configuration supplies exactly its ECMAScript library types and core-authored declarations; the extension configuration supplies its declared browser and tooling types. Installed dependencies, build output, and the copied constitution sit outside the repository-authored compilation scope.
 
-- the compiler reports no implicit any;
-- an explicit any type annotation, assertion, or type argument is absent;
-- a nested assertion through any or unknown, including the double-assertion pattern, is absent;
-- a non-null assertion expression is absent;
-- ts-ignore is absent;
-- ts-expect-error is accepted only in an immediately preceding line comment matching `^// @ts-expect-error EM-BOUNDARY: [A-Za-z0-9._/-]+; verified by [A-Za-z0-9._/-]+$`, with concrete contract and validator-or-test identifiers, and the compiler proves it suppresses a current diagnostic;
-- as-const and satisfies remain ordinary type-preserving techniques;
-- every other type assertion is immediately preceded by a line comment matching `^// EM-BOUNDARY-ASSERTION: [A-Za-z0-9._/-]+; verified by [A-Za-z0-9._/-]+$`, with concrete contract and validator-or-test identifiers;
-- every dispatch over a declared discriminated union proves its remaining value is never in a final branch, either through a canonical assertNever function whose parameter type is never or a local assignment to never.
+Use compiler narrowing, boundary validators, `satisfies`, and `as const` as ordinary type-preserving techniques. Assertions and diagnostic suppressions are permitted exactly where a genuine external API typing mismatch leaves the validated runtime contract inexpressible. Keep each exception at the smallest expression, add an adjacent plain-language Rationale naming the external contract, and verify that boundary with a focused compile-time or deterministic runtime test.
 
-The TypeScript compiler API and deterministic source inspection enforce the enumerated syntax, scope, comment grammar, placeholder rejection, and exhaustive-never forms without a lint dependency. Placeholder identifiers such as `external-contract`, `validator`, or `test` fail the audit.
-
-Architecture Gate review separately inspects that each assertion is necessary, uses the narrowest target type supported by the named contract, and converts only after the named validator or test establishes its runtime basis. Those necessity and narrowness conclusions are inspected judgments, not scanner proof.
+The Architecture Gate combines compiled evidence that every committed TypeScript configuration passes, inspected evidence that types and exceptional boundaries remain precise, and focused deterministic evidence for the runtime basis of each exception. The standard TypeScript compiler and focused tests are the complete compiler-safety mechanism.
 
 ## 5. Deterministic and boundary discipline
 
@@ -64,19 +54,19 @@ The named invariant in [SPEC.md](../SPEC.md#deterministic-authority-and-probabil
 
 ### Static and compiled
 
-Inspect constitution identity, dependency and import direction, permitted schema locations, type escapes, manifest, permissions, bundle contents, and secret/text leakage. Compile core with DOM, Chrome, Node, React, and extension ambient types unavailable; compile the extension under its browser configuration.
+Inspect constitution identity, dependency and import direction, permitted schema locations, exceptional type boundaries, manifest, permissions, bundle contents, and credential/text confinement. Compile core with exactly its ECMAScript library types and core-authored declarations; compile the extension under its browser configuration.
 
 ### Deterministic
 
 Use Vitest, fake clocks, deterministic surface and provider simulations, and controlled fetch/message doubles. Cover Unicode ranges, exact caret ownership, trusted paired-input tickets, context selection, reducer transitions, configuration races, cancellation order, stale work, foreground and exposure, selection authority, validation, redaction, IME commitment, Apply, Dismiss, self-authored selection and mutation, and refusal.
 
-Timing tests control exact boundaries and completion order. A timing fix changes the deterministic model or owning invariant rather than adding arbitrary waits. Every deterministic gate assertion passes.
+Timing tests control exact boundaries and completion order. A timing fix changes the deterministic model or owning invariant. Every deterministic gate assertion passes.
 
 ### Provider
 
-Controlled tests prove the canonical serialization, authored headers, fetch controls, prompt, routing, structured-output schema, disabled plugins, reasoning-trace exclusion, completion bound, response projection, exact returned model identity, timeout, incremental body limit, cancellation, local derivation, and redacted failures.
+Controlled tests prove the canonical serialization, authored headers, fetch controls, prompt, routing, structured-output schema, empty plugin set, declared non-reasoning response projection, completion bound, exact returned model identity, timeout, incremental body limit, cancellation, local derivation, and redacted failures.
 
-The canonical 15-case corpus runs strictly sequentially through production validation using one configured documented direct model and ephemeral environment delivery of the writer's credential. Named human reviewers collectively competent for all corpus profiles apply the semantic method in Acceptance after automated structural checks and record their profile/case coverage. A failed or interrupted run remains factual evidence; only a complete later run records recovery.
+The canonical 15-case corpus runs strictly sequentially through production validation using one configured documented direct model and ephemeral environment delivery of the writer's credential. Named human reviewers collectively competent for all corpus profiles apply the semantic method in Acceptance after automated structural checks and record their profile/case coverage. A failed or interrupted run remains factual evidence; a complete later run records recovery.
 
 ### Browser
 
@@ -88,34 +78,34 @@ Keep these evidence layers distinct:
 
 Browser verification covers the supported textarea and refused editor classes, paired-input provenance, exposure, foreground and selection invalidation, storage isolation, synchronous worker listeners, exact-port permissions, sender validation, external permission changes, serialized lifecycle, worker restart, BFCache and prerender, navigation races, literal rendering, trusted approval controls, immediate pre-Apply authorization, scoped target selection, mutation failures, accessibility, IME, and exact one-step Undo.
 
-Record Windows Studio, MacBook, and Chromebook results separately with their exact OS and browser versions. Each record supports only its tested environment.
+Record Windows Studio, MacBook, and Chromebook results separately with their exact OS and browser versions. Bind each record's support claim to its tested environment.
 
 ## 7. Test-value discipline
 
-Every meaningful test protects a product behavior, state transition, trust boundary, regression, privacy rule, authority rule, or documented risk. Test externally meaningful invariants and semantic ports rather than private helper shape.
+Every meaningful test protects a product behavior, state transition, trust boundary, regression, privacy rule, authority rule, or documented risk. Focus tests on externally meaningful invariants and semantic ports.
 
-Apply verification cost where it produces information: focused deterministic checks during construction; complete deterministic gates at convergence; live provider evidence at the Provider Gate; browser and physical-device evidence at their owning gates. Contract coverage matters; raw test count does not.
+Apply verification cost where it produces information: focused deterministic checks during construction; complete deterministic gates at convergence; live provider evidence at the Provider Gate; browser and physical-device evidence at their owning gates. Evaluate the suite by contract coverage and information gained.
 
 ## 8. Audit, CI, and review convergence
 
 The implementation provides one cross-platform audit command as the sole audit entry point. It is read-only with respect to constitution and product sources and orchestrates every check available at the active phase:
 
 - read-only constitution snapshot and lock verification;
-- all 12 independent constitution checksums;
+- all 11 independent constitution checksums;
 - canonical toolchain and clean npm installation;
-- compilation and type-escape inspection;
+- strict compilation and focused exceptional-boundary verification;
 - deterministic tests;
 - production build, dependency, permission, manifest, and bundle inspection;
 - browser integration when the environment supports it;
 - final critical-requirement coverage and evidence checks.
 
-Its internal helpers and output format are Builder choices. Every helper is reached through this command; no helper is exposed as another audit entry point.
+Its internal helpers and output format are Builder choices. Keep every helper internal and reach it through this command.
 
-The deterministic CI workflow invokes that sole audit command exactly once and adds no separately reconstructed or parallel audit path. Environment-dependent live-provider, minimum-Chrome, current-Stable, and physical-device results remain separately recorded evidence.
+The deterministic CI workflow uses one invocation of that audit command as its complete audit path. Record environment-dependent live-provider, minimum-Chrome, current-Stable, and physical-device results as their separate evidence layers.
 
 Use focused review while constructing and one complete consistency, security, architecture, and acceptance review for the exact final candidate at the owning gate. Repeat complete review after a substantive change to an audited invariant. Freeze when every verified actionable blocker is resolved and required checks pass.
 
-Critical requirement definitions and semantic ownership live only in SPEC; derived documents may reference them. IDs remain stable while semantics remain stable, retired IDs are never reused, and the audit proves that every active ID has acceptance coverage.
+SPEC is the sole home for critical-requirement definitions and semantic ownership; derived documents reference their IDs. Keep each ID permanently bound to one semantic requirement, assign a fresh ID to new semantics, and audit acceptance coverage for every active ID.
 
 ## 9. Evidence policy
 
@@ -130,9 +120,9 @@ Use these exact levels:
 
 Every entry records UTC time, gate or increment, constitution freeze ID/commit/tree, applicable critical requirement IDs, tested implementation tree/commit, commands or actions, exact result, environment and toolchain, evidence level, limitations or failures, and next checkpoint.
 
-The canonical evidence ledger remains `docs/EVIDENCE.md` in the constitution repository; the implementation's `constitution/` snapshot remains read-only. An evidence commit in the constitution repository changes only that ledger and describes an already-existing tested implementation commit. Preserve failures and later recoveries separately. State what was inspected, what was executed, and what remains unverified.
+The canonical evidence ledger is `docs/EVIDENCE.md` in the constitution repository; the implementation's `constitution/` snapshot remains read-only. An evidence commit in the constitution repository changes exactly that ledger and describes an already-existing tested implementation commit. Preserve failures and later recoveries separately. State the inspected scope, executed procedures, verified results, and open verification fields.
 
-Live credentials exist only in the qualification process environment for its lifetime. Evidence, logs, fixtures, snapshots, commits, and errors contain no API key, authorization header, raw private context, raw provider body, page URL, tab/frame/document metadata, source identity, or DOM structure. Synthetic domain-neutral fixtures carry no private text.
+The live qualification process environment exclusively owns the API key and authorization header for its lifetime. The active provider boundary exclusively owns raw private context and response bodies during the bounded call. The current browser-authorization path exclusively owns page URL, tab/frame/document metadata, source identity, and DOM structure while establishing authority. Durable and observable records admit exactly synthetic domain-neutral fixtures, typed redacted outcomes, sanitized evidence fields, and build or test metadata.
 
 ## 10. Deferred engineering
 

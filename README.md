@@ -1,12 +1,12 @@
 # Emenda
 
-> **Frozen supplemental orientation, version 2.1.0**
+> **Frozen supplemental orientation, version 2.1.1**
 
 > **Preserve your Duktus**
 
 Emenda V0.1 is specified as a quiet personal writing assistant for Chromium. It observes committed changes on explicitly enabled sites, waits for typing to settle, sends one split bounded context through OpenRouter using the writer's configured model ID, validates the model's complete corrected focus, derives at most one Unicode-scalar edit locally, and presents that exact correction for the writer to apply or dismiss.
 
-This non-authoritative orientation summarizes the Markdown-only v2.1.0 freeze. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) owns its exact inventory, classification, lineage, and integrity; product implementation requires a separate objective in the separate implementation repository.
+This non-authoritative orientation summarizes the Markdown-only v2.1.1 freeze. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) owns its exact inventory, classification, lineage, and integrity; product implementation requires a separate objective in the separate implementation repository.
 
 ## Intended V0.1 experience
 
@@ -57,7 +57,6 @@ Additional package paths:
 - [`BRAND.md`](BRAND.md) — visual identity
 - [`docs/EVIDENCE.md`](docs/EVIDENCE.md) — mutable empty evidence template
 - [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) — freeze identity and checksums
-- [`docs/LOGO.md`](docs/LOGO.md) — non-authoritative external logo proposal preserved for provenance
 
 ## Scope boundary
 

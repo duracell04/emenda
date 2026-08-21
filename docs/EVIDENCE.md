@@ -1,8 +1,8 @@
 # Emenda Implementation Evidence
 
-> **Mutable evidence-ledger template for constitution version 2.1.0**
+> **Mutable evidence-ledger template for constitution version 2.1.1**
 
-This ledger is not constitutional authority and is excluded from the immutable checksums in `PACKAGE-MANIFEST.md`. It remains empty in the documentation-only v2.1.0 freeze.
+This ledger is a mutable factual record governed by its ledger-only procedure and sits outside the immutable checksum table in `PACKAGE-MANIFEST.md`. It remains empty in the documentation-only v2.1.1 freeze.
 
 Implementation evidence may be added to this canonical ledger only under a separately authorized future implementation objective. Each ledger-only commit identifies an already-existing implementation commit that was actually tested and leaves every frozen file unchanged. It records that fact; it does not claim to have tested itself.
 
@@ -82,4 +82,4 @@ failures or limitations:
 
 ## Evidence entries
 
-No implementation evidence is recorded in the documentation-only v2.1.0 freeze.
+The documentation-only v2.1.1 freeze records an empty implementation-evidence state.

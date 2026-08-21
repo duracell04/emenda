@@ -1,6 +1,6 @@
 # Emenda V0.1 Implementation Plan
 
-> **Frozen implementation plan, version 2.1.0**
+> **Frozen implementation plan, version 2.1.1**
 
 ## 1. Objective boundary
 
@@ -26,7 +26,7 @@ The sequence is binding for the future implementation objective. The six gates r
 
 ## 3. Documentation baseline and Documentation Gate
 
-[`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md) defines the exact v2.1.0 baseline, lineage, classification, and integrity data. The Documentation Gate in [`ACCEPTANCE.md`](ACCEPTANCE.md) verifies that candidate. Passing it completes the documentation objective; product increments begin only under the separate authorization described above.
+[`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md) defines the exact v2.1.1 baseline, lineage, classification, and integrity data. The Documentation Gate in [`ACCEPTANCE.md`](ACCEPTANCE.md) verifies that candidate. Passing it completes the documentation objective; product increments begin only under the separate authorization described above.
 
 ### Future implementation intake
 

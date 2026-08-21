@@ -1,6 +1,6 @@
 # Emenda V0.1 UX
 
-> **Frozen interaction authority, version 2.1.0**
+> **Frozen interaction authority, version 2.1.1**
 
 ## 1. Interaction promise
 

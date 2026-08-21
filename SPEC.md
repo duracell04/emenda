@@ -1,12 +1,12 @@
 # Emenda V0.1 Product Specification
 
-> **Frozen product authority, version 2.1.0**
+> **Frozen product authority, version 2.1.1**
 
 ## 1. Authority and objective boundary
 
 This file is authoritative for what Emenda V0.1 does. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) owns architectural boundaries, and [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) owns future build order. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) owns freeze identity and lineage.
 
-Version 2.1.0 hardens construction governance while carrying the observable V0.1 behavior of version 2.0.3 forward unchanged. A future behavior change requires a concrete defect and a separate versioned documentation decision.
+Version 2.1.1 streamlines construction governance while carrying the observable V0.1 behavior of version 2.1.0 forward unchanged. A concrete defect and separately authorized versioned documentation objective govern every future behavior change.
 
 ## 2. Product goal
 

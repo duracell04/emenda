@@ -1,6 +1,6 @@
 # Emenda V0.1 Architecture
 
-> **Frozen architecture, version 2.1.0**
+> **Frozen architecture, version 2.1.1**
 
 ## 1. Authority and objective boundary
 
