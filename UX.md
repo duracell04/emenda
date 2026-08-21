@@ -1,6 +1,6 @@
 # Emenda V0.1 UX
 
-> **Frozen interaction authority, version 2.0.3**
+> **Frozen interaction authority, version 2.1.0**
 
 ## 1. Interaction promise
 
@@ -8,7 +8,7 @@
 
 The writer stays on the page, keeps the original editor as the primary surface, sees at most one exact proposal, and decides whether text changes. Emenda instructs the model never to translate, exposes the complete change for review because structural validation cannot prove that instruction was followed, and never silently edits.
 
-This file owns visible behavior and accessibility. Product behavior is authoritative in [`SPEC.md`](SPEC.md), and visual identity is authoritative in [`BRAND.md`](BRAND.md).
+This file owns visible behavior and accessibility. Product behavior and the trust model are authoritative in [`SPEC.md`](SPEC.md), and visual identity is authoritative in [`BRAND.md`](BRAND.md). The writer-approval role implements `EM-PROV-003` and the Apply controls implement `EM-APPLY-001` through `EM-APPLY-003`.
 
 ## 2. Activation and revocation
 
@@ -174,6 +174,4 @@ enable one origin
 → continue writing without a self-triggered check
 ```
 
-Caret anchoring, inline underlines, multiple suggestions, review-all flows, inputs, contenteditable, complex editors, native surfaces, packaging, signing, and store-publication UX are deferred.
-
-The current v2.0.3 objective freezes documentation only. Implementing this UX requires a separate future objective.
+Caret anchoring, inline underlines, multiple suggestions, review-all flows, inputs, contenteditable, complex editors, native surfaces, packaging, signing, and store-publication UX are Deferred. Implementing this frozen UX requires a separate product objective.

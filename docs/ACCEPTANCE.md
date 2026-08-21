@@ -1,6 +1,6 @@
 # Emenda V0.1 Acceptance
 
-> **Frozen acceptance contract, version 2.0.3**
+> **Frozen acceptance contract, version 2.1.0**
 
 ## 1. Role and evidence standard
 
@@ -17,9 +17,12 @@ live
 runtime
 ```
 
-Each entry records environment and tool versions, the relevant command or manual procedure, exact sanitized outcome, limitations, and:
+Each entry records environment and tool versions, the relevant command or manual procedure, exact sanitized outcome, limitations, applicable critical requirement IDs, and:
 
 ```text
+constitution freeze ID:
+constitution commit:
+constitution tree:
 tested implementation tree:
 tested implementation commit:
 ```
@@ -41,28 +44,56 @@ Documentation
 → V0.1 Conformance
 ```
 
-The current v2.0.3 objective ends after the Documentation Gate: preserve v2.0.2, rewrite, verify, hash, commit, and push its direct-child 13-file Markdown freeze, confirm remote identity and a clean worktree, then stop. All implementation gates require a separate future objective.
+The v2.1.0 documentation objective ends after its exact 14-file candidate passes the Documentation Gate, becomes one atomic two-parent Markdown freeze, is pushed to its authorized remote refs, and remote identity, ancestry, and tracked-worktree cleanliness are verified. All implementation gates require a separate future objective.
 
 ## 3. Documentation Gate
 
 The gate passes only when:
 
-- the commit is a documentation-only direct child of v2.0.2 commit `6a4ddc65fa9067f94023f87aebe48840e1b88bc2`, while v2.0.1 commit `d70b277998a23663ee6befc77dd6bb0da50ebcca` remains in its ancestry;
-- the tracked Markdown inventory is exactly the 13 paths declared by `PACKAGE-MANIFEST.md`, with no implementation source added;
-- all documents identify version 2.0.3, and every freeze-ID occurrence is `emenda-clean-room-v2.0.3-2026-08-21`;
+- the atomic documentation commit has first parent v2.0.3 `5295799c637f89a5db12b2971dee12ead7977270` and second parent logo proposal `05eadea4dc05e02b715618c458f7df4bbd9c0b10`, preserving v2.0.2 and v2.0.1 ancestry;
+- the tracked inventory is exactly the 14 Markdown paths classified by `PACKAGE-MANIFEST.md`, and the candidate contains no implementation source;
+- all constitutional documents identify version 2.1.0, every freeze-ID occurrence is `emenda-clean-room-v2.1.0-2026-08-21`, and external `docs/LOGO.md` is explicitly non-authoritative;
 - `SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/IMPLEMENTATION-PLAN.md` remain the authorities for behavior, architecture, and build order, with supporting documents introducing no contradiction;
 - every occurrence of the canonical sequence is byte-identical and describes a Documentation baseline followed by seven implementation increments numbered 1 through 7;
 - the Documentation Gate is a prerequisite rather than an implementation increment, and the six gate names and order are unchanged;
 - every local Markdown link resolves;
-- native and commercial work appears only as explicitly deferred work;
-- the 11 immutable documents match individual SHA-256 values computed from exact staged Git-blob bytes;
+- all 18 active critical requirement IDs are unique, remain in `SPEC.md`, and map to acceptance coverage in Section 3.1;
+- review against v2.0.3 finds no observable change to constants, state/profile unions, provider input/result schemas, request body, canonical prompt, live corpus, Unicode/context derivation, paired-input/IME provenance, exact-origin permission and lifecycle behavior, supported textarea/exposure, Apply authorization and mutation, text-only rendering, failure mapping, or the verbatim privacy disclosure;
+- deferred work remains classified as Deferred rather than represented by current scaffolding;
+- the 12 immutable tracked files match individual SHA-256 values computed from exact final staged Git-blob bytes;
 - `PACKAGE-MANIFEST.md` and the empty `docs/EVIDENCE.md` ledger template are excluded from the checksum table;
 - the evidence template uses `tested implementation tree` and `tested implementation commit` and makes no implementation claim;
 - inspection finds no duplicated normative rule that conflicts with its owning authority;
-- `git diff --check` passes and the staged diff contains exactly the 13 Markdown files;
-- one documentation decision is committed and pushed, local and remote commit identities match, ancestry is verified, and the worktree is clean.
+- `git diff --check` passes and the staged candidate contains exactly the declared 14 Markdown files;
+- one final exact-tree audit validates consistency, authority, links, inventory, traceability, wording, staged hashes, and substantive implementability after text convergence;
+- the documentation commit is pushed to the authorized freeze branch and canonical remote ref, local and remote commit identities match, both parents and ancestry are verified, and the tracked worktree is clean while pre-existing ignored state remains preserved.
 
-No package, source, test, build output, audit script, tag, or implementation evidence is created during this objective.
+The permitted objective delta is the declared Markdown-only freeze. No implementation evidence is claimed.
+
+### 3.1 Critical-requirement traceability
+
+[`SPEC.md`](../SPEC.md#critical-requirement-identifiers) owns these requirements. This table derives their minimum acceptance coverage. An ID is covered only when every listed acceptance section passes at its owning evidence level and each corresponding evidence entry cites that ID.
+
+| Requirement | Required acceptance coverage |
+| --- | --- |
+| `EM-AUTH-001` | Sections 4.1, 4.4, and 7.3: revision races, stale silence, and current capability authority |
+| `EM-AUTH-002` | Sections 6.1 and 7.2: strict one-shot protocol and sender-class authorization |
+| `EM-AUTH-003` | Sections 4.1, 6.1, and 7.1: settings revision, invalidation, and stale resynchronization |
+| `EM-PERM-001` | Sections 6.1, 7.2, and 8: exact explicit-port origin derivation and runtime round trips |
+| `EM-PERM-002` | Sections 6.1, 7.2, 7.3, and 8: current Check and Apply authorization |
+| `EM-PERM-003` | Sections 7.2 and 8: serialized reconciliation, revocation, restart, BFCache, and prerender behavior |
+| `EM-PRIV-001` | Sections 6.2 and 7.6: bounded provider text and metadata confinement |
+| `EM-PRIV-002` | Sections 6.1 and 7.1: worker-only credentials and trusted-storage isolation |
+| `EM-PRIV-003` | Sections 6.2 and 7.6: redaction and absence of text history, telemetry, and identifying metadata |
+| `EM-PROV-001` | Sections 6.2 and 6.3: canonical request enforcement and complete live corpus |
+| `EM-PROV-002` | Sections 4.3 and 6.1–6.3: strict result validation, exact model identity, and local derivation |
+| `EM-PROV-003` | Sections 4.3, 6.3, and 7.5: probabilistic proposal, deterministic structure, and human semantic review |
+| `EM-APPLY-001` | Sections 4.3, 7.3, and 8: controller, worker, and surface authority chain |
+| `EM-APPLY-002` | Sections 4.4, 7.3, and 8: sole mutation, exact acknowledgement, refusal, and one-step Undo |
+| `EM-APPLY-003` | Section 7.5: trusted current approval controls, focus handoff, and hit tests |
+| `EM-SEC-001` | Sections 6.2 and 7.5: instruction isolation and literal text-only rendering |
+| `EM-SEC-002` | Section 7.4: classification before read and fail-closed supported-surface boundary |
+| `EM-SEC-003` | Sections 6.2–6.3, 7.1, 7.3–7.5, and 8: provider, credential, residual-risk disclosure, and environment-specific evidence |
 
 ## 4. Mock Product Gate
 
@@ -126,13 +157,16 @@ An exact expected self-mutation updates the post-edit baseline, emits no new obs
 
 This gate verifies only the architecture that exists before browser integration:
 
+- `constitution/` preserves every frozen path and byte; strict `constitution.lock.json` has exactly the schema/version, repository URL, freeze ID, 40-lowercase-hex commit, and 40-lowercase-hex tree fields defined by the Implementation Plan, while the copied manifest supplies and verifies inventory and independent hashes without duplicated lock data;
 - `core/` compiles under strict TypeScript while DOM, Chrome, Node, React, and extension types are unavailable;
+- the committed exact Node/npm/TypeScript tuple, package-manager metadata, engine metadata, exact direct versions, and npm lockfile agree, and the audit rejects a canonical-toolchain mismatch;
 - domain values, text policy, reducer, context, validation, and semantic ports contain no Zod or runtime mechanisms;
+- the authored-TypeScript compiler and AST audit deterministically enforce the syntax, scope, annotation grammar, placeholder rejection, and exhaustive-never rules in [`ENGINEERING.md`](ENGINEERING.md#4-compiler-enforced-safety), while Architecture Gate review records the required inspected judgments about assertion necessity, narrowness, and runtime basis;
 - a repository-wide import scan proves Zod appears only in `core/provider-schema/`, `extension/protocol/`, and the worker-owned trusted-settings boundary, with no re-export or indirect wrapper that broadens those locations;
 - imports point from extension composition and adapters toward core, and core never imports `extension/`;
 - public core declarations expose semantic capabilities and opaque references rather than browser, timer, transport, storage, or UI objects;
 - the repository remains one npm package with exact direct dependency versions, a committed npm lockfile, and a clean `npm ci` install under recorded Node and npm versions;
-- Zod is the only direct runtime dependency, and development dependencies are limited to TypeScript, esbuild, Vitest, Playwright, and Chrome/Node types;
+- Zod is the only direct runtime dependency, and the development dependency set is exactly TypeScript, esbuild, Vitest, Playwright, Chrome types, and Node types, all at exact direct versions;
 - no React, UI framework, OpenRouter SDK, monorepo tool, backend, database, code generation, native scaffold, or deferred-runtime placeholder exists.
 
 Runtime-message behavior and external-schema enforcement are not Architecture Gate criteria. Manifest, permissions, registrations, storage isolation, DOM runtime behavior, and overlay accessibility are not Architecture Gate criteria.
@@ -174,6 +208,8 @@ Tests inspect the exact outbound request and prove:
 ### 6.3 Live provider evidence
 
 Run the following corpus through the production parsing and derivation path using one writer-supplied documented direct-model ID and an OpenRouter key whose account/workspace has no enforced plugin policy that prevents request-level disabling. Record that precondition and requested model in the run metadata; the run itself, not settings syntax, qualifies its observed compatibility, and every returned model must equal the requested ID. In every case, `before` and `after` are empty and the Focus column is the complete focus. Calls are strictly sequential: a case does not start until the preceding case terminates. No case is retried or replaced within a run.
+
+One or more named human semantic reviewers collectively competent for every corpus language and profile compare each strictly parsed and derived result with the table after automated structural and exact-string checks. They assess the returned profile, correction or clean/unsupported decision, category, explanation, language, and preservation of meaning. Run metadata records each reviewer and profile/case coverage plus this method. `linguistic correctness` is that factual human judgment; schema validity, temperature zero, and string equality alone do not prove semantics.
 
 | Case | `profileMode` | Focus | Required result |
 | --- | --- | --- | --- |
@@ -265,14 +301,14 @@ Page and model strings containing HTML, Markdown, URLs, event attributes, or scr
 
 ### 7.6 Confinement inspection
 
-Bundle and runtime inspection prove Emenda-authored messages omit page URLs, tab/frame/document metadata, any separate or unbounded full-document field, source references, snapshot references, and DOM data; the only page text copied from content to worker is the bounded context, which may equal all text of a short document. Request identity, focus range, and `settingsRevision` also cross only as the nontext protocol authority fields declared by the specification and never enter provider input. Chrome-supplied sender metadata reaches the worker only as ephemeral authorization input: only the required fields are inspected, and none is persisted, logged, copied into errors, or forwarded to OpenRouter. No credential, raw private text, persistent text cache, analytics, telemetry, or remote executable code leaks into storage, logs, fixtures, snapshots, errors, or the bundle.
+Bundle and runtime inspection prove Emenda-authored messages omit page URLs, tab/frame/document metadata, any separate or unbounded full-document field, source references, snapshot references, and DOM data; the only page text copied from content to worker is the bounded context, which may equal all text of a short document. Request identity, focus range, and `settingsRevision` also cross only as the nontext protocol authority fields declared by the specification and never enter provider input. Chrome-supplied sender metadata reaches the worker only as ephemeral authorization input: only the required fields are inspected, and none is persisted, logged, copied into errors, or forwarded to OpenRouter. The credential remains confined to the strictly validated worker-owned trusted-settings record and active provider call; it enters no authored message, log, fixture, snapshot, error, evidence, or bundle. Raw private text enters no durable storage, log, fixture, snapshot, error, or evidence. The product contains no persistent text cache, analytics, telemetry, or remote executable code.
 
 ## 8. V0.1 Conformance Gate
 
 The final gate requires all prior evidence to remain valid for the tested implementation tree and commit, plus:
 
-- a clean checkout installs the committed dependency graph with `npm ci` under recorded Node and npm versions, then the complete deterministic suite and Playwright bundled-Chromium persistent-context suite pass;
-- the production extension build and the implementation's single cross-platform audit command pass;
+- a clean checkout verifies the read-only constitution snapshot and lock, activates the committed exact Node/npm/TypeScript tuple, installs the committed dependency graph with `npm ci`, then the complete deterministic suite and Playwright bundled-Chromium persistent-context suite pass;
+- the production extension build, the implementation's single cross-platform audit command, and its deterministic CI workflow pass for the exact tested commit;
 - dependency, bundle, permission, manifest, registration, and secret/text-leakage inspections match the constitution;
 - a manual headed compatibility smoke passes on Chromium or Chrome for Testing 140, with exact browser build and host recorded, and covers actual toolbar grant and denial, external site-access revocation, explicit-port permission round trips, storage-event isolation, synchronous message response, dynamic registration/restart, sender lifecycle, Apply insertion/deletion/replacement, and one-step Undo;
 - a manual unpacked-extension smoke passes on current Chrome Stable, including actual toolbar grant and denial, enablement, inference, Apply, Undo, external site-access revocation, and teardown;
@@ -280,8 +316,9 @@ The final gate requires all prior evidence to remain valid for the tested implem
 - every device record states exact OS/browser versions, tested behaviors, failures, and limitations, without generalizing beyond that environment;
 - supported and rejected surface claims match tested fixtures, accessibility and reduced-motion checks pass, and all privacy disclosure text matches the product behavior;
 - trusted-origin, ticket-piggyback, quota, and possible provider-charge disclosure matches the enabled-site boundary, writer-owned key, and configured model behavior;
+- evidence collectively names all 18 active critical requirement IDs and preserves the distinction between deterministic proof, human semantic judgment, live observation, and environment-specific runtime evidence;
 - the tested implementation commit is pushed and its local and remote identities match;
-- a later evidence commit records that already-existing tested implementation tree and commit, is pushed and verified, and leaves a clean worktree.
+- a later commit in the constitution repository changes only `docs/EVIDENCE.md`, records that already-existing tested implementation tree and commit, is pushed and verified, preserves every frozen file, and leaves both tracked worktrees clean.
 
 The three browser evidence layers remain distinct: automated bundled Chromium, direct Chrome 140 compatibility, and manual current Chrome Stable. Device records supplement rather than replace them.
 

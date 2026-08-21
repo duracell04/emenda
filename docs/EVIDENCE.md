@@ -1,10 +1,10 @@
 # Emenda Implementation Evidence
 
-> **Mutable evidence-ledger template for constitution version 2.0.3**
+> **Mutable evidence-ledger template for constitution version 2.1.0**
 
-This ledger is not constitutional authority and is excluded from the immutable checksums in `PACKAGE-MANIFEST.md`. It remains empty in the documentation-only v2.0.3 freeze.
+This ledger is not constitutional authority and is excluded from the immutable checksums in `PACKAGE-MANIFEST.md`. It remains empty in the documentation-only v2.1.0 freeze.
 
-Implementation evidence may be added only under a separately authorized future implementation objective. Each entry identifies an already-existing implementation commit that was actually tested. The later evidence commit records that fact; it does not claim to have tested itself.
+Implementation evidence may be added to this canonical ledger only under a separately authorized future implementation objective. Each ledger-only commit identifies an already-existing implementation commit that was actually tested and leaves every frozen file unchanged. It records that fact; it does not claim to have tested itself.
 
 ## Baseline template
 
@@ -12,9 +12,11 @@ Implementation evidence may be added only under a separately authorized future i
 constitution version:
 freeze ID:
 constitution commit:
+constitution tree:
 implementation objective:
 UTC time:
 environment:
+toolchain:
 limitations:
 ```
 
@@ -23,12 +25,17 @@ limitations:
 ```text
 UTC time:
 gate or increment:
+constitution freeze ID:
+constitution commit:
+constitution tree:
+critical requirement IDs:
 tested implementation tree:
 tested implementation commit:
 commands or actions:
 exact results:
 evidence level: inspected | compiled | deterministic | integration | live | runtime
 environment:
+toolchain:
 limitations or failures:
 next checkpoint:
 ```
@@ -42,6 +49,9 @@ For each complete Provider Gate run, append once:
 ```text
 requested model:
 enforced provider plugin policy: none
+semantic reviewers:
+reviewer profile/case coverage:
+semantic review method: after automated structural and exact-string checks, assess each required profile, correction or clean/unsupported decision, category, explanation, language, and preservation of meaning
 ```
 
 For each official case in that run, append only:
@@ -72,4 +82,4 @@ failures or limitations:
 
 ## Evidence entries
 
-No implementation evidence is recorded in the documentation-only v2.0.3 freeze.
+No implementation evidence is recorded in the documentation-only v2.1.0 freeze.

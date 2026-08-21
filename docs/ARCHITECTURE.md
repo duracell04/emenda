@@ -1,12 +1,10 @@
 # Emenda V0.1 Architecture
 
-> **Frozen architecture, version 2.0.3**
+> **Frozen architecture, version 2.1.0**
 
 ## 1. Authority and objective boundary
 
-[`SPEC.md`](../SPEC.md) defines product behavior. This document defines ownership, boundaries, import direction, and runtime data flow. [`IMPLEMENTATION-PLAN.md`](IMPLEMENTATION-PLAN.md) defines build order.
-
-The current objective preserves the v2.0.2 freeze at `6a4ddc65fa9067f94023f87aebe48840e1b88bc2` and ends when its direct-child v2.0.3 Markdown constitution is rewritten, verified, hashed, committed, and pushed. Product implementation requires a separate future objective.
+[`SPEC.md`](../SPEC.md) defines product behavior and the authoritative trust model. This document defines ownership, boundaries, import direction, and runtime data flow. [`IMPLEMENTATION-PLAN.md`](IMPLEMENTATION-PLAN.md) defines build order, and [`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md) defines freeze identity and lineage.
 
 ## 2. System shape
 
@@ -38,6 +36,22 @@ options page
 ```
 
 There is one `BrowserTextSurface` implementation for the supported light-DOM `<textarea>` surface. Contenteditable and every other editor class are outside V0.1.
+
+### 2.1 Deterministic authority boundary
+
+Emenda is deterministic software around one narrow probabilistic judgment boundary:
+
+```text
+deterministic state and bounded input
+→ canonical model contract
+→ probabilistic linguistic judgment
+→ strict untrusted result
+→ deterministic validation and local derivation
+→ writer approval
+→ deterministically authorized side effect
+```
+
+The model proposes semantic data. Core and extension software retain all execution authority, and the writer retains final semantic authority. Component ownership below enforces the trust model and critical invariants in [`SPEC.md`](../SPEC.md#trust-and-threat-model).
 
 ## 3. Ownership
 
@@ -84,7 +98,7 @@ extension composition and adapters
 
 `core/` never imports `extension/`. Model-schema code may depend on Zod and core domain definitions, but domain, policy, ports, and state do not depend on model-schema parsing. Protocol and worker schemas remain outside core.
 
-Zod is the only direct runtime dependency. Development dependencies are limited to TypeScript, esbuild, Vitest, Playwright, and Chrome/Node types. Exact direct versions and the npm lockfile are committed, and clean verification installs with `npm ci`. The package has no framework, backend, database, remote executable code, native placeholder, or monorepo machinery.
+Zod is the only direct runtime dependency. The exact development dependency set is TypeScript, esbuild, Vitest, Playwright, Chrome types, and Node types. Exact direct versions, the canonical Node/npm/TypeScript tuple, package-manager metadata, and the npm lockfile are committed, and clean verification installs with `npm ci`. Each architectural mechanism serves a present V0.1 requirement; the product remains one npm package implemented with plain TypeScript, HTML, and CSS.
 
 ## 6. Trusted configuration flow
 
@@ -205,4 +219,4 @@ A later-gate failure does not erase earlier evidence unless the underlying teste
 
 Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, contenteditable and broader editor support, native packaging and signing, store publication, release automation, commercial services, and general cross-platform claims are outside V0.1. They must not shape current ports, packages, or placeholders.
 
-The constitution resolves all product, safety, architecture, and acceptance decisions. The implementation agent retains ordinary discretion over local naming and code organization within the locked boundaries.
+Builder choices remain those defined by [`AGENTS.md`](../AGENTS.md) and [`ENGINEERING.md`](ENGINEERING.md); they preserve every required ownership and observable boundary in this document.

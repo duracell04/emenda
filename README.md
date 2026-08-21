@@ -1,12 +1,12 @@
 # Emenda
 
-> **Frozen clean-room constitution, version 2.0.3**
+> **Frozen supplemental orientation, version 2.1.0**
 
 > **Preserve your Duktus**
 
 Emenda V0.1 is specified as a quiet personal writing assistant for Chromium. It observes committed changes on explicitly enabled sites, waits for typing to settle, sends one split bounded context through OpenRouter using the writer's configured model ID, validates the model's complete corrected focus, derives at most one Unicode-scalar edit locally, and presents that exact correction for the writer to apply or dismiss.
 
-This branch currently contains the 13-file Markdown constitution only. Version 2.0.3 supersedes version 2.0.2, preserved at commit `6a4ddc65fa9067f94023f87aebe48840e1b88bc2`; version 2.0.1 remains preserved at `d70b277998a23663ee6befc77dd6bb0da50ebcca`. Product implementation requires a separate future objective in the separate implementation repository.
+This non-authoritative orientation summarizes the Markdown-only v2.1.0 freeze. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) owns its exact inventory, classification, lineage, and integrity; product implementation requires a separate objective in the separate implementation repository.
 
 ## Intended V0.1 experience
 
@@ -38,13 +38,15 @@ The only page text Emenda-authored provider traffic sends is the bounded context
 
 Emenda specifies no telemetry, analytics, correction history, persistent text cache, application-level retry, streaming, or private-text logging. Raw private text never enters logs. A check has a 15-second deadline. OpenRouter may try eligible provider endpoints for the same configured model inside that single request; Emenda itself does not retry or substitute another model.
 
-## Constitutional authority
+## Document map
+
+[`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) owns exact classification and subject authority. Frequently used subject authorities include:
 
 - [`SPEC.md`](SPEC.md) defines product behavior, safety, compatibility, and failures.
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) defines ownership and dependency direction.
 - [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) defines the Documentation baseline and seven future implementation increments.
 
-Supporting documents:
+Additional package paths:
 
 - [`PROMPT.md`](PROMPT.md) — objective and entry point
 - [`AGENTS.md`](AGENTS.md) — repository operating constraints
@@ -55,6 +57,7 @@ Supporting documents:
 - [`BRAND.md`](BRAND.md) — visual identity
 - [`docs/EVIDENCE.md`](docs/EVIDENCE.md) — mutable empty evidence template
 - [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) — freeze identity and checksums
+- [`docs/LOGO.md`](docs/LOGO.md) — non-authoritative external logo proposal preserved for provenance
 
 ## Scope boundary
 

@@ -1,12 +1,12 @@
 # Emenda V0.1 Implementation Plan
 
-> **Frozen implementation plan, version 2.0.3**
+> **Frozen implementation plan, version 2.1.0**
 
 ## 1. Objective boundary
 
-The current objective is documentation only: preserve v2.0.2 at `6a4ddc65fa9067f94023f87aebe48840e1b88bc2`, rewrite, verify, hash, commit, and push the 13 Markdown files as its direct-child v2.0.3 freeze, then stop. It creates no implementation source. Building V0.1 requires a separate future objective that identifies the implementation repository, baseline, branch, and draft-PR target.
+[`PROMPT.md`](../PROMPT.md) owns objective authorization and completion. This document orders work after the separate human authorization defined there and grants no implementation authorization by itself.
 
-[`SPEC.md`](../SPEC.md) owns product behavior, [`ARCHITECTURE.md`](ARCHITECTURE.md) owns boundaries and responsibility, and this document owns build order. The Documentation Gate establishes the prerequisite baseline; it is not an implementation increment.
+[`SPEC.md`](../SPEC.md) owns product behavior, [`ARCHITECTURE.md`](ARCHITECTURE.md) owns boundaries and responsibility, and this document owns build order. [`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md) owns documentation-freeze identity and lineage. The Documentation Gate establishes the prerequisite baseline; it is not an implementation increment.
 
 ## 2. Canonical sequence
 
@@ -26,23 +26,17 @@ The sequence is binding for the future implementation objective. The six gates r
 
 ## 3. Documentation baseline and Documentation Gate
 
-The present objective completes only this baseline:
+[`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md) defines the exact v2.1.0 baseline, lineage, classification, and integrity data. The Documentation Gate in [`ACCEPTANCE.md`](ACCEPTANCE.md) verifies that candidate. Passing it completes the documentation objective; product increments begin only under the separate authorization described above.
 
-- preserve v2.0.1 at `d70b277998a23663ee6befc77dd6bb0da50ebcca` and v2.0.2 at `6a4ddc65fa9067f94023f87aebe48840e1b88bc2`, then create one documentation-only direct child of v2.0.2;
-- freeze exactly 13 tracked Markdown files as `emenda-clean-room-v2.0.3-2026-08-21`;
-- verify version and freeze identity, source-of-truth ownership, local links, and byte-identical canonical-sequence occurrences;
-- calculate and verify the 11 immutable documents' individual SHA-256 values from their staged Git blobs;
-- leave [`EVIDENCE.md`](EVIDENCE.md) as an empty template and place the inventory and checksums in [`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md);
-- inspect the documentation-only diff and pass `git diff --check`;
-- commit and push the one documentation decision, verify direct v2.0.2 parentage and preserved v2.0.1 ancestry, and confirm a clean worktree.
+### Future implementation intake
 
-Passing this gate ends the current objective. No package, script, extension asset, or implementation file is created during the freeze.
+Before product source mutation, the future implementation repository copies every path in this freeze into `constitution/` with paths preserved. It commits one strict `constitution.lock.json` object with no extra properties and exactly these five fields: `schemaVersion` is the integer `1`; `repository` is the string `https://github.com/duracell04/emenda`; `freezeId` is the exact manifest freeze-ID string; and `commit` and `tree` are the corresponding 40-character lowercase hexadecimal Git object IDs. Document paths and individual hashes come from the copied `constitution/PACKAGE-MANIFEST.md` and are not duplicated in the lock. The implementation audit verifies the lock, inventory, byte identity, and every manifest checksum locally without network access. That snapshot remains read-only for the implementation objective.
 
 ## 4. Seven future implementation increments
 
 ### Increment 1: Pure Core & Simulation
 
-Establish one npm package with exact direct versions and a committed lockfile, strict TypeScript domain values, typed failures, deterministic Unicode-scalar and text rules, the canonical provider schema, local one-hunk correction derivation, semantic ports, a minimal scheduler seam, and deterministic surface and provider simulations. Keep browser/runtime types out of the core and keep Zod at the permitted trust boundaries.
+Establish one npm package, select and commit the one exact Node/npm/TypeScript toolchain tuple, exact direct dependency versions, package-manager and engine metadata, and its npm lockfile. Add strict TypeScript domain values, typed failures, deterministic Unicode-scalar and text rules, the canonical provider schema, local one-hunk correction derivation, semantic ports, a minimal scheduler seam, and deterministic surface and provider simulations. Keep browser/runtime types out of the core and keep Zod at the permitted trust boundaries.
 
 Verify scalar behavior, context selection, provider outcomes, cancellation races, surface changes, replacement acknowledgements, and refusals before building controller behavior.
 
@@ -80,12 +74,12 @@ Pass the **Browser Integration Gate**, which owns the manifest, permissions, reg
 
 Run the complete deterministic and browser suites, inspect the production bundle, dependencies, permissions, secret and text leakage, and known limitations, then complete the required runtime and personal-device evidence.
 
-Commit the final implementation tree, test that exact commit, then push and verify it. Create a later documentation-only evidence commit that names the tested tree and commit, push and verify that evidence commit, confirm a clean worktree, declare the **V0.1 Conformance Gate** passed, and stop. Any branch or draft-PR action follows the separately supplied implementation objective. Distribution and deferred work require another objective.
+Commit the final implementation tree, test that exact commit, then push and verify it in the implementation repository. Return to this constitution repository and create a later commit whose sole file change appends the factual result to `docs/EVIDENCE.md`, naming that already-existing tested tree and commit while every frozen file remains unchanged. Push and verify the evidence commit, confirm both tracked worktrees are clean, declare the **V0.1 Conformance Gate** passed, and stop. Any branch or draft-PR action follows the separately supplied implementation objective. Distribution and Deferred work require another objective.
 
 ## 5. Future execution policy
 
-Implementation commits should each express a coherent decision; there is no mandated commit per component, helper, or file. Every gate must be evaluated against [`ACCEPTANCE.md`](ACCEPTANCE.md), and factual results belong only in the mutable evidence ledger.
+Repository and commit discipline follows [`AGENTS.md`](../AGENTS.md). Every gate is evaluated against [`ACCEPTANCE.md`](ACCEPTANCE.md), and factual results belong only in the mutable evidence ledger.
 
-The future implementation provides the cross-platform audit capability specified in [`ENGINEERING.md`](ENGINEERING.md). Its filename, path, internal organization, and output format remain implementation choices.
+The future implementation provides the cross-platform audit capability specified in [`ENGINEERING.md`](ENGINEERING.md). Its filename, internal organization, and output format remain builder choices; its coverage and clean-checkout behavior are required.
 
-The constitution resolves all product, safety, architecture, and acceptance decisions. The implementation agent retains ordinary discretion over local naming and code organization within the locked boundaries.
+Builder discretion follows [`AGENTS.md`](../AGENTS.md) and [`ENGINEERING.md`](ENGINEERING.md) within the frozen product and architecture contracts.

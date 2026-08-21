@@ -1,18 +1,63 @@
 # Emenda V0.1 Product Specification
 
-> **Frozen product authority, version 2.0.3**
+> **Frozen product authority, version 2.1.0**
 
 ## 1. Authority and objective boundary
 
-This file is authoritative for what Emenda V0.1 does. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) owns architectural boundaries, and [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) owns future build order.
+This file is authoritative for what Emenda V0.1 does. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) owns architectural boundaries, and [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) owns future build order. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) owns freeze identity and lineage.
 
-The v2.0.3 objective is documentation-only. It preserves the v2.0.2 freeze at commit `6a4ddc65fa9067f94023f87aebe48840e1b88bc2` and ends after the 13-document package is rewritten, verified, hashed, committed, and pushed as its direct child. Product implementation requires a separate future objective.
+Version 2.1.0 hardens construction governance while carrying the observable V0.1 behavior of version 2.0.3 forward unchanged. A future behavior change requires a concrete defect and a separate versioned documentation decision.
 
 ## 2. Product goal
 
 Emenda is a personal browser writing assistant designed to propose at most one exact local correction. Its canonical prompt instructs the model to preserve the writer's language, meaning, voice, rhythm, register, terminology, names, quotations, and Duktus and never to translate. Local validation proves structure rather than semantics; the complete before/after display and explicit writer approval are the final safeguard, and Emenda never applies a proposal silently.
 
 The writer's page remains the primary writing surface. Observation begins only after explicit permission for the current origin, and page text changes only after explicit Apply.
+
+## Trust and threat model
+
+### Assets and trust anchors
+
+The protected assets are private page text, the OpenRouter credential and trusted settings, exact-origin grants, revision and capability state, browser/document identity, and authority to mutate writer text.
+
+Packaged Emenda code, validated browser-supplied sender and lifecycle facts, deterministic core checks, and the writer's current trusted approval are the trust anchors. Page text, page DOM and script behavior, authored runtime payloads, persisted records before strict validation, transport bodies, and every model-authored value are untrusted inputs.
+
+An enabled origin is a writer-approved operating boundary, not trusted data or unrestricted execution authority. Emenda still validates input provenance, exposure, sender authority, state, and mutation preconditions there.
+
+### Deterministic authority and probabilistic judgment
+
+The language model supplies bounded semantic judgment as proposed data. Deterministic software owns schemas, serialization, coordinates, state, revisions, capabilities, settings, permissions, routing constraints, validation, and side effects. The writer is the final semantic authority and approves the complete identifiable proposal; structural validation cannot prove preservation of meaning, language, voice, or Duktus.
+
+OpenRouter and each eligible provider endpoint are trusted only to process a bounded request under their applicable policies. Within-request fallback may expose the same bounded text to multiple eligible endpoints for the configured model. The requested data-collection denial is not a zero-retention guarantee. Exact returned-model identity prevents explicit substitution in the response contract but does not prove that a catalog ID lacks internal routing.
+
+### Accepted V0.1 limitations
+
+The writer accepts two disclosed enabled-origin residual risks: page work nested in a genuine trusted editing event or queued ahead of ticket expiry can consume one provenance ticket, and DOM hit-testing cannot detect compositor-only or `pointer-events: none` visual covers. The API key resides in the browser profile rather than an operating-system secret vault. Human approval remains required because a structurally valid single hunk can still be semantically wrong.
+
+### Critical requirement identifiers
+
+These stable identifiers cover only high-risk invariants. Their detailed sections remain controlling.
+
+| ID | Required invariant | Detailed contract |
+| --- | --- | --- |
+| `EM-AUTH-001` | Newer revision and current capability authority makes stale work silent. | Sections 4, 6, 10 |
+| `EM-AUTH-002` | Strict versioned sender-class protocol authorizes each one-shot message from current browser facts. | Sections 4, 5, 12 |
+| `EM-AUTH-003` | Worker-owned settings revision invalidates work and resynchronizes stale controllers without retry. | Sections 5, 13 |
+| `EM-PERM-001` | One exact-origin function with an explicit port owns permission and registration patterns. | Sections 5, 12 |
+| `EM-PERM-002` | Check and Apply require current sender, enabled-origin, exact-permission, and settings authority. | Sections 5, 10, 12 |
+| `EM-PERM-003` | Serialized reconciliation, revocation-first disablement, and document reauthorization keep lifecycle transitions fail-closed. | Section 12 |
+| `EM-PRIV-001` | The only page-derived text in provider traffic is the bounded linguistic payload; page and browser identity remain excluded. | Sections 4, 8, 9 |
+| `EM-PRIV-002` | The worker alone owns credentials and full trusted settings under trusted-context storage isolation. | Section 5 |
+| `EM-PRIV-003` | Emenda keeps no persistent text history or telemetry; logs, fixtures, snapshots, commits, errors, and evidence contain no credential, private text, raw provider body, page URL, or Chrome sender metadata. | Sections 13, 14 |
+| `EM-PROV-001` | One canonical bounded OpenRouter request enforces the prompt, schema, routing, plugin, deadline, and zero application-retry contract. | Section 9 |
+| `EM-PROV-002` | Strict bounded response validation, exact returned-model identity, and deterministic local derivation precede trusted correction data. | Sections 8, 9 |
+| `EM-PROV-003` | Model judgment remains proposed data; deterministic software owns execution and the writer owns semantic approval. | This trust model; Sections 8, 10, 14 |
+| `EM-APPLY-001` | Controller capability, immediate worker authorization, and exact surface verification form separate Apply authorities. | Sections 4, 10 |
+| `EM-APPLY-002` | The sole verified mutation requires exact synchronous acknowledgement and one-step native Undo, with no fallback mutation. | Section 10 |
+| `EM-APPLY-003` | Only a current trusted, focused, visible, hit-tested approval control can create Apply or Dismiss commands. | Section 14 |
+| `EM-SEC-001` | Emenda never interprets untrusted page or model strings as executable instructions, markup, links, or code; they render literally, and the provider prompt instructs the model to treat document text as untrusted. | Sections 9, 14 |
+| `EM-SEC-002` | Surface classification and exposure occur before text read; the supported textarea boundary fails closed. | Sections 6, 11 |
+| `EM-SEC-003` | Enabled-origin residual risks and provider/credential assumptions remain explicit in writer disclosure and evidence. | This trust model; Sections 6, 14; UX Section 9 |
 
 ## 3. V0.1 runtime and limits
 
@@ -466,4 +511,4 @@ Native hosts, Tauri, Rust, operating-system accessibility APIs, native credentia
 
 Future implementation is complete only when all six gates in [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) pass and the factual evidence distinguishes deterministic, bundled-Chromium, minimum-Chrome-140, current-Chrome, and personal-device results.
 
-The constitution resolves all product, safety, architecture, and acceptance decisions. The implementation agent retains ordinary discretion over local naming and code organization within the locked boundaries.
+Builder choices are the equivalent internal techniques defined by [`AGENTS.md`](AGENTS.md); they preserve every observable product, safety, privacy, compatibility, and reliability contract in this specification.

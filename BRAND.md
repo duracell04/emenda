@@ -1,10 +1,14 @@
 # Emenda Brand System
 
-> **Frozen brand system, version 2.0.3**
+> **Frozen brand system, version 2.1.0**
 
 > **Preserve your Duktus**
 
 Emenda is a quiet editorial instrument: precise, restrained, mechanical, literate, and visibly respectful of authorship.
+
+## Authority and external proposal
+
+This file is the active visual-identity authority. [`docs/LOGO.md`](docs/LOGO.md) is preserved as external proposal material from the divergent v2.0.2 sibling lineage. Its E-only successor concept is non-authoritative in V0.1 and creates no asset, implementation, acceptance, or future-surface requirement. Adoption would require an explicit versioned brand decision.
 
 ## Identity
 

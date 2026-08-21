@@ -1,83 +1,46 @@
 # Emenda V0.1
 
-> **Frozen clean-room constitution, version 2.0.3**
+> **Frozen clean-room constitution, version 2.1.0**
 
-This repository contains the documentation-only constitution for Emenda V0.1. It does not authorize implementation by itself.
+This repository is the Markdown-only constitution for Emenda V0.1. It defines the product, architecture, implementation sequence, verification, interaction, brand, and agent operating contract. It contains no product implementation and grants no standing implementation authorization.
 
-## Current objective
+## Entry point
 
-The v2.0.3 objective ends when the 13 Markdown documents are rewritten, verified, hashed, committed as one direct child of v2.0.2, pushed, and the worktree is clean. Do not create implementation files during this objective. Building the product requires a separate future objective in the separate implementation repository.
+Every agent begins with this file and [AGENTS.md](AGENTS.md), completes the proportional preflight defined there, states the active gate, and then loads the authoritative documents relevant to the current decision. This progressive-disclosure path is the canonical reading method.
 
-Version 2.0.2 remains preserved at Git commit `6a4ddc65fa9067f94023f87aebe48840e1b88bc2`. Version 2.0.1 remains preserved at `d70b277998a23663ee6befc77dd6bb0da50ebcca`, and version 2.0.0 remains preserved at `a1a13607867db8e6eb2ea904f6387ba130f22ce7`.
+This file owns objective authorization and completion conditions. A human objective owner authorizes every product, architecture, safety, UX, acceptance, implementation-order, brand, or governance change. Agents may surface evidence and draft proposals; they cannot authorize adoption.
 
-## Future product objective
+A documentation objective may revise this repository only through a new versioned atomic freeze. A product objective identifies a separate implementation repository, exact baseline, branch, frozen constitution commit and tree, and completion target before implementation mutation begins.
 
-When separately authorized, build the smallest complete Emenda V0.1 as:
+## Governing construction objective
 
-- one strict-TypeScript product core;
-- one Chromium Manifest V3 extension requiring Chrome 140 or newer;
-- one bounded correction at a time through one writer-configured base OpenRouter model ID;
-- one locally derived Unicode-scalar edit from the model's complete corrected focus;
-- one visible, writable, sequentially keyboard-focusable light-DOM textarea surface;
-- explicit writer approval before any verified, one-step-undoable edit.
+> **Build the smallest sufficient implementation through affirmative, precise, auditable instructions; deterministic verification; low complexity and maintenance burden; and explicit completion criteria.**
 
-Emenda instructs the model to preserve the writer's language, meaning, terminology, register, rhythm, and Duktus and never to translate; exact before/after review remains required because structural validation cannot prove semantics. It performs no telemetry, private-text logging, automatic rewriting, or unsupported-surface fallback.
+The constitution is agent-agnostic and architecture-specific. Codex, Claude, Copilot, Gemini, and future coding agents receive the same authority hierarchy and observable contract. Agent-specific compatibility files remain thin integration layers that point here.
 
-## Authority
+## Subject authority
 
-Read the complete package before implementation. The three subject authorities are:
+- [PROMPT.md](PROMPT.md) owns objective authorization and completion conditions.
+- [SPEC.md](SPEC.md) owns product behavior, safety, compatibility, failures, the trust model, the canonical provider prompt and schemas, and critical requirement IDs.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) owns component responsibility, runtime boundaries, and dependency direction.
+- [docs/IMPLEMENTATION-PLAN.md](docs/IMPLEMENTATION-PLAN.md) owns build order and gate placement.
+- [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md) derives gate criteria and owns the canonical live-provider corpus.
+- [docs/ENGINEERING.md](docs/ENGINEERING.md) owns implementation quality, toolchain, verification, and evidence vocabulary.
+- [UX.md](UX.md) owns visible interaction and accessibility; [BRAND.md](BRAND.md) owns visual identity.
+- [AGENTS.md](AGENTS.md) owns preflight, objective execution, agent coordination, audit handling, Git discipline, and post-completion stop discipline.
 
-1. [`SPEC.md`](SPEC.md) — product behavior, safety, compatibility, and failures.
-2. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — ownership, boundaries, and dependency direction.
-3. [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) — implementation order and gate placement.
+Supporting and external documents introduce no authority over those homes. [PACKAGE-MANIFEST.md](PACKAGE-MANIFEST.md) records the exact freeze, lineage, document classification, and integrity data. [docs/EVIDENCE.md](docs/EVIDENCE.md) records facts only.
 
-Supporting documents may summarize or verify these authorities but cannot change them. [`SPEC.md`](SPEC.md) is the sole canonical home of the model prompt, provider schemas, limits, and provider contract. [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) is the sole canonical home of the live qualification corpus. [`AGENTS.md`](AGENTS.md) defines repository operating constraints.
+## Future V0.1 outcome
 
-## Canonical future sequence
+When a separate product objective authorizes it, Emenda V0.1 is one strict-TypeScript product core and one Chromium Manifest V3 extension. It proposes at most one bounded local correction through one writer-configured OpenRouter model ID, derives the edit deterministically, presents the complete identifiable proposal, and applies only the writer-approved correction to the specified supported textarea surface.
 
-The Documentation Gate is a prerequisite. It is not an implementation increment.
+The detailed provider, permission, privacy, lifecycle, input-provenance, rendering, and Apply contracts remain exactly those in [SPEC.md](SPEC.md). The six gates and seven increments remain exactly those in [docs/IMPLEMENTATION-PLAN.md](docs/IMPLEMENTATION-PLAN.md).
 
-```text
-Documentation baseline + Documentation Gate
-→ Increment 1: Pure Core & Simulation
-→ Increment 2: Unified State Machine
-→ Increment 3: Mock Product + Architecture Gates
-→ Increment 4: Unified DOM Integration
-→ Increment 5: MV3 Shell + Provider
-→ Increment 6: Browser Integration
-→ Increment 7: V0.1 Conformance
-→ stop
-```
+## Completion
 
-The six gates remain separate:
+A documentation objective is complete when the Documentation Gate passes for the exact candidate tree, the atomic freeze commit is pushed to its authorized remote refs, remote identity and ancestry match, and the tracked worktree is clean.
 
-```text
-Documentation
-→ Mock Product
-→ Architecture
-→ Provider
-→ Browser Integration
-→ V0.1 Conformance
-```
+A future implementation objective is complete when all seven increments and six gates pass for the recorded implementation tree and commit, that commit is pushed and verified in the implementation repository, the later ledger-only factual evidence commit is pushed and verified in this constitution repository, and both tracked worktrees are clean.
 
-Gates are evidence checkpoints within a future implementation objective, not new authorization boundaries.
-
-## Hard limits
-
-- Shared behavior lives in browser-independent strict TypeScript.
-- Browser authority remains in the extension leaves.
-- The service worker alone owns trusted settings, credentials, and OpenRouter traffic.
-- The content script alone owns page text, source identity, controller state, DOM mapping, and the overlay.
-- Only paired trusted writer input on the foreground exposed textarea may start inference; rejected editor classes are never read.
-- Apply requires current controller authority, an immediate worker origin/permission check, and complete surface verification.
-- Chrome sender metadata is transient authorization input and never enters provider traffic, storage, logs, or errors.
-- Page and model strings render only through safe text sinks.
-- Contenteditable and every other unsupported editor class fail closed without fallback.
-- Unsupported or ambiguous conditions fail closed.
-- Native runtimes, release packaging, signing, store publication, and commercial expansion are deferred.
-
-## Completion rules
-
-The present documentation objective stops after its verified documentation-only commit is pushed. A future implementation objective stops after its tested implementation commit and later factual evidence commit are both pushed and verified, all seven increments and six gates pass, and the worktree is clean.
-
-The constitution resolves all product, safety, architecture, and acceptance decisions. The implementation agent retains ordinary discretion over local naming and code organization within the locked boundaries.
+Completion is a contract state: required behavior, evidence, repository integrity, remote identity, and the objective-specific terminal condition all hold.
