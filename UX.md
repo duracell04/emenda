@@ -1,6 +1,6 @@
 # Emenda V0.1 UX
 
-> **Frozen interaction authority, version 2.1.1**
+> **Frozen interaction authority, version 2.2.0**
 
 ## 1. Interaction promise
 
@@ -107,19 +107,19 @@ Each new current suggestion or content error produces exactly one polite assisti
 
 The options page provides:
 
-- a write-only OpenRouter API-key field;
-- a required base model-shaped OpenRouter ID field, with no variant suffix or compiled default;
-- profile selection, defaulting to `auto`;
-- enabled-origin review and revocation;
-- the privacy disclosure below.
+- provider choice, defaulting to **Local oMLX**, with **OpenRouter** as an explicit alternative;
+- a local direct-model field/catalog discovery and a separate remembered remote base-model field;
+- independent write-only local and remote credentials with Keep, Replace and Clear actions;
+- local model discovery and a synthetic **Test connection and model** action with ephemeral redacted status;
+- profile selection, defaulting to `auto`, enabled-origin review/revocation and the disclosure below.
 
-The profile choices are `auto`, `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE`, and `ru-RU`. A fixed profile is authoritative; `auto` asks the model to identify a supported profile. Text that cannot safely be handled under the selected mode produces no suggestion.
+Local model selection uses the exact case-sensitive server catalog ID, with no compiled default. Local auth is optional only when the actual loopback server is unauthenticated; the current authenticated installation retains its key. Remote mode requires its model and key. Discovery/readiness does not mean that the model passed linguistic qualification and never uses page text. Model/server/auth/resource failure explains the actionable Settings remedy without exposing raw responses.
 
-Options communicates only with the service worker. After saving, the API key is never displayed back in full. The model and key never appear in the page or writing overlay. Emenda remains paused with Configuration required until both fields are valid.
+The profile choices remain `auto`, `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE` and `ru-RU`; a fixed profile is authoritative. Text not safely handled under the selected mode yields no suggestion.
 
-Changing the API key, model, or profile cancels any active check and removes any visible suggestion. Emenda resumes on the next committed input; it does not retry the interrupted text. Origin enablement and revocation remain separate controls.
+Options communicates only with the worker. No saved credential is displayed back. Provider choice, models, keys and profile never appear in the writing page/overlay. Invalid active configuration remains paused with Configuration required. Switching provider, either model/key, or profile invalidates active checks and suggestions and resumes only on the next committed input. The inactive provider configuration is remembered without becoming a fallback. Stale discovery/readiness status is discarded after configuration changes or restart.
 
-There is no model picker in the writing overlay.
+Origin enablement/revocation remains separate. There is no provider or model picker in the writing overlay.
 
 ## 8. Errors
 
@@ -127,7 +127,7 @@ Writer-visible errors are concise, typed, and actionable:
 
 | Condition | Visible action |
 | --- | --- |
-| API key or model missing | Configuration required, with **Open Settings** |
+| Active provider model or required credential missing | Configuration required, with **Open Settings** |
 | Site permission unavailable | Explain that Emenda could not be enabled for this site |
 | Revocation cleanup incomplete | Explain that the site is disabled and cleanup will be retried |
 | Current provider failure or 15-second timeout | Explain that the check failed and writing can continue |
@@ -136,7 +136,7 @@ Writer-visible errors are concise, typed, and actionable:
 
 Unsupported capture during ordinary typing and stale background failures remain silent. New eligible committed input clears an obsolete error and begins a new revision.
 
-Any provider fallback occurs inside the same OpenRouter request. Emenda does not retry a failed or timed-out check at the application level.
+Local failure never sends text to a remote provider. In explicitly selected OpenRouter mode, any endpoint fallback occurs only inside that one same-model request. Emenda does not retry failed/timed-out checks or substitute models/providers.
 
 Errors never display an API key, authorization detail, raw request context, raw model body, source identity, DOM data, or page URL.
 
@@ -144,9 +144,9 @@ Errors never display an API key, authorization detail, raw request context, raw 
 
 The options page displays this text verbatim:
 
-> The only page text Emenda sends to OpenRouter is the current bounded context for the configured model ID. On a short document, that context can equal all of its text; Emenda sends no separate or unbounded full-document field. Enable only trusted origins: page work nested in a genuine editing event or queued ahead of its ticket expiry may cause one check, and page-controlled visual covers that DOM hit-testing cannot detect may obscure an inline approval control. A catalog ID may itself represent a routing service; Emenda does not infer that from its syntax. OpenRouter may try more than one eligible provider endpoint for the same model inside one request; each attempted endpoint may receive the bounded text. Emenda disables web search, response healing, context compression, and Fusion in every request. OpenRouter account or workspace policies that prevent those overrides are unsupported, can still apply, and may add processing or cost outside Emenda’s request contract. Provider calls use the writer’s OpenRouter quota and may incur charges. Emenda does not send the page URL, editor identity, DOM structure, or Chrome sender metadata to OpenRouter. Emenda requests provider routing that denies data collection, but this is not a guarantee of zero retention; processing remains subject to OpenRouter’s, any enforced account policy, and every attempted provider’s policies. The API key is stored in the browser profile, not in an operating-system secret vault.
+> Emenda sends only the current bounded context to the selected provider. On a short document, that context can equal all of its text; Emenda sends no separate or unbounded full-document field. Local oMLX is the default: inference goes only to http://127.0.0.1:8000 on this Mac, and a local failure never sends text to OpenRouter or another remote provider. Local model KV caching may retain model state; oMLX request logging is set to critical. Emenda stores no raw context, provider bodies, or correction history and makes no guarantee about OS-native crash diagnostics. OpenRouter is an explicit alternative and may try more than one eligible endpoint for the same configured model inside one request; each attempted endpoint may receive the bounded text. A remote catalog ID may itself represent a routing service. Emenda disables web search, response healing, context compression, and Fusion in remote requests. Enforced account/workspace policies that prevent those overrides are unsupported and may add processing or cost. Remote calls use your OpenRouter quota and may incur charges. Requested data-collection denial is not a zero-retention guarantee; remote processing remains subject to OpenRouter’s, enforced account policy, and each attempted provider’s policies. Emenda sends neither provider the page URL, editor identity, DOM structure, or Chrome sender metadata. Enable only trusted origins: page work nested in a genuine editing event or queued ahead of ticket expiry may cause one check, and page-controlled visual covers that DOM hit-testing cannot detect may obscure an inline approval control. Saved provider credentials reside in the browser profile, not an operating-system secret vault.
 
-Emenda shows no claim that browser-profile storage is an operating-system secret vault. The UI makes no telemetry, analytics, or text-history claim because V0.1 implements none.
+The UI identifies synthetic readiness as connectivity/model compatibility rather than semantic qualification. It makes no claim of complete local-server persistence elimination, OS diagnostic suppression, human corpus review, or reliability beyond the recorded environment.
 
 ## 10. Supported and unsupported surfaces
 

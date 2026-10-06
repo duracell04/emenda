@@ -1,6 +1,6 @@
 # Emenda V0.1 Architecture
 
-> **Frozen architecture, version 2.1.1**
+> **Frozen architecture, version 2.2.0**
 
 ## 1. Authority and objective boundary
 
@@ -29,7 +29,8 @@ service worker
   permissions and origin lifecycle
   trusted settings
   cancellation
-  OpenRouter transport
+  shared WorkerProvider processing
+  selected local oMLX or OpenRouter transport
         ^
         |
 options page
@@ -62,7 +63,7 @@ The model proposes semantic data. Core and extension software retain all executi
 | Runtime message schemas | `extension/protocol/` | Versioned, discriminated, strict Zod schemas |
 | Controller instance, revision lifetime, cached public configuration, source registries, document lifecycle, and presentation | content script | Raw editor identity, unbounded text, snapshot state, and DOM data remain here; only bounded context is copied out |
 | Capture, scalar/UTF-16 mapping, selection identity, and mutation safety | `BrowserTextSurface` in `extension/content/` | Browser types are confined to the adapter |
-| Trusted settings schema, storage, sender authorization, permissions, origin lifecycle, request cancellation, and OpenRouter traffic | service worker | Secrets and the configured model never enter content scripts; browser sender metadata is ephemeral and confined |
+| Trusted settings schema, storage, sender authorization, permissions, origin lifecycle, request cancellation, local discovery/readiness, and selected-provider traffic | service worker | Secrets and the configured model never enter content scripts; browser sender metadata is ephemeral and confined |
 | Settings interaction | options page through the worker | The options page never accesses trusted storage directly |
 | Visible suggestion and error UI | content-script closed-shadow overlay | It uses text-only sinks, accepts only trusted control events, renders state, and emits semantic commands; it does not own authority |
 
@@ -102,37 +103,32 @@ Zod is the only direct runtime dependency. The exact development dependency set 
 
 ## 6. Trusted configuration flow
 
-The worker owns these values in `chrome.storage.local`:
+The worker owns the strict schema-version-2 record:
 
 ```text
 schemaVersion
-apiKey
-model
+provider
+localOmlx: { apiKey, model }
+openrouter: { apiKey, model }
 profileMode
 settingsRevision
 enabledOrigins
 ```
 
-`profileMode` defaults to `auto`; API key and model ID both default to missing. The strict version, types, canonical origin representation, validation rules, and sole explicit-port origin-pattern derivation are owned by [`SPEC.md`](../SPEC.md#5-settings-authority).
+Local oMLX is active by default, both model/key configurations start missing, and `profileMode` defaults to `auto`. The sole exact v1 migration preserves remote settings as inactive, profile and origins, then increments revision once; unknown/corrupt records fail closed. Record and model validation, migration, options views/actions, active-configuration predicate, and sole explicit-port origin function are owned by [`SPEC.md`](../SPEC.md#5-settings-authority).
 
-At worker initialization, it must await:
+One shared sticky initialization promise establishes `TRUSTED_CONTEXTS` storage isolation before any read/write, validates or migrates settings, then reconciles permissions and registration. Listeners register synchronously; the Chrome-140 message bridge returns literal `true` and later calls `sendResponse`. Content scripts cannot read the storage area or receive its change events.
 
-```text
-chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })
-```
-
-Action, message, and permission listeners are registered synchronously at worker module evaluation. Every handler awaits one shared initialization promise that first establishes the storage access level, then reads and validates settings and reconciles permissions and dynamic registration. The Chrome-140 message listener uses the synchronous `return true` plus `sendResponse` bridge and is never itself `async`. No trusted-settings read or write may occur first. Initialization failure is sticky and leaves configuration, content authority, and provider work closed for that worker lifetime. Content scripts must be unable both to read the storage area and to receive its change events.
-
-The options page reads and changes settings through validated worker messages authorized only from the exact packaged options-page URL and extension origin. Its safe read view omits the raw key; revision-aware saves express keep, replace, or clear for that key and merge validated model/profile changes with the worker's current origin state. Content-origin message types require the separate active top-level HTTP(S) sender predicate; the worker rejects every sender/message-class mismatch. On content-script initialization, the worker returns only:
+Options reads/saves, origin revocation, local discovery, and synthetic readiness use strict sender-class messages from the exact packaged options page. Read views expose model and key-presence flags without keys; expected-revision saves use independent Keep/Replace/Clear key actions and merge current origins. Content scripts cache only:
 
 ```text
 isConfigured
 settingsRevision
 ```
 
-The content script caches that public configuration. Validated settings-change messages to every live enabled content script replace the cache; capture does not fetch configuration again. API-key, model, and profile changes increment `settingsRevision`, cancel active inference, invalidate visible suggestions and obsolete errors, and never retry old text. Origin changes use the activation and revocation lifecycle instead.
+One worker-owned active-configuration predicate is reused for inference, public configuration, and immediate pre-Apply authorization. Provider, either model, either credential, or profile changes increment the revision, cancel inference, invalidate suggestions/errors, and broadcast only that public view. Origin transitions remain separate. A stale check resynchronizes configuration without retrying the revision.
 
-Every content-to-worker check carries the cached `settingsRevision`. Before using its private API key and model, the worker validates the browser-supplied sender, current exact origin permission, and revision. A stale request returns current validated public configuration and the originating controller replaces its cache; the rejected revision is not retried. `settingsRevision` and sender metadata are Emenda-internal and are never sent to OpenRouter.
+The worker alone discovers local model IDs and performs bounded synthetic readiness calls. Ephemeral results are keyed to settings revision, become invalid after settings changes/restart, contain no raw response or credential, and authorize no page text or mutation. They establish connectivity/compatibility rather than linguistic qualification.
 
 ## 7. Check and presentation flow
 
@@ -141,7 +137,7 @@ For an eligible revision:
 1. The content script captures an opaque snapshot through `BrowserTextSurface` after debounce.
 2. Pure core policy selects the deterministic focus and bounded context under the canonical limits in [`SPEC.md`](../SPEC.md#3-v01-runtime-and-limits).
 3. The content script sends a one-shot authored payload containing only that bounded logical context, its exact focus range, request identity, and `settingsRevision`; Chrome separately supplies fresh `MessageSender` metadata. V0.1 uses no long-lived messaging port.
-4. The worker projects the sender to the minimum active-top-level authority fields, confirms the exact optional permission and enabled origin, validates configuration revision and message shape, splits the context into model-facing `before`, `focus`, and `after`, then adds its trusted profile and uses its private model and credential for one OpenRouter request.
+4. The worker projects the sender to the minimum active-top-level authority fields, confirms the exact optional permission and enabled origin, validates configuration revision and message shape, splits the context into model-facing `before`, `focus`, and `after`, then adds its trusted profile and uses the selected private provider configuration for one request. It never tries another provider after failure.
 5. The worker strictly validates the external result, invokes pure scalar derivation, and returns only the trusted derived correction or typed failure in a versioned outcome. Model-authored `correctedFocus` never crosses into the content script.
 6. Before any provider outcome changes presentation, the content script proves the current revision plus exact captured source, document, snapshot value and selection, foreground focus, and exposure. A mismatch refreshes only a supported local baseline, invalidates the revision, and stays silent.
 7. Only then does the reducer accept the outcome and either return to `Idle`, present one suggestion, or enter `Error` according to the specification.
@@ -153,7 +149,7 @@ No separate or unbounded full-document field, editor source identity, snapshot i
 Apply is split deliberately:
 
 - The controller verifies the current `SuggestionId`, current `RevisionId`, and that the suggestion belongs to that revision.
-- A one-shot `AuthorizeApply` carrying only `settingsRevision` makes the worker repeat sender, enabled-origin, current exact-permission, and revision authorization immediately before local mutation; denial invalidates the suggestion.
+- A one-shot `AuthorizeApply` carrying only `settingsRevision` makes the worker repeat sender, enabled-origin, current exact-permission, active configuration, and revision authorization immediately before local mutation; denial invalidates the suggestion.
 - `BrowserTextSurface` restores the captured textarea and collapsed selection after the controlled approval handoff, verifies the same connected source and document, opaque snapshot, foreground-visible writable exposed surface, exact expected logical text, lossless mapping, and exact original substring.
 - Inside one scoped synchronous internal selection phase, the surface suspends selection observation only for target selection and immediate readback, then re-verifies the unchanged value, exact target selection, and original substring before mutation. It does not await or require queued or coalesced selection events.
 
@@ -179,7 +175,7 @@ emenda-enabled-origins
 
 That registration is persistent, isolated-world, top-frame-only, excludes fallback-origin matching, runs at document idle, and contains only the exact derived origin matches plus the packaged content entry. Direct recovery injection uses the same entry and isolated world for frame 0 only.
 
-The worker accepts content messages only from its own extension, an active outermost HTTP(S) document, an enabled canonical origin, and a currently granted exact permission. One origin-pattern function emits an explicit port and owns permission and registration calls, so default-port and nondefault-port origins are not broadened. One FIFO serializes startup reconciliation, options saves, and every post-prompt origin mutation; each operation rereads current state, and a pending-prompt set protects only the exact grant being requested. `permissions.onAdded` removes externally acquired or broader optional grants, `permissions.onRemoved` disables externally revoked origins, both reconcile the one persistent registration, and every check and Apply authorization repeats permission validation.
+The worker accepts content messages only from its own extension, an active outermost HTTP(S) document, an enabled canonical origin, and a currently granted exact permission. One origin-pattern function emits an explicit port and owns permission and registration calls, so default-port and nondefault-port origins are not broadened. One FIFO serializes startup reconciliation, options saves, and every post-prompt origin mutation; each operation rereads current state, and a pending-prompt set protects only the exact grant being requested. `permissions.onAdded` removes externally acquired or broader optional grants, `permissions.onRemoved` disables externally revoked origins, both reconcile the one persistent registration, and every check and Apply authorization repeats permission validation. The exact required local-loopback and OpenRouter provider-pattern set is excluded from optional-grant cleanup and never supplies writing-site authority by itself.
 
 Enablement invokes the permission prompt synchronously in `action.onClicked` before awaiting initialization, then follows the ordered lifecycle and rollback contract in [`SPEC.md`](../SPEC.md#12-origin-activation-and-revocation). The worker pings the active top-level document and injects only when no control listener responds; otherwise validated origin-bound `Activate` state reinitializes the existing script. Revocation persists disabled authority first, then cancels, sends origin-bound document-targeted `Deactivate`, updates registration, and removes permission. When permission is already absent or known targets may be incomplete, an unfiltered all-tab frame-0 broadcast supplies best-effort cleanup without reading tab URLs; receivers compare the control origin with current `location.origin`, so a navigation race cannot affect another origin. Cleanup failure cannot restore authority and is repaired during startup reconciliation.
 
@@ -187,9 +183,15 @@ The content script's permanent control and lifecycle bootstrap remain inert when
 
 ## 11. Provider boundary
 
-The worker alone owns the endpoint, credential, required model setting, routing, cancellation, bounded response reading, outer-envelope checks, external Zod parsing, and conversion from the external result into the trusted derived correction. It implements the canonical serialization, JSON Schema, request fields, response projection, and prompt in [`SPEC.md`](../SPEC.md#8-model-facing-contract-and-local-derivation) and [`SPEC.md`](../SPEC.md#9-provider-request) without adding payload fields.
+Reuse `WorkerProvider` rather than introducing another core provider abstraction. Shared processing owns canonical prompt, bounded input, JSON schema, response bound, fatal decoding, outer/model validation, pure derivation, cancellation, and the full-processing deadline. Separate concrete local oMLX and OpenRouter transport adapters own only their fixed endpoint, selected credential, and provider-specific request fields. A worker composition chooses exactly the active adapter.
 
-Provider fallback remains inside the single OpenRouter request for the configured ID. Emenda neither retries at application level nor sends a `models` array. The adapter disables request plugins, redirects, credentials, cache, and referrer; omits returned reasoning traces; requires JSON media type, fatal UTF-8, and exact requested/returned model-ID equality; applies the canonical deadline and response bound; exposes only typed redacted outcomes; and keeps the model identifier available only where sanitized live evidence requires it. A model-shaped catalog entry may itself be a routing service; syntax does not claim otherwise.
+The local adapter performs one fresh bounded authenticated catalog GET before inference, verifies exact case-sensitive membership inside the same deadline, then uses the exact loopback completion endpoint, direct catalog model, optional auth, nonstreaming strict schema, bounded completion, no thinking/tools, and no OpenRouter fields. The server remains loopback-bound with model fallback disabled. Grammar-downgrade warnings and HTTP-200 error envelopes fail closed. Local discovery and synthetic readiness are worker-owned options operations under the same confinement, cancellation, and revision policy.
+
+OpenRouter retains its explicit remote endpoint, required key/base-model ID, disabled plugins, routing constraints, omitted reasoning trace, and within-request eligible-endpoint fallback for the same model. That provider-specific behavior never enters local traffic or supplies application-level/cross-provider fallback.
+
+Both paths use the exact request and response contract in [`SPEC.md`](../SPEC.md#9-provider-request), including no credentials/cache/redirect/referrer fetch controls, strict media/envelope/model checks, typed redacted outcomes, 15-second processing deadline, and 32-KiB response bound. Content scripts never learn provider selection, model IDs, credentials, or raw model content.
+
+Local server logging is configured to `critical` and canary-tested; local model KV cache state is allowed. Extension code stores no text/body/history and makes no blanket guarantee about local model state or native crash diagnostics.
 
 ## 12. Gate ownership
 
@@ -211,7 +213,7 @@ Documentation
 | Architecture | Strict core compilation, prohibited type absence, Zod placement, import direction, semantic ports, dependency allowlist, and absence of native scaffolding |
 | Provider | Runtime-message and external-result schema enforcement, worker/provider boundary behavior, and live structured-output compatibility |
 | Browser Integration | Manifest, permissions, registrations, trusted-storage isolation, lifecycle, DOM safety, overlay accessibility, and bundled-Chromium runtime behavior |
-| V0.1 Conformance | Clean final build, minimum-runtime and current-Stable evidence, personal-device evidence, final audit, pushed implementation and evidence identities, and stop condition |
+| V0.1 Conformance | Clean final build, installed-Brave and personal-Mac evidence, separately identified compatibility evidence, final audit, pushed implementation and evidence identities, and stop condition |
 
 A later-gate failure does not erase earlier evidence unless the underlying tested invariant changed.
 

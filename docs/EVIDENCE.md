@@ -1,10 +1,10 @@
 # Emenda Implementation Evidence
 
-> **Mutable evidence-ledger template for constitution version 2.1.1**
+> **Mutable evidence-ledger template for constitution version 2.2.0**
 
-This ledger is a mutable factual record governed by its ledger-only procedure and sits outside the immutable checksum table in `PACKAGE-MANIFEST.md`. It remains empty in the documentation-only v2.1.1 freeze.
+This ledger is a mutable factual record governed by its ledger-only procedure and sits outside the immutable checksum table in `PACKAGE-MANIFEST.md`. It remains empty in the documentation-only v2.2.0 freeze.
 
-Implementation evidence may be added to this canonical ledger only under a separately authorized future implementation objective. Each ledger-only commit identifies an already-existing implementation commit that was actually tested and leaves every frozen file unchanged. It records that fact; it does not claim to have tested itself.
+Implementation evidence may be added to this canonical ledger only under the separately authorized implementation objective. Each ledger-only commit identifies an already-existing implementation commit that was actually tested and leaves every frozen file unchanged. It records that fact; it does not claim to have tested itself.
 
 ## Baseline template
 
@@ -47,9 +47,12 @@ Preserve failures and later recoveries as separate entries. Never record credent
 For each complete Provider Gate run, append once:
 
 ```text
+provider: localOmlx | openrouter
 requested model:
-enforced provider plugin policy: none
-semantic reviewers:
+server or provider build and verified policy:
+enforced provider plugin policy: none | not applicable
+cold/warm latency and memory observations:
+semantic reviewers (agent/model identities):
 reviewer profile/case coverage:
 semantic review method: after automated structural and exact-string checks, assess each required profile, correction or clean/unsupported decision, category, explanation, language, and preservation of meaning
 ```
@@ -62,7 +65,7 @@ selected model: <model ID | unavailable>
 complete request latency:
 outcome:
 failure reason: <reason | none>
-linguistic correctness:
+linguistic correctness (independent agent judgment):
 ```
 
 After the 15 sequential cases, report `success count: x/15`. Do not retry or replace a case within the run. Preserve a failed run; record a complete recovery run separately after an implementation, configuration, or external-service change.
@@ -82,4 +85,4 @@ failures or limitations:
 
 ## Evidence entries
 
-The documentation-only v2.1.1 freeze records an empty implementation-evidence state.
+The documentation-only v2.2.0 freeze records an empty implementation-evidence state.

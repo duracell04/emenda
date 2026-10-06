@@ -1,6 +1,6 @@
 # Emenda Agent Guide
 
-> **Frozen agent governance, version 2.1.1**
+> **Frozen agent governance, version 2.2.0**
 
 This guide is the agent-agnostic control plane for Emenda work. Repository-local authority applies equally to every coding system. A tool-specific compatibility file contains only the integration details that tool requires and points here for project rules.
 
@@ -70,6 +70,8 @@ Resolve an interpretation through the subject hierarchy and the nearest authorit
 - **Builder choice:** Select names, helper structure, algorithms, file organization, internal test organization, and equivalent techniques when observable behavior, safety, privacy, compatibility, reliability, and architecture remain unchanged.
 
 Treat implementation difficulty as learning. Change constitutional requirements through a human-authorized versioned documentation objective.
+
+Within the active authorized objective, resolve ordinary implementation, testing, model selection, configuration, refactoring, and debugging autonomously from the repositories, primary documentation, the local environment, and measured evidence. Diagnose, repair, verify, and continue after intermediate failures. Ask the objective owner only for a decision that materially changes the product objective, privacy boundary, supported scope, external-service dependency, cost, or security posture, or when credentials or a user-only OS/browser authorization are required.
 
 ## 6. Instruction and construction control
 

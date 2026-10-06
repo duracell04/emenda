@@ -1,6 +1,6 @@
 # Emenda V0.1 Acceptance
 
-> **Frozen acceptance contract, version 2.1.1**
+> **Frozen acceptance contract, version 2.2.0**
 
 ## 1. Role and evidence standard
 
@@ -44,21 +44,21 @@ Documentation
 → V0.1 Conformance
 ```
 
-The v2.1.1 documentation objective ends after its exact 13-file candidate passes the Documentation Gate, becomes one atomic single-parent Markdown freeze whose ancestry retains the v2.1.0 convergence, reaches its authorized remote refs, and satisfies remote identity, ancestry, and tracked-worktree cleanliness. A separate future objective authorizes implementation gates.
+The v2.2.0 documentation objective ends after its exact 13-file candidate passes the Documentation Gate, becomes one atomic single-parent Markdown freeze whose ancestry preserves every prior freeze and the v2.1.0 convergence, reaches its authorized remote refs, and satisfies remote identity, ancestry, and tracked-worktree cleanliness. A separate future objective authorizes implementation gates.
 
 ## 3. Documentation Gate
 
 The gate passes when:
 
-- the atomic documentation commit has the sole parent v2.1.0 `39c243b8a9652ccf0e65db1683e32e13e4f6eac0`, whose ancestry retains v2.0.3 `5295799c637f89a5db12b2971dee12ead7977270` and logo proposal `05eadea4dc05e02b715618c458f7df4bbd9c0b10` as its two parents;
+- the atomic documentation commit has sole parent v2.1.1 `7a65e69e915a19b310db19fd425cbd2cbd67fb54` (tree `07bd030daaf1cc791f8e6a4d44afedcf97828851`), preserving prior freezes and the two-parent v2.1.0 convergence in ancestry;
 - the tracked inventory is exactly the 13 Markdown paths classified by `PACKAGE-MANIFEST.md`, and the candidate tree consists exclusively of that documentation package;
-- every constitutional, supplemental, and evidence document identifies version 2.1.1, and every freeze-ID occurrence is `emenda-clean-room-v2.1.1-2026-08-21`;
+- every constitutional, supplemental, and evidence document identifies version 2.2.0, and every freeze-ID occurrence is `emenda-clean-room-v2.2.0-2026-10-06`;
 - `SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/IMPLEMENTATION-PLAN.md` supply behavior, architecture, and build order, and supporting documents resolve through those subject homes;
 - every occurrence of the canonical sequence is byte-identical and describes a Documentation baseline followed by seven implementation increments numbered 1 through 7;
 - the Documentation Gate remains the prerequisite, and the six gate names and order remain unchanged;
 - every local Markdown link resolves;
 - all 18 active critical requirement IDs remain unique in `SPEC.md` and retain their acceptance mappings in Section 3.1;
-- review against v2.1.0 confirms that the delta consists exactly of affirmative agent governance, simplified compiler governance and its Architecture Gate evidence, version and lineage metadata, manifest inventory and hashes, active logo-reference removal, and deletion of `docs/LOGO.md`; product-defining sections, critical requirements and mappings, provider/browser contracts, and active brand rules carry forward;
+- review against v2.1.1 confirms the authorized local/default and explicit remote provider behavior, strict settings migration, semantics-preserving shared prompt clarification, local readiness, locked provider-permission set, truthful privacy/logging/cache policy, autonomous execution and agent semantic qualification, personal Brave conformance, version/lineage metadata, and staged hashes; all 18 IDs and mappings, canonical corpus, textarea/Apply/Undo/staleness contracts, dependency boundaries, package inventory, and visual identity remain intact;
 - Deferred work remains assigned to future authorized objectives;
 - the 11 immutable tracked files match individual SHA-256 values computed from exact final staged Git-blob bytes;
 - the checksum table covers those 11 files, while `PACKAGE-MANIFEST.md` follows its self-referential exclusion and `docs/EVIDENCE.md` follows its mutable-ledger procedure;
@@ -66,7 +66,7 @@ The gate passes when:
 - each normative rule resolves to one owning authority;
 - `git diff --check` passes and the staged candidate contains exactly the declared 13 Markdown files;
 - one final exact-tree audit validates consistency, authority, links, inventory, traceability, wording, staged hashes, and substantive implementability after text convergence;
-- the documentation commit reaches `origin/docs/v2.1.1-freeze` and `origin/main`, local and remote commit identities match, its sole parent and preserved ancestry are verified, and the tracked worktree is clean while pre-existing ignored state remains preserved.
+- the documentation commit reaches `origin/docs/v2.2.0-freeze` and `origin/main`, local and remote commit identities match, its sole parent and preserved ancestry are verified, and the tracked worktree is clean while pre-existing ignored state remains preserved.
 
 The permitted objective delta is the declared Markdown freeze. The evidence ledger remains an empty factual template.
 
@@ -87,7 +87,7 @@ The permitted objective delta is the declared Markdown freeze. The evidence ledg
 | `EM-PRIV-003` | Sections 6.2 and 7.6: redaction and absence of text history, telemetry, and identifying metadata |
 | `EM-PROV-001` | Sections 6.2 and 6.3: canonical request enforcement and complete live corpus |
 | `EM-PROV-002` | Sections 4.3 and 6.1–6.3: strict result validation, exact model identity, and local derivation |
-| `EM-PROV-003` | Sections 4.3, 6.3, and 7.5: probabilistic proposal, deterministic structure, and human semantic review |
+| `EM-PROV-003` | Sections 4.3, 6.3, and 7.5: probabilistic proposal, deterministic structure, independent agent qualification review and writer semantic approval |
 | `EM-APPLY-001` | Sections 4.3, 7.3, and 8: controller, worker, and surface authority chain |
 | `EM-APPLY-002` | Sections 4.4, 7.3, and 8: sole mutation, exact acknowledgement, refusal, and one-step Undo |
 | `EM-APPLY-003` | Section 7.5: trusted current approval controls, focus handoff, and hit tests |
@@ -105,9 +105,9 @@ Fake-clock and reducer tests prove:
 - each eligible committed input reserves a new revision synchronously, clears a current error or suggestion, cancels older work best-effort, and starts one trailing 600 ms debounce;
 - ordinary input is eligible only from a same-source, same-generation trusted `beforeinput`/`input` ticket that binds exact pre/post tuples and passes the complete foreground/exposed textarea predicate at both events; every later `beforeinput` first invalidates the prior ticket, the first input clears it, and each private expiry callback clears only its own still-current opaque ticket while listener microtasks do not, and an unpaired or untrusted change on that otherwise supported textarea may refresh the baseline and invalidate stale authority without reserving a revision or requesting inference, while the exact registered Apply input is the sole bypass;
 - no request starts at 599 ms and exactly one eligible request starts at 600 ms; later committed input replaces the timer;
-- each eligible revision produces at most one request, and current revision authority wins every completion and cancellation race;
+- each eligible revision produces at most one inference operation, and current revision authority wins every completion and cancellation race;
 - stale results, stale failures, stale settings revisions, and stale Apply or Dismiss commands do not change presentation or text;
-- API-key, model, and profile changes increment `settingsRevision`, cancel active inference, invalidate visible suggestions and obsolete errors, and leave processing paused until the next committed input; completing configuration returns to `Idle` without retry, and origin changes do not increment it;
+- Provider, either API-key, either model, and profile changes increment `settingsRevision`, cancel active inference, invalidate visible suggestions and obsolete errors, and leave processing paused until the next committed input; completing configuration returns to `Idle` without retry, and origin changes do not increment it;
 - the simulated public configuration contains only `isConfigured` and `settingsRevision` and is replaced in every live enabled controller by validated update events rather than fetched before capture;
 - every composition start invalidates immediately and binds its collapsed pre-composition tuple; only a trusted start on a qualifying surface creates an eligible generation, every composing change must use a trusted same-generation pair and refresh the exact text/selection baseline, an in-bounds losslessly mapped intermediate IME candidate range may be noncollapsed, delayed selection notifications are ignored only when they match that baseline, any untrusted, unpaired, malformed, or mismatching composing event disqualifies the generation, and only a trusted qualifying end at a collapsed caret whose terminal text changed emits the sole committed change; cancelled and no-op generations remain silent;
 - a terminal pair after composition end is deduplicated only when text, source, and selection all match within that composition generation; each individual mismatch is external and reserves a revision only when it independently qualifies;
@@ -177,39 +177,36 @@ The Provider Gate owns runtime-message behavior and external-schema enforcement.
 
 Deterministic worker tests prove:
 
-- one-shot runtime messages use `protocolVersion: 1` in discriminated strict Zod envelopes, reject unknown versions, types, properties, malformed payloads, and disallowed senders, and use no long-lived Port;
-- content-origin operations require the complete top-level HTTP(S) sender class, options reads/saves/revocation require the exact packaged options-page URL and extension origin, and content-to-settings, options-to-content, altered extension-page URL, and all other cross-class combinations fail closed;
-- trusted settings accept only the exact version-1 types, scalar bounds, base-model-shaped grammar, safe integer, and sorted canonical origins in [`SPEC.md`](../SPEC.md#5-settings-authority), rejecting the `openrouter` namespace, `~` alias syntax, arrays, and every colon-suffixed variant while making no catalog-existence claim, with no guessed migration;
-- new settings use null API key and model, `profileMode: auto`, revision zero, and no origins; a complete valid save derives `isConfigured: true` and an incomplete or corrupt record fails closed;
-- the options read view contains exactly the nonsecret fields, and revision-aware keep/replace/clear saves reject stale revisions, never disclose the existing key, preserve current worker-owned origins, and increment only for a real API-key/model/profile change;
-- public configuration messages contain exactly `isConfigured` and `settingsRevision`; the content protocol carries no profile, and provider input always derives it from trusted settings;
-- settings-change messages are validated and delivered to every live enabled content script, API-key/model/profile changes increment the revision and cancel current requests, and origin changes follow separate lifecycle messages;
-- every check carries `settingsRevision`; a stale value returns current validated public configuration, the originating controller replaces its cache, and the rejected revision is not retried;
-- `settingsRevision` and every Chrome-supplied sender field are absent from the OpenRouter payload;
-- external model JSON is accepted only through the strict canonical schema before semantic derivation;
-- the provider-authored corrected focus cannot enter the worker-to-content envelope, whose trusted derived correction shape remains unchanged.
+- strict one-shot `protocolVersion: 1` messages reject unknown versions/types/properties/payloads/senders and use no long-lived Port;
+- content operations require the complete active top-level HTTP(S) sender predicate; settings, origin revocation, local discovery and readiness require the exact packaged options sender, with every cross-class combination rejected;
+- settings v2 accepts exactly the provider, nested configurations, profile, safe revision and canonical origins in [`SPEC.md`](../SPEC.md#5-settings-authority), with provider-specific model validation and no compiled model default;
+- absent settings select local with null model/key, auto profile, revision zero and no origins; valid legacy v1 preserves inactive remote settings/profile/origins, increments once, migrates before authority opens, and never remigrates; corrupt, extra-property, unknown-schema and revision-overflow records fail closed;
+- options views expose only the specified models/key-presence flags and safe fields; expected-revision saves require separate Keep/Replace/Clear actions, preserve worker origins, reject stale writes, never echo tokens, and increment only on provider/either-model/either-key/profile changes;
+- one active-configuration predicate authorizes inference and Apply; local may omit a key while remote requires one, and remembered inactive settings never drive transport;
+- public content configuration remains exactly `isConfigured`/`settingsRevision`, with no provider/profile/model/key; changes cancel requests and broadcast validated updates without retrying old text;
+- stale checks resynchronize public configuration without retry; revision and sender metadata enter neither provider payload;
+- options discovery returns only strictly validated local IDs; synthetic tests read no page, store no raw result, cannot qualify a corpus or enable an origin, and discard settings-change/restart races;
+- external model JSON passes the canonical strict schema and pure derivation before the unchanged trusted correction can enter content messages.
 
-### 6.2 OpenRouter transport tests
+### 6.2 Provider transport tests
 
-Tests inspect the exact outbound request and prove:
+Shared processing tests inspect both concrete adapters and prove:
 
-- the endpoint, authored headers, no-credentials/no-cache/no-redirect/no-referrer fetch controls, canonical prompt, two-message order, exact JSON-stringified user content, JSON Schema name and shape, explicit disabled-plugin entries, and every request field match [`SPEC.md`](../SPEC.md#9-provider-request);
-- one required trusted base model-shaped ID is sent, with no compiled default, `openrouter` namespace, variant suffix, `models` array, or application-level substitution;
-- the model-facing user payload is exactly the split bounded input and excludes URL, any separate or unbounded full-document field, source or snapshot identity, DOM structure, API key, settings metadata, and browser sender metadata; tests acknowledge that bounded context may equal all text of a short document, and embedded document instructions cannot alter the system instruction or request shape;
-- the strict structured-output schema and local semantic pass reject missing or extra properties, more than one correction, malformed Unicode, CR, an over-limit explanation or corrected focus, and a whitespace-only explanation;
-- `max_completion_tokens: 8192`, `reasoning.exclude: true`, `temperature: 0`, routing, one-request behavior, zero application retries, 15-second full-processing deadline, 32-KiB incremental response bound, and cancellation match the canonical contract; reasoning may consume that budget but no trace enters the bounded response;
-- 2xx success accepts only parsed `application/json`, fatal UTF-8, and the canonical outer projection: no top-level or choice error/refusal, one index-0 choice, `finish_reason: stop`, assistant string content, and a returned model exactly equal to the trusted requested model before strict content parsing and semantic derivation;
-- HTTP, media-type, decoding, transport, redirect, timeout, size, model-identity, envelope, finish, parse, schema, semantic, and unsupported outcomes are typed and redacted;
-- authorization headers, credentials, raw contexts, and raw response bodies cannot enter logs, snapshots, errors, or telemetry;
-- there is no enabled plugin, tool, server tool, healing, prompt transform, streaming, response cache, telemetry, OpenRouter SDK, application-level retry, `models`-array failover, or application-level model substitution;
-- within-request provider fallback is enabled only across eligible endpoints for the same model and is not represented as a guarantee of immediate fallback or completion inside the deadline;
-- a successful response's selected model is available to the live evidence path, while pre-response failure records it as unavailable.
+- canonical prompt, two-message order, exact bounded split user serialization, schema, content confinement, fetch controls, fatal UTF-8, JSON media type, exact requested/returned model, one index-zero choice, assistant string content, stop finish and strict result/derivation all match [`SPEC.md`](../SPEC.md#9-provider-request);
+- malformed/extra-property schemas, multiple corrections, malformed Unicode/CR, excessive or whitespace-only explanation, over-limit focus, unchanged/multihunk correction, profile contradiction, top-level/choice errors and refusals, including HTTP-200 error envelopes, all fail closed;
+- the 15-second deadline includes reading through final derivation; the 32-KiB incremental bound, cancellation and stale-revision behavior hold even for hanging, oversized or malformed responses;
+- each revision makes at most one inference POST; local inference has one fresh bounded authenticated catalog GET first, shares its full-processing deadline and rejects unknown/wrong-case models before page text is sent; server/model/auth/resource unavailability, timeout and every other failure produce redacted outcomes without retries, response repair, application model substitution or cross-provider fallback;
+- credential/header isolation, bounded page-text confinement and no private body/log/snapshot/history/telemetry leakage hold for success and failure paths.
+
+Local-specific tests prove the exact loopback endpoint, case-sensitive direct catalog selection, optional auth, `max_tokens: 8192`, `temperature: 0`, `stream: false`, `tool_choice: "none"`, `enable_thinking: false`, `thinking_budget: 0`, strict schema and complete absence of OpenRouter fields. The server is configured with `model_fallback: false`; oMLX may match case-insensitively, so the adapter’s fresh exact-membership catalog guard rejects unknown and wrong-case IDs before POST; aliases/profiles/fallback are never selected. Warning-199 grammar downgrades fail even with valid JSON. Local inference and failures cause zero remote inference traffic. Loopback binding, `critical` logging, synthetic leakage canaries and allowed local KV cache state are recorded without claiming native crash diagnostics are suppressed.
+
+OpenRouter-specific tests preserve its fixed endpoint, required base-model/key grammar, exact disabled plugins, `max_completion_tokens: 8192`, `reasoning.exclude: true`, routing/data-collection constraints and same-model endpoint fallback. No local thinking/tool-choice field, model array, tool/server tool, plugin enablement, SDK, transform, attribution or extra payload field enters remote requests. Within-request fallback does not guarantee success within the deadline. Selected model is available only to sanitized evidence; pre-response failure records it unavailable.
 
 ### 6.3 Live provider evidence
 
-Run the following corpus through the production parsing and derivation path using one writer-supplied documented direct-model ID and an OpenRouter key whose account/workspace has no enforced plugin policy that prevents request-level disabling. Record that precondition and requested model in the run metadata; the run itself, not settings syntax, qualifies its observed compatibility, and every returned model must equal the requested ID. In every case, `before` and `after` are empty and the Focus column is the complete focus. Calls are strictly sequential: a case does not start until the preceding case terminates. No case is retried or replaced within a run.
+Run the following corpus through production parsing and derivation using one directly configured documented model and the active provider’s actual credential policy. The v2.2.0 personal objective requires a complete local oMLX run; remote runs, when performed, are separate evidence and record the no-enforced-plugin-policy precondition. Record provider, requested case-sensitive model, server/build policy, measured cold/warm latency and memory observations with Brave running. The run, not discovery/readiness or settings syntax, qualifies observed compatibility; every returned model equals the requested ID. In every case, `before` and `after` are empty and the Focus column is the complete focus. Calls are strictly sequential: a case does not start until the preceding case terminates. No case is retried or replaced within a run.
 
-One or more named human semantic reviewers collectively competent for every corpus language and profile compare each strictly parsed and derived result with the table after automated structural and exact-string checks. They assess the returned profile, correction or clean/unsupported decision, category, explanation, language, and preservation of meaning. Run metadata records each reviewer and profile/case coverage plus this method. `linguistic correctness` is that factual human judgment; schema validity, temperature zero, and string equality alone do not prove semantics.
+Independent named agent semantic reviewers collectively cover every corpus language/profile and every case, and compare each strictly parsed and derived result against the table after automated structural and exact-string checks. They review the actual returned profile, correction or clean/unsupported decision, category, explanation, language and meaning preservation independently of the implementation owner. Metadata records agent/model identity, profile/case coverage, method and findings truthfully as agent review. `linguistic correctness` is this qualification judgment, never misrepresented as human review or guaranteed future correctness. The writer still approves every actual suggestion; schema validity, temperature zero and string equality alone do not prove semantics.
 
 | Case | `profileMode` | Focus | Required result |
 | --- | --- | --- | --- |
@@ -229,7 +226,7 @@ One or more named human semantic reviewers collectively competent for every corp
 | `fixed-en-GB-German` | `en-GB` | `Dies ist ein synthetischer Satz.` | `unsupported` with no correction |
 | `auto-unsupported-Japanese` | `auto` | `これは合成の文です。` | `unsupported` with no correction |
 
-The Provider Gate requires 100% of its deterministic assertions and one complete live qualification run with `15/15` successes. A case succeeds only when it completes inside the canonical deadline, passes the strict schema and local semantic derivation, matches the table's required result, and is linguistically correct. This observed qualification is not a future reliability guarantee. Any failure remains factual and leaves the gate incomplete. After an implementation, configuration, or external-service change, a new complete 15-case attempt may be recorded as separate recovery evidence; individual failed cases are never retried in place. Missing credentials, exhausted quota, or an interrupted corpus also leaves the gate incomplete.
+The Provider Gate requires 100% of its deterministic assertions and one complete live qualification run with `15/15` successes. A case succeeds only when it completes inside the canonical deadline, passes the strict schema and local semantic derivation, matches the table's required result, and is linguistically correct. This observed qualification is not a future reliability guarantee. Any failure remains factual and leaves the gate incomplete. After an implementation, configuration, or external-service change, a new complete 15-case attempt may be recorded as separate recovery evidence; individual failed cases are never retried in place. Missing required credentials, unavailable server/model, resource failure, exhausted quota, or an interrupted corpus also leaves the gate incomplete.
 
 For each case record only the case identifier, selected model or `unavailable`, complete request latency, outcome, failure reason when any, and linguistic correctness. General evidence metadata from Section 1 still applies. Do not calculate percentiles, distributions, or a stochastic pass percentage, and do not run a concurrent stress corpus as part of this gate. No live record contains the credential or raw private text.
 
@@ -241,13 +238,13 @@ Automated extension tests run in Playwright's [bundled Chromium persistent conte
 
 Runtime tests prove:
 
-- the Manifest V3 package declares `minimum_chrome_version` as `"140"`, grants OpenRouter only `https://openrouter.ai:443/*`, uses only the other locked permissions, has no static all-sites content script or `<all_urls>` grant, disables incognito, and bundles executable code locally;
+- the Manifest V3 package declares `minimum_chrome_version` as `"140"`, grants provider access only to the exact required set `http://127.0.0.1:8000/*` and `https://openrouter.ai:443/*`, uses only the other locked permissions, has no static all-sites content script or `<all_urls>` grant, disables incognito, and bundles executable code locally;
 - action, message, and permission listeners register synchronously at worker module evaluation, and every handler awaits one shared sticky initialization promise;
 - worker initialization awaits `chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })` before any settings read or write and fails closed when the method is unavailable or rejected;
 - the Chrome-140-compatible `runtime.onMessage` listener is not `async`, starts asynchronous dispatch, responds on every handled path through `sendResponse`, and returns literal `true` synchronously, including after a cold worker restart;
 - a content script cannot read `chrome.storage.local` and cannot receive its change events;
-- only the worker reads or writes the API key, model, and full settings record; the options page communicates through the worker;
-- fresh, valid, corrupt, extra-property, and unknown-schema settings records follow the exact version-1 schema and fail-closed behavior;
+- only the worker reads or writes both provider credentials/models and the full settings record; the options page communicates through the worker;
+- fresh, valid-v2, valid-v1 migration, corrupt, extra-property and unknown-schema settings follow the exact v2/migration/fail-closed contract;
 - content initialization receives and caches only `isConfigured` and `settingsRevision`, then updates that cache only through validated messages rather than fetching before each capture;
 - worker restart preserves only the intended durable settings and origin state and re-establishes storage isolation before reconciling them.
 
@@ -263,7 +260,7 @@ Tests with multiple tabs and origins prove:
 - zero enabled origins produces zero dynamic content-script registrations;
 - every content message has a fresh Chrome sender and is rejected unless extension ID, tab ID, frame 0, active lifecycle, nonempty document ID, HTTP(S) URL, matching nonopaque origin, enabled-origin membership, and current exact permission all validate; payload authority and `sender.tab.url` are ignored, while options-only commands, missing fields, opaque origins, iframes, prerender senders, stale settings, adjacent ports, and contradictory fields fail closed;
 - one-shot messaging is used throughout and no long-lived runtime Port exists;
-- startup reconciles corrupt or interrupted durable state, current exact grants, and the fixed registration before content or provider work opens; external `permissions.onAdded` removes unowned or broader grants without racing Emenda's pending exact prompt, external `permissions.onRemoved` performs disablement and cancellation, and every inference and Apply authorization repeats the current permission check;
+- startup reconciles corrupt or interrupted durable state, current exact grants, and the fixed registration before content or provider work opens; both required provider patterns survive reconciliation, confer no implicit writing-origin authority, and zero enabled origins still has no registration; external `permissions.onAdded` removes unowned or broader grants without racing Emenda's pending exact prompt, external `permissions.onRemoved` performs disablement and cancellation, and every inference and Apply authorization repeats the current permission check;
 - revocation first disables the origin and rejects new checks and Apply authorizations, then cancels associated requests and sends versioned origin-bound `Deactivate` to known document IDs;
 - after an external removal or incomplete known-document set, unfiltered `tabs.query({})` drives a best-effort frame-0 broadcast without reading tab URLs; each receiver ignores a control message whose origin differs from its current nonopaque `location.origin`, including a forced cross-origin navigation race;
 - deactivation invalidates revision authority, cancels debounce and inference, removes input and composition listeners and the overlay host, clears source and snapshot registries, and leaves the script inert;
@@ -301,25 +298,22 @@ Page and model strings containing HTML, Markdown, URLs, event attributes, or scr
 
 ### 7.6 Confinement inspection
 
-Bundle and runtime inspection prove Emenda-authored messages omit page URLs, tab/frame/document metadata, any separate or unbounded full-document field, source references, snapshot references, and DOM data; the only page text copied from content to worker is the bounded context, which may equal all text of a short document. Request identity, focus range, and `settingsRevision` also cross only as the nontext protocol authority fields declared by the specification and never enter provider input. Chrome-supplied sender metadata reaches the worker only as ephemeral authorization input: only the required fields are inspected, and none is persisted, logged, copied into errors, or forwarded to OpenRouter. The credential remains confined to the strictly validated worker-owned trusted-settings record and active provider call; it enters no authored message, log, fixture, snapshot, error, evidence, or bundle. Raw private text enters no durable storage, log, fixture, snapshot, error, or evidence. The product contains no persistent text cache, analytics, telemetry, or remote executable code.
+Bundle and runtime inspection prove Emenda-authored messages omit page URLs, tab/frame/document metadata, any separate or unbounded full-document field, source references, snapshot references, and DOM data; the only page text copied from content to worker is the bounded context, which may equal all text of a short document. Request identity, focus range, and `settingsRevision` also cross only as the nontext protocol authority fields declared by the specification and never enter provider input. Chrome-supplied sender metadata reaches the worker only as ephemeral authorization input: only the required fields are inspected, and none is persisted, logged, copied into errors, or forwarded to either provider. Both credentials remain confined to the strictly validated worker-owned trusted-settings record and their owning active provider call; neither enters a content message, log, fixture, snapshot, error, evidence, or bundle. Raw private text enters no durable storage, log, fixture, snapshot, error, or evidence. The product contains no persistent text cache, analytics, telemetry, or remote executable code.
 
 ## 8. V0.1 Conformance Gate
 
 The final gate requires all prior evidence to remain valid for the tested implementation tree and commit, plus:
 
-- a clean checkout verifies the read-only constitution snapshot and lock, activates the committed exact Node/npm/TypeScript tuple, installs the committed dependency graph with `npm ci`, then the complete deterministic suite and Playwright bundled-Chromium persistent-context suite pass;
-- the production extension build, the implementation's single cross-platform audit command, and its deterministic CI workflow pass for the exact tested commit;
-- dependency, bundle, permission, manifest, registration, and secret/text-leakage inspections match the constitution;
-- a manual headed compatibility smoke passes on Chromium or Chrome for Testing 140, with exact browser build and host recorded, and covers actual toolbar grant and denial, external site-access revocation, explicit-port permission round trips, storage-event isolation, synchronous message response, dynamic registration/restart, sender lifecycle, Apply insertion/deletion/replacement, and one-step Undo;
-- a manual unpacked-extension smoke passes on current Chrome Stable, including actual toolbar grant and denial, enablement, inference, Apply, Undo, external site-access revocation, and teardown;
-- personal-device smokes are recorded separately for Windows Studio with current Chrome, MacBook with current Chrome, and Chromebook with current ChromeOS/Chrome;
-- every device record states exact OS/browser versions, tested behaviors, failures, and limitations, without generalizing beyond that environment;
-- supported and rejected surface claims match tested fixtures, accessibility and reduced-motion checks pass, and all privacy disclosure text matches the product behavior;
-- trusted-origin, ticket-piggyback, quota, and possible provider-charge disclosure matches the enabled-site boundary, writer-owned key, and configured model behavior;
-- evidence collectively names all 18 active critical requirement IDs and preserves the distinction between deterministic proof, human semantic judgment, live observation, and environment-specific runtime evidence;
-- the tested implementation commit is pushed and its local and remote identities match;
-- a later commit in the constitution repository changes only `docs/EVIDENCE.md`, records that already-existing tested implementation tree and commit, is pushed and verified, preserves every frozen file, and leaves both tracked worktrees clean.
+- a clean checkout verifies the read-only constitution/lock, canonical Node/npm/TypeScript tuple and committed dependency graph via `npm ci`; complete deterministic, production build, audit/CI and Playwright bundled-Chromium persistent-context suites pass;
+- dependency, bundle, permission, manifest, registration, redaction and privacy inspections match this freeze, including zero remote inference traffic in local mode and sanitized synthetic server-log canaries;
+- the existing browser harness runs against the exact installed Brave executable and records Chromium/Brave build, actual Mac chip/RAM/OS, local server build/model/policy, latency and memory observations;
+- personal unpacked-extension verification in the writer’s existing Brave profile covers actual toolbar grant/denial, exact-port activation/revocation, storage isolation, sender/document lifecycle, debounce, local inference, complete suggestion, Dismiss, off-caret insertion/deletion/replacement, writer-approved Apply, one native Undo, navigation invalidation, and worker/browser/server restart recovery;
+- local model qualification is one preserved sequential 15/15 production-path run plus complete independent named agent semantic review; readiness does not count as qualification, and earlier failed attempts remain evidence;
+- supported/refused surfaces, accessibility, reduced motion, enabled-origin residual risks, local/remote processing, credentials, logging/cache/native-diagnostic limits and possible remote charges are accurately disclosed;
+- all 18 critical IDs have their required evidence, with deterministic proof, agent qualification judgment, actual writer approval, live observation and environment-specific runtime evidence kept distinct;
+- the exact tested implementation commit is pushed and remotely verified, the verified production `dist/extension/` build is installed into the user’s Brave profile and usable after restart, and a later blueprint commit changes only `docs/EVIDENCE.md` to record already-existing tested implementation identities;
+- the later ledger commit is pushed/verified, every frozen file remains unchanged and both tracked worktrees are clean.
 
-The three browser evidence layers remain distinct: automated bundled Chromium, direct Chrome 140 compatibility, and manual current Chrome Stable. Device records supplement rather than replace them.
+Automated bundled Chromium, actual installed Brave and the personal Mac remain distinct evidence layers. Chrome 140 remains the declared minimum, but unperformed direct Chrome-140/current-Chrome/other-device tests are explicitly recorded as unproven compatibility and never inferred from Brave. Additional Windows, Chromebook and other runtime results supplement the personal objective when actually performed; they are not required to claim this recorded Mac/Brave installation.
 
-After V0.1 Conformance passes, stop. Distribution, native work, commercial work, broader surfaces, and general cross-platform claims require separately versioned objectives.
+After V0.1 Conformance passes, stop. Store distribution, native work, commercial work, broader surfaces, and general cross-platform claims require separately versioned objectives.

@@ -1,6 +1,6 @@
 # Emenda V0.1 Implementation Plan
 
-> **Frozen implementation plan, version 2.1.1**
+> **Frozen implementation plan, version 2.2.0**
 
 ## 1. Objective boundary
 
@@ -26,7 +26,7 @@ The sequence is binding for the future implementation objective. The six gates r
 
 ## 3. Documentation baseline and Documentation Gate
 
-[`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md) defines the exact v2.1.1 baseline, lineage, classification, and integrity data. The Documentation Gate in [`ACCEPTANCE.md`](ACCEPTANCE.md) verifies that candidate. Passing it completes the documentation objective; product increments begin only under the separate authorization described above.
+[`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md) defines the exact v2.2.0 baseline, lineage, classification, and integrity data. The Documentation Gate in [`ACCEPTANCE.md`](ACCEPTANCE.md) verifies that candidate. Passing it completes the documentation objective; product increments begin only under the separate authorization described above.
 
 ### Future implementation intake
 
@@ -62,7 +62,7 @@ Integrate centralized IME suppression, one-shot self-authored input consumption,
 
 Build the Chrome 140 Manifest V3 shell: trusted worker settings, synchronous listener registration and Chrome-140 response bridging, validated one-shot protocol, sender and immediate pre-Apply authorization, serialized explicit-port origin lifecycle and recovery, external permission reconciliation, zero-or-one dynamic registration, idempotent activation, BFCache/prerender teardown and reauthorization, options messaging, and the accessible text-only shadow overlay.
 
-Add the OpenRouter adapter using the required writer-configured base model ID, canonical JSON serialization and schema, explicit within-request provider fallback, zero application retries, fixed generation and response bounds, cancellation, local derivation, and redacted failures. Pass the **Provider Gate**, including deterministic message and transport enforcement plus a successful sequential live qualification corpus defined in [`ACCEPTANCE.md`](ACCEPTANCE.md).
+Compose the shared `WorkerProvider` processing from separate concrete local oMLX/default and explicit OpenRouter adapters. Implement strict settings v2 with the sole valid-v1 migration, separate remembered write-only credentials/models, worker-owned local discovery and synthetic readiness, active-configuration authorization, and both locked provider permissions. Preserve shared prompt/schema/derivation, fixed generation and response bounds, cancellation, no application retry or cross-provider fallback, and redacted failures; retain within-request same-model endpoint fallback only for OpenRouter. Pass the **Provider Gate**, including deterministic message and transport enforcement plus a successful sequential live qualification corpus defined in [`ACCEPTANCE.md`](ACCEPTANCE.md).
 
 ### Increment 6: Browser Integration
 
@@ -72,9 +72,15 @@ Pass the **Browser Integration Gate**, which owns the manifest, permissions, reg
 
 ### Increment 7: V0.1 Conformance
 
-Run the complete deterministic and browser suites, inspect the production bundle, dependencies, permissions, secret and text leakage, and known limitations, then complete the required runtime and personal-device evidence.
+Run the complete deterministic and browser suites, inspect the production bundle, dependencies, permissions, secret and text leakage, and known limitations, then complete the installed-Brave and personal-Mac evidence and label other runtime compatibility fields truthfully. Existing baseline evidence is preserved; every affected invariant is reverified on the new tested state.
 
-Commit the final implementation tree, test that exact commit, then push and verify it in the implementation repository. Return to this constitution repository and create a later commit whose sole file change appends the factual result to `docs/EVIDENCE.md`, naming that already-existing tested tree and commit while every frozen file remains unchanged. Push and verify the evidence commit, confirm both tracked worktrees are clean, declare the **V0.1 Conformance Gate** passed, and stop. Any branch or draft-PR action follows the separately supplied implementation objective. Distribution and Deferred work require another objective.
+Commit the final implementation tree, test that exact commit, then push and verify it in the implementation repository. Return to this constitution repository and create a later commit whose sole file change appends the factual result to `docs/EVIDENCE.md`, naming that already-existing tested tree and commit while every frozen file remains unchanged. Push and verify the evidence commit, confirm both tracked worktrees are clean, declare the **V0.1 Conformance Gate** passed, and stop. Any branch or draft-PR action follows the separately supplied implementation objective. The authorized personal unpacked installation into Brave and restart verification belong to this objective; store distribution and other Deferred work require another objective.
+
+### v2.2.0 migration of the existing implementation
+
+The existing `build/v0.1` baseline remains preserved. Create `build/local-omlx` from the exact authorized baseline, import this freeze’s exact commit/tree and lock, and update audit expectations without weakening inventory, checksums, compiler, dependencies, trust boundaries, or gate enforcement. Reuse existing completed increments and tests where their invariant remains unchanged; reverify affected increments in canonical order. Measure local API compatibility and candidate memory/latency before adopting the frozen provider policy. Select the smallest tested candidate that passes one full 15/15 production-path corpus within the fixed deadline with Brave running, with independent named agent semantic review.
+
+Publish the exact tested implementation state, append sanitized factual failures and recoveries through the later blueprint ledger-only commit, install the production unpacked build into the writer’s existing Brave profile, and verify daily-use behavior after browser/worker/server restart. Never invent, expose, or commit credentials. User-only OS/browser authorization is the only permitted interruption of otherwise ordinary implementation work.
 
 ## 5. Future execution policy
 
