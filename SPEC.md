@@ -1,18 +1,18 @@
-# Emenda V0.1 Product Specification
+# Emenda V0.2 Product Specification
 
-> **Frozen product authority, version 2.2.1**
+> **Frozen product authority, version 2.3.0**
 
 ## 1. Authority and objective boundary
 
-This file is authoritative for what Emenda V0.1 does. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) owns architectural boundaries, and [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) owns future build order. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) owns freeze identity and lineage.
+This file owns Emenda V0.2 product behavior, safety, privacy, provider contracts and critical requirements. [ARCHITECTURE](docs/ARCHITECTURE.md) owns component responsibility, [IMPLEMENTATION-PLAN](docs/IMPLEMENTATION-PLAN.md) owns sequence, and [PACKAGE-MANIFEST](PACKAGE-MANIFEST.md) owns identity and lineage.
 
-Version 2.2.1 clarifies the shared canonical proofreading prompt and specifies one measured startup policy for the existing explicit local Settings test. The prompt makes existing profile/language mappings, compatible-clean versus unsupported decisions, necessary single local edits, literal final equality, and actual-diff category/explanation explicit; concise plain English explanations are preferred, not required. Only the worker-owned synthetic local test receives a fixed 25-second bound. Writing checks, discovery, OpenRouter and every official corpus case retain 15 seconds. The v2.2.0 settings, privacy, transport payloads, canonical corpus, quality standard, deterministic validation, supported surfaces, writer-approved Apply, native Undo and stale-result authority carry forward unchanged. Future material changes require a separately authorized versioned documentation objective.
+Version 2.3.0 freezes the measured daily-use successor: Brave/macOS native spelling supplies ordinary word-level assistance, and an explicit **Proofread with Emenda** action supplies deep proofreading through the qualified local Gemma path or explicitly selected OpenRouter. Ambient typing is provider-free. This documentation objective preserves the model-facing linguistic contract and conservative editing surface while changing dispatch, resource, recovery and interaction semantics. Product implementation requires the separate authorization in [PROMPT](PROMPT.md).
 
 ## 2. Product goal
 
 Emenda is a personal browser writing assistant designed to propose at most one exact local correction. Its canonical prompt instructs the model to preserve the writer's language, meaning, voice, rhythm, register, terminology, names, quotations, and Duktus and never to translate. Local validation proves structure rather than semantics; the complete before/after display and explicit writer approval are the final safeguard, and Emenda never applies a proposal silently.
 
-The writer's page remains the primary writing surface. Observation begins only after explicit permission for the current origin, and page text changes only after explicit Apply.
+The writer's page remains the primary writing surface. Observation begins only after explicit permission for the current origin, deep page-text dispatch begins only after Proofread with Emenda, and page text changes only after explicit Apply. Emenda adds no spelling engine, spelling process or automatic grammar lane; native spelling remains independent of Emenda settings and provider availability.
 
 ## Trust and threat model
 
@@ -30,7 +30,7 @@ The language model supplies bounded semantic judgment as proposed data. Determin
 
 The local oMLX process receives bounded text only over the fixed loopback endpoint; local mode never sends inference text to OpenRouter or another remote endpoint, even after local failure. Its logging and cache boundary is specified in Section 14 and verified with synthetic canaries. In explicitly selected OpenRouter mode, OpenRouter and each eligible provider endpoint process a bounded request under their applicable policies. Within-request fallback may expose that same text to multiple eligible endpoints for the configured remote model. Requested data-collection denial is not a zero-retention guarantee. Exact returned-model identity prevents explicit substitution in the response contract; local selection additionally requires a direct case-sensitive catalog ID, while remote syntax does not prove an ID lacks internal routing.
 
-### Accepted V0.1 limitations
+### Accepted V0.2 limitations
 
 The writer accepts two disclosed enabled-origin residual risks: page work nested in a genuine trusted editing event or queued ahead of ticket expiry can consume one provenance ticket, and DOM hit-testing cannot detect compositor-only or `pointer-events: none` visual covers. Provider credentials reside in the browser profile rather than an operating-system secret vault. The local server may retain model KV state and the OS may create crash diagnostics; Emenda makes no total server-persistence or OS-diagnostic confidentiality guarantee. Writer approval remains required because a structurally valid single hunk can still be semantically wrong.
 
@@ -58,14 +58,19 @@ These stable identifiers cover only high-risk invariants. Their detailed section
 | `EM-SEC-001` | Emenda never interprets untrusted page or model strings as executable instructions, markup, links, or code; they render literally, and the provider prompt instructs the model to treat document text as untrusted. | Sections 9, 14 |
 | `EM-SEC-002` | Surface classification and exposure occur before text read; the supported textarea boundary fails closed. | Sections 6, 11 |
 | `EM-SEC-003` | Enabled-origin residual risks and provider/credential assumptions remain explicit in writer disclosure and evidence. | This trust model; Sections 6, 14; UX Section 9 |
+| `EM-RES-001` | Ambient edits and lifecycle events produce zero provider traffic; settling is source-local and bounded. | Sections 3, 4, 6 |
+| `EM-OPS-001` | One exclusive bounded client dispatch lease spans tabs and expensive diagnostics, with zero queued work. | Section 4 |
+| `EM-OPS-002` | Coalescing and transient reuse require exact identity, bounded retention and fresh authority. | Sections 4, 14 |
+| `EM-OPS-003` | Unknown provider completion remains explicit; capability-based recovery and permanent operation fencing prevent obsolete authority. | Sections 4, 9, 13 |
+| `EM-QUAL-001` | Inherited linguistic qualification requires deterministic preservation of the qualified model-facing semantics. | Section 9; Acceptance Section 6.3 |
 
-## 3. V0.1 runtime and limits
+## 3. V0.2 runtime and limits
 
-V0.1 is one strict-TypeScript product core and one Chromium Manifest V3 extension with:
+V0.2 is one strict-TypeScript product core and one Chromium Manifest V3 extension with:
 
 ```text
 minimum_chrome_version: "140"
-PROTOCOL_VERSION: 1
+PROTOCOL_VERSION: 2
 SETTINGS_SCHEMA_VERSION: 2
 DEBOUNCE_MS: 600
 MAX_CONTEXT_SCALARS: 1200
@@ -75,15 +80,20 @@ MAX_COMPLETION_TOKENS: 8192
 PROVIDER_TIMEOUT_MS: 15000
 LOCAL_MODEL_TEST_TIMEOUT_MS: 25000
 MAX_PROVIDER_RESPONSE_BYTES: 32768
+MAX_RECENT_RESULTS: 4
+RECENT_RESULT_TTL_MS: 60000
+MAX_RECENT_RESULT_BYTES: 65536
 ```
 
 The state union is:
 
 ```text
-Idle | Debouncing | Checking | Suggestion | Applying | Error
+Disabled | Idle | Settling | Checking | Suggestion | Applying | Error
 ```
 
-There is no persistent Clean state. One eligible revision causes at most one inference POST and one response containing zero or one correction. The local adapter’s preceding catalog GET contains no page text and shares that operation’s deadline.
+There is no persistent Clean state. One explicit page action initiates at most one inference POST and one response containing zero or one correction; coalescing and cache hits initiate none. The worker operation registry separately has `Idle | Running | Recovering` state. The local adapter's fresh catalog GET contains no page text and shares the operation deadline.
+
+Resource invariants are Required: zero ambient inference, catalog, readiness or status traffic; zero automatic model load, warm-up, keepalive or pinning; zero new language background process; at most one trailing settling timer per active controller; at most one authoritative expensive client operation globally; and zero queued deep work. With stable text and no pending explicit deep work or cache expiry, Emenda has no scheduled compute. The sole one-shot cache-expiry timer exists only to remove retained completed results under Section 4.
 
 The supported profile modes are:
 
@@ -95,13 +105,13 @@ auto | de-CH | en-GB | en-US | fr-FR | ka-GE | ru-RU
 
 ## 4. State, effects, and authority
 
-One pure reducer controls revisions, debounce state, checking, validation outcomes, suggestions, Apply, Dismiss, and errors. Effects execute timers, inference, storage, messaging, and DOM operations and report results back to that reducer.
+One pure reducer controls source-local revisions, settling, explicit proofread intent, checking, validation outcomes, suggestions, Apply, Dismiss, and errors. Effects execute timers, inference, storage, messaging, and DOM operations and report results back to that reducer.
 
-The core compiles without DOM, Chrome, Node, React, or extension types. Domain values, context policy, and reducer state use pure TypeScript. Zod is permitted only in `core/provider-schema/`, `extension/protocol/`, and the worker-owned trusted-settings boundary. Every runtime message uses `protocolVersion: 1` in a strict discriminated envelope. Unknown versions, types, properties, payloads, and senders fail closed; exact internal type names remain an implementation choice. V0.1 uses only one-shot `runtime.sendMessage` and document-targeted `tabs.sendMessage`, never a long-lived `Port`, so every content message receives fresh sender lifecycle metadata.
+The core compiles without DOM, Chrome, Node, React, or extension types. Domain values, context policy, and reducer state use pure TypeScript. Zod is permitted only in `core/provider-schema/`, `extension/protocol/`, and the worker-owned trusted-settings boundary. Every runtime message uses `protocolVersion: 2` in a strict discriminated envelope. Unknown versions, types, properties, payloads, and senders fail closed; exact internal type names remain an implementation choice. V0.2 uses only one-shot `runtime.sendMessage` and document-targeted `tabs.sendMessage`, never a long-lived `Port`, so every content message receives fresh sender lifecycle metadata.
 
 Protocol dispatch is sender-class-specific. Content-origin operations such as initialization, check, cancellation, and Apply authorization require the complete active top-level HTTP(S) predicate in Section 12. Options-origin reads, saves, origin revocation, local model discovery, and synthetic readiness checks require `sender.id === chrome.runtime.id`, an exact `sender.url === chrome.runtime.getURL("options.html")`, and `sender.origin === new URL(chrome.runtime.getURL("options.html")).origin`. Content cannot invoke settings operations, options cannot invoke content operations, and every cross-class combination fails closed.
 
-Each eligible committed change synchronously reserves a new monotonically increasing `RevisionId`. It clears any current error or suggestion, invalidates the older Apply capability and timer, best-effort cancels older inference, and starts one trailing-edge 600 ms debounce.
+Each eligible committed change synchronously reserves a new monotonically increasing `RevisionId`. It clears any current error or suggestion, invalidates the older Apply capability and timer, best-effort cancels older inference, and starts one trailing-edge 600 ms settling timer in that controller. At 599 ms the controller remains Settling; at 600 ms after the final edit it returns to Idle through local bookkeeping only. Timer expiry performs no inference capture, worker dispatch or provider call. Replacement timers and source invalidation clear the prior timer. Independent controllers do not reset each other's settling state.
 
 A newer revision is authoritative even when cancellation is unavailable or races. Stale completions, failures, and commands cannot change state, presentation, or page text. Before any provider success or failure changes presentation, the content script also rechecks the captured source, document, snapshot value and selection, foreground focus, and exposure through `BrowserTextSurface`; a mismatch refreshes only a supported local baseline, invalidates that revision, and returns silently to `Idle`.
 
@@ -115,9 +125,51 @@ current SuggestionId
 + suggestion belongs to that revision
 ```
 
-Source and snapshot references remain opaque to the core. Editor identity, raw DOM data, the unbounded captured document, and snapshot state remain in the content script; only the selected bounded context copy may cross to the worker. On a short document that bounded context can equal all of its text.
+Actual source and snapshot references remain opaque to the core. Editor identity, raw DOM data, the unbounded captured document, and snapshot state remain in the content script; only the selected bounded context copy may cross to the worker. On a short document that bounded context can equal all of its text.
 
 Chrome attaches `MessageSender` metadata to content-script messages. The worker may inspect only the browser-supplied sender fields required to prove same-extension, active top-level HTTP(S) document, exact enabled origin, current host permission, and request cancellation. This metadata is ephemeral authority input: Emenda-authored payloads omit it, and the worker never persists, logs, includes in errors, or forwards the page URL, tab metadata, document ID, or frame metadata to either provider.
+
+### 4.1 Explicit action and context-menu handoff
+
+Proofread with Emenda is one browser context-menu item using the `editable` context. The toolbar retains Enable/Reactivate. The menu uses enabled-origin document patterns and is removed when there are no enabled origins; pattern visibility is only a UI filter, never authority. The worker synchronously registers `contextMenus.onClicked` and performs no permission prompt in that handler. See the [Chrome context-menu API](https://developer.chrome.com/docs/extensions/reference/api/contextMenus).
+
+The content script records one replaceable candidate only from a trusted `contextmenu` event on a currently authorized eligible textarea. Surface classification and nontext exposure checks precede any text read. The candidate binds the actual content-local source, generation, document and exact collapsed selection; full snapshot and DOM references remain content-local. Opening the menu performs no provider or readiness call and does not suppress native spelling/menu behavior. Selecting text, composing, changing source/text/selection, navigating or losing authorization invalidates the candidate. Ordinary blur still retires existing presentation authority; the browser-owned menu action may complete only a controlled handoff to this candidate and must re-establish visible window-focused source eligibility before capture. It cannot preserve an old suggestion or revive invalidated authority.
+
+The browser-owned click creates a single-use worker intent token bound in memory to the selected tab/top-level document and current authorization. An `editable` flag, page-authored event or arbitrary content Check message alone cannot dispatch deep work. The content reply must carry that live intent token through protocol 2 and supply fresh browser sender metadata. A nonzero frame or missing/contradictory lifecycle identity fails closed. The worker never reads or forwards menu `selectionText` as linguistic input.
+
+The content controller cancels settling, restores only the still-current candidate source/caret when necessary, repeats source/value/selection/foreground/exposure/configuration checks, captures its latest state and invokes the unchanged Section 7 algorithms immediately. No preceding edit or pause is required. Capturing an unchanged current state retains its source revision so identical repeated actions can coalesce; a changed supported baseline obtains fresh revision authority. An invalid or over-limit/nonlinguistic capture dispatches no provider request. An unsupported explicit target receives a concise unavailable action outcome without reading rejected editor text. The action never chooses another textarea, broadens permissions or changes native selections to manufacture eligibility.
+
+### 4.2 Global operation authority and request identity
+
+The worker registry owns one exclusive client-side dispatch lease across page actions and inference-capable diagnostic Tests. Read-only model discovery is not expensive inference. Admission is serialized from freshly authorized state; the existing origin/settings lifecycle FIFO remains a separate responsibility. Recovery inspection belongs to the same admitted action and cannot overlap another admitted deep operation.
+
+Identity includes purpose, browser-supplied document identity, opaque source generation/revision, exact bounded model input, provider, trusted profile/model, configuration revision, and canonical prompt/schema identity. Diagnostic identity uses its fixed fixture and trusted configuration rather than a page source. A document-scoped opaque correlation token may cross content-to-worker only for operation/cache identity; it contains no DOM identifier, selector or actual source/snapshot reference and conveys no authority by itself. Browser identity and correlation tokens remain worker-memory-only and never enter provider traffic, errors, logs or durable state.
+
+After fresh authorization, an identical active identity coalesces with the same operation token, deadline and completion; it adds no request, queued job or new timer. A distinct concurrent action receives Busy immediately, including across tabs or diagnostics. Zero deep jobs are retained for later dispatch. Repeated actions do not renew a lease or result authority. An admitted operation receives a unique fencing token never reused across worker lifetimes; the selected provider adapter exposes execution-status inspection availability and best-effort cancellation to one central recovery policy. No provider-specific policy is scattered into DOM logic.
+
+### 4.3 Completion, expiry and uncertainty
+
+Transport reports whether inference could have been dispatched and distinguishes known terminal completion from unknown completion after abort, timeout or lost worker state. An abort is not proof that provider computation stopped. Source/lifecycle/configuration invalidation immediately and permanently retires result authority, independently of lease ownership. Completion or deadline expiry also permanently retires that operation token; current authorized completion is processed once before retirement. Every asynchronous event checks its exact operation owner in addition to current revision/configuration and content surface authority. Late success and failure from a retired token cannot change cache, registry ownership, readiness, presentation or text.
+
+Before a possible inference POST, the worker persists one strict text-free execution marker separately from settings in TRUSTED_CONTEXTS `storage.local`. The marker records only schema version, nonreusable operation token, provider kind, phase and the operation's original deadline. It contains no document/source/origin identity, input, result, profile, model or credential. A failed marker write refuses dispatch. Marker updates/clears compare the operation token so an old callback cannot alter a newer lease. A normal known-terminal completion clears the marker before another deep dispatch; a failed clear retains fail-closed recovery. Cancellation before any possible POST needs no server recovery. An observed terminal HTTP/parsed outcome retires safely; transport uncertainty after possible POST remains explicit.
+
+On startup the worker validates the marker locally, retires all predecessor tokens and drops the transient cache; it performs zero network activity. A valid interrupted local marker becomes Recovering. A valid interrupted remote marker retains only the remaining original lease bound. Live deadlines use the deterministic monotonic scheduler; persisted deadlines use UTC epoch milliseconds and restore at most the operation's original maximum duration, so backward wall-clock changes cannot create an unbounded remote lease. Corrupt marker data fails closed with a redacted unavailable state rather than being treated as proof of idle execution.
+
+For unresolved local execution, the next explicit deep action performs one read-only authenticated status inspection using the saved local credential, even if active-provider settings have changed. This prevents settings changes from discarding unresolved local work. A valid idle observation clears local uncertainty and permits the explicitly selected provider's normal path under the same action deadline. Busy/loading/unknown or failed inspection leaves Recovering and returns unavailable with no inference POST and no backlog. No periodic inspection, load/unload or retry occurs. Server status is an observation, not an atomic reservation against other oMLX clients.
+
+For unresolved OpenRouter execution, dispatch exclusion lasts until known terminal completion or the original operation deadline. Expiry releases the client lease without a provider status call; only a later explicit action may create a new operation. A retired response cannot regain authority. Physical remote computation may outlive that lease and overlap a later explicit request; Emenda guarantees one authoritative client operation, not remote termination or datacenter-wide concurrency.
+
+### 4.4 Bounded recent-result reuse
+
+The worker retains at most four completed valid writing results globally, document-scoped, for 60,000 ms from completion without sliding extension. Eligible results are derived corrections and valid no-correction outcomes; failures, cancelled/stale results and diagnostic readiness results are excluded. Store only exact bounded input/identity and validated derived outcomes, never raw provider bodies. A hit creates fresh current presentation/suggestion authority after source revalidation; it never reuses an old capability or old snapshot.
+
+Charge each entry by the UTF-8 byte length of a deterministic JSON encoding containing all retained identity fields, bounded input and validated result. The summed charge never exceeds 65,536 bytes. This bounds serialized retained payload, not JavaScript object overhead or process RSS. Reject an oversized entry; evict oldest-completed entries until both count and byte limits hold. Use one global one-shot timer for the next expiry, remove expired entries and rearm only for remaining entries. Lookup also removes expired entries. Worker termination removes all entries; no cache enters local/session/sync storage, files, logs or evidence.
+
+Text/source revisions make old entries ineligible immediately. Fresh lookup rejects any mismatch and evicts incompatible source entries; already-required cancellation/lifecycle notices can remove affected entries earlier, without adding per-edit IPC solely to maintain a cache. Configuration changes clear incompatible entries globally. Navigation, page teardown and revocation evict affected document/origin entries; the worker revalidates current document/permission before lookup. Cache hits bypass provider catalog/status/inference traffic only when no active lease or unresolved recovery blocks the action. Apply changes source revision and invalidates source reuse; Dismiss changes suggestion state only, and a subsequent deliberate Proofread may reuse an otherwise eligible result.
+
+### 4.5 Qualified linguistic boundary
+
+The successor retains the qualified `gemma-3-12b-it-4bit` path. [Acceptance Section 6.3](docs/ACCEPTANCE.md#63-live-provider-evidence) defines inherited evidence and deterministic equivalence. Settings still have no compiled model default; another explicitly selected model has no inherited Gemma qualification. Operation, intent and correlation tokens are internal authority fields and add no model-facing information.
 
 ## 5. Settings authority
 
@@ -175,7 +227,7 @@ settingsRevision
 
 One worker-owned active-configuration predicate is used for inference, public configuration, and Apply authorization. Local configuration requires a syntactically valid model and a valid optional credential; OpenRouter requires its valid model and credential. `isConfigured` means necessary settings exist, not that the server/model is ready, linguistically qualified, or available. Provider selection, profile, models, and credentials never enter content scripts. The worker derives the profile and selected transport privately; `protocolVersion` belongs to the message envelope.
 
-Provider, either model, either credential, or profile changes increment the revision, cancel inference, invalidate suggestions and obsolete errors, and broadcast the validated public configuration to live enabled top frames without inspecting tab URLs. A newly complete configuration returns controllers to silent `Idle`; only the next committed input starts new work. Origin changes do not increment the revision. Every check and immediate pre-Apply authorization validates current sender, enabled origin, exact site permission, active configuration, and revision. A stale request returns current public configuration and is never retried.
+Provider, either model, either credential, or profile changes increment the revision, cancel inference, invalidate suggestions and obsolete errors, and broadcast the validated public configuration to live enabled top frames without inspecting tab URLs. A newly complete configuration returns controllers to silent `Idle`; only a subsequent explicit Proofread or separately authorized Settings action starts provider work; typing remains provider-free. Origin changes do not increment the revision. Every check and immediate pre-Apply authorization validates current sender, enabled origin, exact site permission, active configuration, and revision. A stale request returns current public configuration and is never retried.
 
 Options-only local discovery makes a worker-owned `GET http://127.0.0.1:8000/v1/models` using the local credential when present and the same fetch confinement controls. It returns only validated model IDs and typed redacted failures under the 15,000 ms full-processing deadline.
 
@@ -187,9 +239,9 @@ The explicit synthetic request may initialize/warm the local model as a conseque
 
 ## 6. Observation and IME
 
-Only eligible writer-committed changes start debounce and inference. Every `beforeinput` first invalidates the prior provenance ticket. For ordinary non-composition editing, a trusted `beforeinput` on a textarea that passes the base surface/exposure predicate in Section 11, has well-formed text, and has one lossless collapsed selection creates one opaque same-source, same-generation ticket containing the exact pre-value and pre-selection and immediately queues one private one-shot expiry task. The first input of any kind clears the ticket, and the callback clears it only if that same opaque ticket is still current; microtasks do not expire it. Only a qualifying trusted `InputEvent` for the bound source and generation received before that callback may consume it; the textarea must again pass the base predicate with well-formed text and one lossless collapsed selection. The exact resulting value and selection synchronously become the latest accepted ordinary post-input baseline for that source and generation. If the text changed, that tuple is bound to the committed change and its newly reserved revision. If the text did not change, no revision starts; a changed selection still invalidates prior authority.
+Only eligible writer-committed changes start local settling. Only an authorized explicit Proofread action starts page-text inference. Every `beforeinput` first invalidates the prior provenance ticket. For ordinary non-composition editing, a trusted `beforeinput` on a textarea that passes the base surface/exposure predicate in Section 11, has well-formed text, and has one lossless collapsed selection creates one opaque same-source, same-generation ticket containing the exact pre-value and pre-selection and immediately queues one private one-shot expiry task. The first input of any kind clears the ticket, and the callback clears it only if that same opaque ticket is still current; microtasks do not expire it. Only a qualifying trusted `InputEvent` for the bound source and generation received before that callback may consume it; the textarea must again pass the base predicate with well-formed text and one lossless collapsed selection. The exact resulting value and selection synchronously become the latest accepted ordinary post-input baseline for that source and generation. If the text changed, that tuple is bound to the committed change and its newly reserved revision. If the text did not change, no revision starts; a changed selection still invalidates prior authority.
 
-An untrusted, unpaired, expired, wrong-source, or wrong-generation input on a textarea that independently passes the base nontext predicate may recapture its local baseline only when text and selection are well formed and lossless, and may invalidate stale authority when the tuple changed, but starts no revision, debounce, or inference. Events from inputs, contenteditable hosts, and every other rejected editor class are ignored without reading their text. The exact registered self-authored input during Apply is the sole provenance bypass and follows Section 10. This pairing rejects synthetic dispatch, value-only changes, and page `execCommand` input when no ticket is outstanding. It does not claim to distinguish page work nested in a genuine trusted `beforeinput` or queued ahead of that ticket's expiry callback; the opaque one-use ticket bounds but cannot eliminate that explicitly enabled-origin limitation.
+An untrusted, unpaired, expired, wrong-source, or wrong-generation input on a textarea that independently passes the base nontext predicate may recapture its local baseline only when text and selection are well formed and lossless, and may invalidate stale authority when the tuple changed, but starts no revision, settling, or inference. Events from inputs, contenteditable hosts, and every other rejected editor class are ignored without reading their text. The exact registered self-authored input during Apply is the sole provenance bypass and follows Section 10. This pairing rejects synthetic dispatch, value-only changes, and page `execCommand` input when no ticket is outstanding. It does not claim to distinguish page work nested in a genuine trusted `beforeinput` or queued ahead of that ticket's expiry callback; the opaque one-use ticket bounds but cannot eliminate that explicitly enabled-origin limitation.
 
 Composition handling is centralized:
 
@@ -199,7 +251,7 @@ Composition handling is centralized:
 4. A later terminal non-composing pair with identical text, source, and selection is deduplicated for that generation.
 5. A divergent later pair is ordinary external input and must independently satisfy ordinary eligibility before it can reserve a revision.
 
-Outside an eligible intermediate composition state, a non-collapsed selection is ineligible and returns silently to `Idle`. V0.1 checks only a collapsed caret in a foreground document: capture requires `document.visibilityState === "visible"`, `document.hasFocus()`, and `document.activeElement` equal to the textarea. Every inference snapshot binds the connected source, document, exact textarea value, and exact collapsed UTF-16 selection. A `select` or `selectionchange` event, a moved caret, or focus leaving the source invalidates current authority and any provenance ticket or composition generation, except for a notification matching the latest accepted ordinary, eligible composing, or self-authored Apply baseline, the scoped internal target-selection phase in Section 10, and one direct transition into the current Emenda approval UI. That controlled handoff retains the captured selection while focus moves among the current internal controls; any selection change or focus leaving both the captured source and that current UI before Apply or Dismiss invalidates it. A delayed or coalesced selection notification is ignored only when its bound source and current value, selection start/end/direction, generation, and revision identity if one exists equal that latest applicable baseline; a mismatch invalidates authority. A transition to a hidden document or a window blur immediately clears provenance, invalidates current authority, cancels debounce and inference best-effort, removes current presentation, and causes no retry when visibility or window focus returns.
+Outside an eligible intermediate composition state, a non-collapsed selection is ineligible and returns silently to `Idle`. V0.2 checks only a collapsed caret in a foreground document: capture requires `document.visibilityState === "visible"`, `document.hasFocus()`, and `document.activeElement` equal to the textarea. Every inference snapshot binds the connected source, document, exact textarea value, and exact collapsed UTF-16 selection. A `select` or `selectionchange` event, a moved caret, or focus leaving the source invalidates current authority and any provenance ticket or composition generation, except for a notification matching the latest accepted ordinary, eligible composing, or self-authored Apply baseline, the scoped internal target-selection phase in Section 10, and one direct transition into the current Emenda approval UI. That controlled handoff retains the captured selection while focus moves among the current internal controls; any selection change or focus leaving both the captured source and that current UI before Apply or Dismiss invalidates it. A delayed or coalesced selection notification is ignored only when its bound source and current value, selection start/end/direction, generation, and revision identity if one exists equal that latest applicable baseline; a mismatch invalidates authority. A transition to a hidden document or a window blur immediately clears provenance, invalidates current authority, cancels settling and inference best-effort, removes current presentation, and causes no retry when visibility or window focus returns.
 
 ## 7. Scalar text model and focus
 
@@ -280,7 +332,7 @@ type Correction = {
 };
 ```
 
-The model-authored `correctedFocus` never crosses the worker boundary. Revision identity remains Emenda-authored and is attached to the trusted local outcome. The content controller retains the original complete focus and reconstructs the complete corrected focus exactly once from the trusted hunk for approval display. The existing versioned runtime envelope need not change merely because the external provider contract changed.
+The model-authored `correctedFocus` never crosses the worker boundary. Revision identity remains Emenda-authored and is attached to the trusted local outcome. The content controller retains the original complete focus and reconstructs the complete corrected focus exactly once from the trusted hunk for approval display. The external linguistic contract remains unchanged; protocol 2 carries only the successor’s internal intent and operation authority.
 
 A single hunk proves only one structural edit. It cannot prove that the model preserved meaning or avoided translation. The prompt requires semantic preservation, and the overlay shows the writer exact before and after text for judgment before Apply.
 
@@ -288,7 +340,7 @@ The observable alignment and hunk rules are binding; matrix representation, trac
 
 ## 9. Provider request
 
-The worker composes the existing `WorkerProvider` port from shared bounded input, canonical prompt/schema, bounded response processing, strict result parsing, pure derivation, cancellation, and deadline handling, plus one selected transport adapter. It dispatches at most one nonstreaming inference POST per eligible revision to the active provider. Local inference first makes one fresh bounded authenticated catalog GET, containing no page text, to enforce exact case-sensitive model membership. Local failure never selects OpenRouter; no adapter performs application-level retries, repair, streaming, or model substitution.
+The worker composes the existing `WorkerProvider` port from shared bounded input, canonical prompt/schema, bounded response processing, strict result parsing, pure derivation, cancellation, and deadline handling, plus one selected transport adapter. It dispatches at most one nonstreaming inference POST per admitted explicit operation to the active provider, under Section 4's global lease. Local inference first makes one fresh bounded authenticated catalog GET, containing no page text, to enforce exact case-sensitive model membership. Local failure never selects OpenRouter; no adapter performs application-level retries, repair, streaming, or model substitution.
 
 Both adapters use the trusted active model and profile. The two messages are exactly the canonical system instruction followed by `JSON.stringify({ profileMode: trustedSettings.profileMode, before, focus, after })` in that property order and with no additional fields. Content messages carry no profile; settings revision and browser metadata remain internal authority inputs. Fetch uses `method: "POST"`, `credentials: "omit"`, `cache: "no-store"`, `redirect: "error"`, `referrerPolicy: "no-referrer"`, and the active cancellation signal. Emenda authors only `Content-Type: application/json` and, when applicable, `Authorization: Bearer <apiKey>`.
 
@@ -344,7 +396,7 @@ Both adapters send these common semantic fields:
 }
 ```
 
-Property order outside serialized user content is not significant. The 15,000 ms full-processing deadline applies to every writing/inference check, independent local catalog discovery, OpenRouter request and official qualification case. It begins with the first dispatch, includes local catalog discovery when required, and covers incremental reading, fatal UTF-8 decoding, outer parsing, strict model-result validation and semantic derivation to a terminal outcome. Only the explicit local Settings synthetic test in Section 5 uses its fixed 25,000 ms full-processing bound with the same production processing. Reading stops above 32,768 bytes in either operation. Cancellation is best-effort; revision authority still wins. Writing deadlines are never extended for cold start; no automatic warm-up inference, application retry or per-case qualification retry is permitted.
+Property order outside serialized user content is not significant. The 15,000 ms full-processing deadline applies to every writing/inference check, independent local catalog discovery, OpenRouter request and official qualification case. For an admitted deep action it begins at admission, includes recovery inspection and local catalog discovery when required, and covers incremental reading, fatal UTF-8 decoding, outer parsing, strict model-result validation and semantic derivation to a terminal outcome. Only the explicit local Settings synthetic test in Section 5 uses its fixed 25,000 ms full-processing bound with the same production processing. Reading stops above 32,768 bytes in either operation. Cancellation is best-effort; revision authority still wins. Writing deadlines are never extended for cold start; no automatic warm-up inference, application retry or per-case qualification retry is permitted.
 
 HTTP success requires 2xx and `application/json` after case-insensitive media-type parsing and parameter removal. The bounded body is decoded and parsed once. Its envelope has no top-level error, `model` exactly matching the trusted requested ID, and exactly one choice at index 0 without error or refusal, with `finish_reason: "stop"` and assistant string content. The content is parsed once as JSON, validated by the strict ModelResult schema, and derived under Section 8. Unrelated documented transport metadata may be ignored without logging. HTTP-200 error envelopes, wrong identity, refusals, invalid finish/envelope/content, and schema/semantic failures are rejected as typed redacted outcomes. Selected identity is available only to sanitized live evidence.
 
@@ -358,7 +410,9 @@ POST http://127.0.0.1:8000/v1/chat/completions
 
 No configurable remote/base URL, `localhost` substitution, redirect, proxy route, alias, model profile, or alternate provider is used. Add exactly `max_tokens: 8192`, `tool_choice: "none"`, `enable_thinking: false`, and `thinking_budget: 0` to the shared fields. OpenRouter `provider`, `plugins`, `reasoning`, and `max_completion_tokens` fields are absent. Tools and server tools are absent. The oMLX server remains loopback-bound with `model_fallback: false`, and request model selection is a direct case-sensitive catalog ID freshly verified by `GET http://127.0.0.1:8000/v1/models` before the sole inference POST. Catalog responses use the same auth/fetch confinement, incremental byte bound and deadline; malformed/unknown/wrong-case entries fail before any page text is sent. No catalog retry, alias resolution or cached-membership shortcut is used. Reject oMLX `Warning: 199` grammar-downgrade responses even when the HTTP status, outer envelope, and generated JSON would otherwise pass; an unsupported strict schema is failure rather than downgraded qualification.
 
-Local request logging is configured to `critical` and verified with synthetic canaries. Local model KV caching may remain enabled as model state. Emenda neither stores a raw prompt/body/history nor claims that server caches or OS crash diagnostics contain no derived text. Qualification records actual oMLX build, direct model ID, cold/warm latency, memory observations, server policy, and behavior with Brave running.
+Recovery alone uses `GET http://127.0.0.1:8000/api/status`, authenticated with the saved local credential and the same no-store/no-redirect/no-referrer/omit-credentials controls. Perform exactly one bounded JSON read per recovery action, within the writing 15-second deadline (or existing 25-second local diagnostic Test deadline). Require `status: "ok"`, a valid server version string, and nonnegative safe-integer `models_loading`, `active_requests` and `waiting_requests`; only all three zero permits dispatch. Reject absent/malformed fields, non-2xx/error bodies or incompatible responses. Ignore unrelated metrics without logging them. Zero loaded models is permissible; an idle snapshot promises neither residency nor admission. The inspected application build `0.7.0.dev4` provides these fields; another runtime needs explicit compatibility evidence. Local recovery never invokes health polling, load/unload or resident-only inference.
+
+Local request logging is configured to `critical` and verified with synthetic canaries. Local model KV caching may remain enabled as model state. Emenda retains bounded input only transiently under Section 4.4, stores no raw provider body or persistent prompt/history, and makes no claim that server caches or OS crash diagnostics contain no derived text. Qualification records actual oMLX build, direct model ID, cold/warm latency, memory observations, server policy, and behavior with Brave running.
 
 ### 9.3 Explicit OpenRouter transport
 
@@ -436,9 +490,9 @@ replacement
 
 The only mutation leaf is a runtime-gated `document.execCommand("insertText", false, replacement)` with that verified correction-range selection. Direct value assignment, DOM rewriting, clipboard operations, simulated keys, and fallback mutation strategies are forbidden.
 
-Success requires the call to return `true`, synchronously produce the exact registered input event, and leave the exact expected post-edit logical text. The event is consumed internally as `AppliedChange`: it updates the adapter's snapshot, logical-text baseline, and resulting selection baseline and does not emit `ObservedChange`. Successful replacement returns the post-edit snapshot. A later queued or coalesced selection notification is self-authored only when the current source and selection still equal that baseline. The controller advances authority, invalidates the suggestion, and returns to `Idle` without debounce or inference.
+Success requires the call to return `true`, synchronously produce the exact registered input event, and leave the exact expected post-edit logical text. The event is consumed internally as `AppliedChange`: it updates the adapter's snapshot, logical-text baseline, and resulting selection baseline and does not emit `ObservedChange`. Successful replacement returns the post-edit snapshot. A later queued or coalesced selection notification is self-authored only when the current source and selection still equal that baseline. The controller advances authority, invalidates the suggestion, and returns to `Idle` without settling or inference.
 
-After any non-success, the surface recaptures once. A thrown exception, `false` return, or missing acknowledgement is a typed Apply refusal only when the exact verified pre-edit state remains. A mismatching event or any unexpected changed state is external: it refreshes the supported baseline, invalidates the Apply result, and prevents a false no-mutation claim, but reserves and debounces a revision only when that change independently arrived through eligible paired-input provenance. No fallback mutation is attempted.
+After any non-success, the surface recaptures once. A thrown exception, `false` return, or missing acknowledgement is a typed Apply refusal only when the exact verified pre-edit state remains. A mismatching event or any unexpected changed state is external: it refreshes the supported baseline, invalidates the Apply result, and prevents a false no-mutation claim, but reserves and settles a revision only when that change independently arrived through eligible paired-input provenance. No fallback mutation is attempted.
 
 A surface is supported for Apply only after browser evidence proves that one native Undo restores the exact original text.
 
@@ -446,9 +500,9 @@ A surface is supported for Apply only after browser evidence proves that one nat
 
 The base surface predicate accepts only one visible, focused, writable, exposed, sequentially keyboard-focusable (`tabIndex === 0`) light-DOM `<textarea>` on an explicitly enabled top-level HTTP(S) page. The document must be visible and have window focus, and the textarea must be `document.activeElement`, connected to that active document, enabled, not readonly or inert, have a nonempty client rectangle intersecting the layout viewport, and have visible computed display, visibility, and nonzero opacity through its ancestor chain. Ordinary eligibility, inference capture, completion-time presentation, and final Apply additionally require its exact value and collapsed selection to map losslessly between UTF-16 DOM offsets and Unicode-scalar offsets. Only eligible intermediate IME pairs may carry a noncollapsed lossless selection, and they never infer.
 
-One exposure predicate is used at input eligibility, post-debounce capture, completion-time presentation recheck, and final Apply verification. Intersect the textarea's client rectangle with the layout viewport, take the clipped rectangle's midpoint, obtain `document.elementsFromPoint` there, discard only the current Emenda overlay host, and require the first remaining hit element to be that textarea. The tag, attributes, document/focus state, CSS/geometry, and exposure predicates are evaluated before reading textarea text. Missing APIs, an empty intersection, or any other result fails closed. This is a deterministic DOM hit-test boundary, not a claim to detect compositor-only or `pointer-events: none` visual covers; that limitation remains explicit in browser evidence.
+One exposure predicate is used at input eligibility, explicit-proofread capture, completion-time presentation recheck, and final Apply verification. Intersect the textarea's client rectangle with the layout viewport, take the clipped rectangle's midpoint, obtain `document.elementsFromPoint` there, discard only the current Emenda overlay host, and require the first remaining hit element to be that textarea. The tag, attributes, document/focus state, CSS/geometry, and exposure predicates are evaluated before reading textarea text. Missing APIs, an empty intersection, or any other result fails closed. This is a deterministic DOM hit-test boundary, not a claim to detect compositor-only or `pointer-events: none` visual covers; that limitation remains explicit in browser evidence.
 
-The snapshot binds `value`, `selectionStart`, `selectionEnd`, and `selectionDirection`; the first two offsets must be equal. Conversion rejects a boundary inside a surrogate pair, malformed Unicode, raw CR, or any correction range that cannot round-trip exactly. There is no DOM-tree text reconstruction or contenteditable mapping in V0.1.
+The snapshot binds `value`, `selectionStart`, `selectionEnd`, and `selectionDirection`; the first two offsets must be equal. Conversion rejects a boundary inside a surrogate pair, malformed Unicode, raw CR, or any correction range that cannot round-trip exactly. There is no DOM-tree text reconstruction or contenteditable mapping in V0.2.
 
 Inputs, contenteditable hosts, iframes, shadow-DOM editors, rich, virtualized, canvas, and Google Docs-style editors, restricted or extension pages, file URLs, PDFs, hidden/offscreen, readonly, disabled, inert, or non-sequential surfaces, and incognito are unsupported. Excluded surfaces fail closed rather than operating partially.
 
@@ -458,7 +512,7 @@ The manifest disables incognito and declares only:
 
 ```json
 {
-  "permissions": ["activeTab", "scripting", "storage"],
+  "permissions": ["activeTab", "scripting", "storage", "contextMenus"],
   "host_permissions": ["http://127.0.0.1:8000/*", "https://openrouter.ai:443/*"],
   "optional_host_permissions": ["http://*/*", "https://*/*"]
 }
@@ -488,7 +542,7 @@ sender.id equals this extension
 
 Missing or contradictory sender fields fail closed. The worker reads the URL only transiently for this comparison under the confinement rule in Section 4.
 
-One worker-owned FIFO serializes startup reconciliation, options saves, and every post-prompt enable, revoke, `permissions.onAdded`, and `permissions.onRemoved` mutation of settings, permissions, or registration. Each operation reads the latest trusted record inside the queue rather than carrying a stale copy across awaits. After each lifecycle operation it verifies that validated `enabledOrigins`, current exact grants, and registered matches converge. Content and provider work remains closed until initial reconciliation succeeds.
+One worker-owned FIFO serializes startup reconciliation, options saves, and every post-prompt enable, revoke, `permissions.onAdded`, and `permissions.onRemoved` mutation of settings, permissions, or registration. Each operation reads the latest trusted record inside the queue rather than carrying a stale copy across awaits. After each lifecycle operation it verifies that validated `enabledOrigins`, current exact grants, registered matches and context-menu patterns converge. Menu removal/update is best-effort after authoritative disablement; a stale visible menu can never authorize dispatch. Content and provider work remains closed until initial reconciliation succeeds.
 
 Worker startup first establishes trusted-storage access, strictly validates settings, and reconciles durable desired state with current optional permissions and the fixed dynamic registration. Origins whose permission was externally removed are deleted from `enabledOrigins`; stale registration matches and unowned optional grants are removed; the registration is created, updated, or removed to match the remaining canonical origins exactly. A small in-memory pending-request set preserves only the exact grant whose Emenda user prompt is in flight. `chrome.permissions.onAdded` enqueues the same convergence audit so externally acquired or broader grants are removed; `chrome.permissions.onRemoved` enqueues disablement, cancellation, and best-effort teardown for externally revoked origins. Every check independently repeats `permissions.contains` before inference.
 
@@ -503,14 +557,14 @@ Enable follows this lifecycle:
 
 An already-enabled origin follows the same prompt-safe path; the existing exact grant resolves without a new grant and activation is idempotently refreshed. The toolbar action remains an Enable or Reactivate command rather than becoming an options shortcut. If configuration is incomplete after successful activation, the worker opens the packaged options page and content observation remains paused. Content-script initialization is idempotent: duplicate injection or activation cannot create duplicate listeners, controllers, registries, or overlays. If any post-grant activation step fails, the worker marks the origin disabled and best-effort rolls back its registration match and optional permission before returning a typed activation error. Startup reconciliation completes any interrupted rollback.
 
-When `enabledOrigins` is empty there are zero dynamic content-script registrations. The fixed registration is unregistered because Chrome does not accept an empty `matches` list.
+When `enabledOrigins` is empty there are zero dynamic content-script registrations and no Proofread context-menu item. The fixed registration is unregistered because Chrome does not accept an empty `matches` list.
 
 Revoke follows this lifecycle:
 
 1. Mark the origin disabled in trusted settings so new work and messages from it are rejected.
 2. Cancel worker requests associated with the origin.
 3. Send a versioned `Deactivate` carrying the revoked canonical origin to known live documents on that origin, targeting `documentId` when available. The worker keeps those `(tabId, documentId)` targets only in memory from accepted messages and activation. When the grant is already absent or the known set may be incomplete, it also calls unfiltered `tabs.query({})` and best-effort sends the origin-bound message to frame 0 of every returned tab; it does not inspect tab URLs, depend on `runtime.getContexts()`, or issue a URL-filtered query after permission loss.
-4. A content script acts only when that origin equals its current nonopaque `location.origin`; it then invalidates its revision, cancels debounce and inference, removes input and composition listeners, removes the overlay host, clears source and snapshot registries, and becomes inert.
+4. A content script acts only when that origin equals its current nonopaque `location.origin`; it then invalidates its revision, cancels settling and inference, removes input and composition listeners, removes the overlay host, clears source and snapshot registries, and becomes inert.
 5. Update the dynamic registration, or remove it when no origins remain.
 6. Remove the optional origin permission.
 
@@ -522,16 +576,18 @@ The content script retains only one inert runtime-control listener and one docum
 
 | Outcome | Required result |
 | --- | --- |
-| Clean result, empty focus, nonlinguistic focus, unsupported language, over-limit focus, non-collapsed selection, or unsupported capture during ordinary typing | `Idle`, silent |
+| Clean result, empty focus, nonlinguistic focus, unsupported language, over-limit focus, non-collapsed selection, or unsupported capture during ordinary typing or an explicit clean/no-correction outcome | `Idle`, silent |
 | Stale completion, stale failure, stale command, or cancellation | No presentation change |
 | Stale settings revision | Resynchronize cached settings, do not retry that revision |
 | Missing configuration | `Error`, with Open Settings |
 | Complete valid settings saved | Clear obsolete configuration error, invalidate old work, return to `Idle`, do not retry old text |
 | Activation, revocation cleanup, startup reconciliation, or sender authorization failure | Fail closed; no observation or provider call; show an action error only for the writer's current command |
-| Current provider timeout or failure | `Error` |
+| Distinct concurrent explicit deep action | Busy, concise current-action outcome; no queue |
+| Local recovery busy/loading/unreachable, memory admission failure, server/model/auth unavailability, or current provider timeout | `Error`, Deep check temporarily unavailable; preserve native spelling and applicable recovery |
+| Other current provider failure | `Error`, redacted |
 | Invalid current provider response, including unchanged or multi-hunk output, an over-limit `correctedFocus`, or a fixed-profile contradiction | `Error` |
 | Current Apply authorization or surface refusal after writer action | `Error`; claim no mutation only when post-state equals the verified pre-state |
-| New eligible committed input | Clear current `Error`, reserve a revision, and debounce |
+| New eligible committed input | Clear current `Error`, reserve a revision, and start local settling |
 
 Errors contain no API key, authorization header, raw context, model body, source identity, or DOM data.
 
@@ -539,21 +595,21 @@ Errors contain no API key, authorization header, raw context, model body, source
 
 The content script owns a fixed, unanchored overlay in a closed shadow root. Its host is inserted immediately after the current textarea in sequential DOM order without changing layout. It appears only for a current suggestion or writer-visible content error and never autofocuses. A suggestion shows the complete original focus and complete reconstructed corrected focus, with the one changed hunk visibly marked using trusted wrapper elements and text nodes, plus category, concise explanation, Apply, and Dismiss. Empty hunks display `[empty]`; changed whitespace and every control, format, or combining scalar display a deterministic ASCII name or `U+XXXX` marker. Text runs use bidi isolation. An error offers only its redacted message, Dismiss, and Open Settings when configuration is the remedy.
 
-Apply and both Dismiss variants use native buttons; V0.1 defines no custom page keyboard shortcut. A command is created only by a trusted (`Event.isTrusted`) activation of the current internal control while it owns focus. Pointer activation additionally requires the closed-root and document hit tests to identify that control and host at the event coordinates; keyboard activation requires the current visible focused button. The host and its ancestor chain must be connected, visible, nontransparent, and unobscured under those DOM hit tests at that instant. Synthetic, stale, hidden, moved, DOM-hit-test-covered, disconnected, or page-focused events do nothing. Accepted control events are contained at the closed-root boundary; any page capture-phase change makes later verification fail closed. DOM hit-testing cannot detect a compositor-only or `pointer-events: none` visual cover over an approval control, so enabled origins remain a trust boundary and this limitation is disclosed. A controlled focus transition directly from the current textarea into this UI, and subsequent focus movement among that current UI's controls, preserves the approval handoff; either Dismiss variant then best-effort restores the still-current unchanged textarea and captured selection without mutating text.
+Apply and both Dismiss variants use native buttons; V0.2 defines no custom page keyboard shortcut. A command is created only by a trusted (`Event.isTrusted`) activation of the current internal control while it owns focus. Pointer activation additionally requires the closed-root and document hit tests to identify that control and host at the event coordinates; keyboard activation requires the current visible focused button. The host and its ancestor chain must be connected, visible, nontransparent, and unobscured under those DOM hit tests at that instant. Synthetic, stale, hidden, moved, DOM-hit-test-covered, disconnected, or page-focused events do nothing. Accepted control events are contained at the closed-root boundary; any page capture-phase change makes later verification fail closed. DOM hit-testing cannot detect a compositor-only or `pointer-events: none` visual cover over an approval control, so enabled origins remain a trust boundary and this limitation is disclosed. A controlled focus transition directly from the current textarea into this UI, and subsequent focus movement among that current UI's controls, preserves the approval handoff; either Dismiss variant then best-effort restores the still-current unchanged textarea and captured selection without mutating text.
 
-Each new current suggestion or content error emits one polite accessible notification; debounce and checking emit none. Activation errors render through a nonprivate action badge/title, and revocation-command errors render in the options page; neither assumes that a content overlay exists. Action errors clear on the next successful relevant action or settings save.
+Each new current suggestion or content error emits one polite accessible notification; settling and checking emit none. Activation errors render through a nonprivate action badge/title, and revocation-command errors render in the options page; neither assumes that a content overlay exists. Action errors clear on the next successful relevant action or settings save.
 
 All page-derived and model-authored strings are untrusted display text. The overlay and options page render them only through text nodes or `textContent`; `innerHTML`, `outerHTML`, `insertAdjacentHTML`, Markdown interpretation, markup parsing, and executable or model-authored links are forbidden.
 
 The options page displays the single verbatim disclosure owned by [`UX.md`](UX.md#9-privacy-disclosure). It accurately distinguishes fixed-loopback local inference from explicitly selected remote processing, local cache/logging and native-diagnostic limits, remote within-request endpoint fallback, quota/retention limits, and browser-profile credential storage.
 
-Emenda stores no raw text history, provider body, or persistent text cache, writes no private text to logs, and emits no telemetry or analytics. Local oMLX may retain model KV cache state; request logging must be `critical`, and synthetic canary tests verify ordinary application logs and Emenda artifacts without claiming to suppress OS-native crash diagnostics. Tests and evidence use synthetic domain-neutral text.
+Emenda stores no persistent text history, raw provider body or persistent text cache, writes no private text to logs, and emits no telemetry or analytics. The sole completed-result retention exception is the bounded worker-memory cache in Section 4.4; the durable recovery marker is text-free under Section 4.3. Local oMLX may retain model KV cache state; request logging must be `critical`, and synthetic canary tests verify ordinary application logs and Emenda artifacts without claiming to suppress OS-native crash diagnostics. Tests and evidence use synthetic domain-neutral text.
 
 Visible interaction and accessibility details are authoritative in [`UX.md`](UX.md).
 
 ## 15. Deferred scope and completion
 
-Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, native packaging and signing, store publication, release automation, native placeholders, general cross-OS claims, multiple suggestions, contenteditable, and complex editors are outside V0.1 and must not be scaffolded.
+Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, native packaging and signing, store publication, release automation, native placeholders, general cross-OS claims, multiple suggestions, contenteditable, and complex editors are outside V0.2 and must not be scaffolded.
 
 Future implementation is complete only when all six gates in [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) pass and the factual evidence distinguishes deterministic, bundled-Chromium, directly tested minimum-runtime compatibility, installed-Brave, and personal-Mac results. Other physical devices and untested browser versions receive no positive support claim.
 

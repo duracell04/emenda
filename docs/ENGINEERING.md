@@ -1,6 +1,6 @@
 # Emenda Engineering Standard
 
-> **Frozen engineering standard, version 2.2.1**
+> **Frozen engineering standard, version 2.3.0**
 
 ## 1. Authority
 
@@ -19,7 +19,7 @@ Maintenance burden is an acceptance concern. Keep the global interaction surface
 
 ## 3. Canonical toolchain and dependency set
 
-At initial implementation preflight, select one exact Node, npm, and TypeScript version tuple. The v2.2.1 continuation retains the baseline’s committed tuple unless an evidence-backed compatibility fix requires a separately coherent update. Commit that tuple before product source through exact engine metadata, an exact packageManager value, the exact TypeScript development dependency, and the implementation's toolchain record. Generate and commit the npm lockfile under that tuple.
+At initial implementation preflight, select one exact Node, npm, and TypeScript version tuple. The v2.3.0 continuation retains the baseline’s committed tuple unless an evidence-backed compatibility fix requires a separately coherent update. Commit that tuple before product source through exact engine metadata, an exact packageManager value, the exact TypeScript development dependency, and the implementation's toolchain record. Generate and commit the npm lockfile under that tuple.
 
 That tuple is canonical for the objective. The audit passes when the running versions match it. Label another-environment run as compatibility evidence; canonical conformance comes from the canonical tuple. Package scripts and verification resolve executables from committed, lockfile-installed local tools.
 
@@ -64,9 +64,13 @@ Timing tests control exact boundaries and completion order. A timing fix changes
 
 ### Provider
 
-Controlled tests prove the canonical serialization, authored headers, fetch controls, prompt, routing, structured-output schema, no local plugins and the four disabled remote plugin directives, declared non-reasoning response projection, completion bound, exact returned model identity, timeout, incremental body limit, cancellation, local derivation, and redacted failures.
+Controlled tests prove canonical serialization, headers, fetch controls, prompt, schema, routing, plugin policy, completion/response bounds, exact returned model, timeout, incremental parsing, derivation and redacted outcomes. Add fake-clock and controlled-transport proof for lease ownership, coalescing, cache bounds, uncertain completion, local one-shot recovery, remote deadline release, restart markers and permanently fenced late callbacks. Distinguish client waiting/authority from unknown provider execution.
 
-The canonical 15-case corpus runs strictly sequentially through production validation using one directly configured documented model and ephemeral credential delivery when required. Independent named agents apply Acceptance’s semantic method after structural/exact-string checks, cover every language/profile and actual parsed result, and record agent/model identity, case coverage and findings truthfully as agent review. The personal objective requires a local 15/15 run with Brave running; every official case retains the 15-second full-processing deadline. The existing explicit local Settings test alone uses its fixed 25-second startup bound and production parsing/derivation; local discovery/readiness is not qualification or a future-latency/residency guarantee. Any explicit test performed before a corpus is recorded as a separate setup operation with its actual cold/warm condition and outcome; the runner never performs implicit warm-up, preload or per-case retry. A failed or interrupted run remains factual evidence; a complete later run records recovery.
+The unchanged 15-case corpus and semantic method remain authoritative. For this successor, deterministic equivalence against implementation `5a154ac6d7b19a4fc856a3c460dbae2ba3c31f63` permits the existing sealed 15/15 `gemma-3-12b-it-4bit` run and two independent complete agent reviews to supply inherited linguistic qualification under Acceptance Section 6.3. Compare exact prompt/schema/serialized input/generation semantics, bounded context/focus and replayed validation/derivation. Scheduler and browser evidence are freshly established at the successor, not inherited from the model run.
+
+A model/weight, prompt, profile, focus/context, schema, generation or derivation semantic change requires a new full qualification boundary. When fresh qualification is required, use one directly configured documented model, ephemeral credential delivery, strict sequential production validation and complete independent named agent semantic review. All 15 official cases retain 15 seconds; no implicit warm-up, preload, retry or case replacement occurs. Preserve failures and later recoveries separately.
+
+Sprint 3/4 verification uses synthetic/mocked providers and deterministic equivalence. Sprint 5 uses one bounded synthetic explicit deep smoke on the exact release candidate, not exploratory model testing. The existing explicit local Settings Test alone retains its immutable fixture and 25-second bound; discovery/writing/official corpus stay at 15 seconds. A smoke admission failure records a limitation and ends that attempt; it does not authorize a model search, guard relaxation or retry loop.
 
 ### Browser
 
@@ -124,7 +128,7 @@ Every entry records UTC time, gate or increment, constitution freeze ID/commit/t
 
 The canonical evidence ledger is `docs/EVIDENCE.md` in the constitution repository; the implementation's `constitution/` snapshot remains read-only. An evidence commit in the constitution repository changes exactly that ledger and describes an already-existing tested implementation commit. Preserve failures and later recoveries separately. State the inspected scope, executed procedures, verified results, and open verification fields.
 
-The live qualification process owns the selected credential and authorization header ephemerally for its lifetime; local unauthenticated calls require no fabricated key. Never persist or print credentials. Local server logging is configured to `critical`, loopback/model-fallback policy is verified, and synthetic canaries inspect ordinary app logs and Emenda artifacts. Local model KV state may remain enabled; native crash diagnostics are outside the extension’s guarantee. The active provider boundary exclusively owns raw private context and response bodies during the bounded call. The current browser-authorization path exclusively owns page URL, tab/frame/document metadata, source identity, and DOM structure while establishing authority. Durable and observable records admit exactly synthetic domain-neutral fixtures, typed redacted outcomes, sanitized evidence fields, and build or test metadata.
+The live qualification process owns the selected credential and authorization header ephemerally for its lifetime; local unauthenticated calls require no fabricated key. Never persist or print credentials. Local server logging is configured to `critical`, loopback/model-fallback policy is verified, and synthetic canaries inspect ordinary app logs and Emenda artifacts. Local model KV state may remain enabled; native crash diagnostics are outside the extension’s guarantee. The active provider boundary owns raw private context and response bodies during the bounded call; raw bodies are discarded after processing. The worker registry alone may retain exact bounded input and validated derived outcomes within SPEC's transient cache. Durable recovery state contains only the strict text-free marker. Neither exception permits private text or browser/source identity in storage, logs, snapshots, errors or evidence. The current browser-authorization path exclusively owns page URL, tab/frame/document metadata, source identity, and DOM structure while establishing authority. Durable and observable records admit exactly synthetic domain-neutral fixtures, typed redacted outcomes, sanitized evidence fields, and build or test metadata.
 
 ## 10. Deferred engineering
 

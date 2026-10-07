@@ -1,6 +1,6 @@
 # Emenda Brand System
 
-> **Frozen brand system, version 2.2.1**
+> **Frozen brand system, version 2.3.0**
 
 > **Preserve your Duktus**
 
@@ -30,6 +30,10 @@ Reactivate on this site
 ```
 
 Its accessible name states Enable or Reactivate as applicable. Disabled, unavailable, and configuration-required status remains distinguishable by text, shape, or icon treatment; incomplete configuration opens Settings only after the writer's activation command finishes.
+
+### Context menu
+
+One browser-native item is named **Proofread with Emenda**. It requests deep proofreading for the verified supported textarea and preserves the native menu and spelling experience. It adds no floating button or persistent page chrome.
 
 ### Overlay
 
@@ -74,4 +78,4 @@ Preferred statements:
 
 ## Scope
 
-V0.1 brand work covers only the Chromium action, fixed overlay, options page, and locally bundled extension icons. Native application art, installers, store listings, commercial surfaces, and release packaging are deferred.
+V0.2 brand work covers only the Chromium action, native context-menu item, fixed overlay, options page, and locally bundled extension icons. Native application art, installers, store listings, commercial surfaces, and release packaging are deferred.

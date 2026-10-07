@@ -1,6 +1,6 @@
 # Emenda Agent Guide
 
-> **Frozen agent governance, version 2.2.1**
+> **Frozen agent governance, version 2.3.0**
 
 This guide is the agent-agnostic control plane for Emenda work. Repository-local authority applies equally to every coding system. A tool-specific compatibility file contains only the integration details that tool requires and points here for project rules.
 
@@ -85,7 +85,7 @@ Measure quality and effort against the completion and verification standards in 
 
 State the active gate before implementation work:
 
-> Documentation → Mock Product → Architecture → Provider → Browser Integration → V0.1 Conformance
+> Documentation → Mock Product → Architecture → Provider → Browser Integration → V0.2 Conformance
 
 Classify each failure by its owning gate and causal subsystem. Later-gate failure preserves earlier evidence while the tested invariant and tree remain unchanged.
 

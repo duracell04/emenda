@@ -1,6 +1,6 @@
-# Emenda V0.1 Architecture
+# Emenda V0.2 Architecture
 
-> **Frozen architecture, version 2.2.1**
+> **Frozen architecture, version 2.3.0**
 
 ## 1. Authority and objective boundary
 
@@ -8,7 +8,7 @@
 
 ## 2. System shape
 
-Emenda V0.1 is one npm package with two architectural regions:
+Emenda V0.2 is one npm package with two architectural regions:
 
 ```text
 core/                         strict TypeScript product semantics
@@ -28,7 +28,9 @@ content script
 service worker
   permissions and origin lifecycle
   trusted settings
-  cancellation
+  exclusive operation registry, fencing and recovery
+  bounded transient result cache
+  context-menu intent dispatch
   shared WorkerProvider processing
   selected local oMLX or OpenRouter transport
         ^
@@ -36,7 +38,7 @@ service worker
 options page
 ```
 
-There is one `BrowserTextSurface` implementation for the supported light-DOM `<textarea>` surface. Contenteditable and every other editor class are outside V0.1.
+There is one `BrowserTextSurface` implementation for the supported light-DOM `<textarea>` surface. Contenteditable and every other editor class are outside V0.2.
 
 ### 2.1 Deterministic authority boundary
 
@@ -63,21 +65,21 @@ The model proposes semantic data. Core and extension software retain all executi
 | Runtime message schemas | `extension/protocol/` | Versioned, discriminated, strict Zod schemas |
 | Controller instance, revision lifetime, cached public configuration, source registries, document lifecycle, and presentation | content script | Raw editor identity, unbounded text, snapshot state, and DOM data remain here; only bounded context is copied out |
 | Capture, scalar/UTF-16 mapping, selection identity, and mutation safety | `BrowserTextSurface` in `extension/content/` | Browser types are confined to the adapter |
-| Trusted settings schema, storage, sender authorization, permissions, origin lifecycle, request cancellation, local discovery/readiness, and selected-provider traffic | service worker | Secrets and the configured model never enter content scripts; browser sender metadata is ephemeral and confined |
+| Trusted settings, sender/origin authorization, context-menu intent, global lease/cache/recovery, local discovery/readiness and selected-provider traffic | service worker | Secrets/models remain worker-only; sender and correlation metadata remain ephemeral; durable operation markers are text-free |
 | Settings interaction | options page through the worker | The options page never accesses trusted storage directly |
 | Visible suggestion and error UI | content-script closed-shadow overlay | It uses text-only sinks, accepts only trusted control events, renders state, and emits semantic commands; it does not own authority |
 
-Source and snapshot references are opaque core values backed by content-script-private registries. They are never serialized to the worker, provider, logs, or durable storage.
+Actual source and snapshot references are opaque core values backed by content-script-private registries and never serialized. A separate nontext document-scoped opaque correlation token crosses only the strict worker protocol for exact operation/cache identity; it identifies no DOM object by itself and reaches neither provider nor durable/observable records.
 
 ## 4. Core state and effects
 
 One pure reducer owns the complete product state:
 
 ```text
-Idle | Debouncing | Checking | Suggestion | Applying | Error
+Disabled | Idle | Settling | Checking | Suggestion | Applying | Error
 ```
 
-It controls revision reservation, the 600 ms trailing debounce, request authority, validation, suggestions, Apply, Dismiss, and failure transitions. Inputs are semantic events; outputs are declarative effects. Effect handlers perform timers, inference, messaging, storage interaction, and DOM operations and return typed events to the reducer.
+It controls revision reservation, one local 600 ms settling timer, explicit intent, request authority, validation, suggestions, Apply, Dismiss and failure transitions. Timer expiry returns to Idle without capture or dispatch. A separate worker registry controls `Idle | Running | Recovering`, one global lease, exact identity, coalescing, cache and uncertainty. DOM state and cheap timers remain source-local; only the shared dispatch resource is globally coordinated. Inputs are semantic events; outputs are declarative effects. Effect handlers perform timers, inference, messaging, storage interaction, and DOM operations and return typed events to the reducer.
 
 Each eligible writer-committed change reserves a `RevisionId` synchronously. Ordinary input requires one same-source, same-generation trusted `beforeinput`/`input` ticket with exact pre/post tuples, collapsed selections, and the complete foreground/exposure predicate; its synchronous post-state becomes the latest accepted baseline for that source and generation, and is bound to a new revision only when text changed. The first input or the private queued expiry callback clears the ticket; listener microtasks do not. An eligible composition generation starts from a collapsed caret, admits only trusted paired composing changes with lossless in-bounds selections, allows their transient IME-owned candidate ranges to be noncollapsed, and ends eligible only at a collapsed caret. Delayed or coalesced selection notification is self-authored only when source, current value and selection, generation, and revision identity if one exists equal the latest applicable ordinary, composition, or Apply baseline. Other input on an otherwise supported textarea may update the local baseline and invalidate stale authority without requesting inference; rejected editor classes are ignored without reading their text. A newer revision cancels older work best-effort and is always authoritative. Stale results, failures, and commands cannot change presentation or text.
 
@@ -99,7 +101,7 @@ extension composition and adapters
 
 `core/` never imports `extension/`. Model-schema code may depend on Zod and core domain definitions, but domain, policy, ports, and state do not depend on model-schema parsing. Protocol and worker schemas remain outside core.
 
-Zod is the only direct runtime dependency. The exact development dependency set is TypeScript, esbuild, Vitest, Playwright, Chrome types, and Node types. Exact direct versions, the canonical Node/npm/TypeScript tuple, package-manager metadata, and the npm lockfile are committed, and clean verification installs with `npm ci`. Each architectural mechanism serves a present V0.1 requirement; the product remains one npm package implemented with plain TypeScript, HTML, and CSS.
+Zod is the only direct runtime dependency. The exact development dependency set is TypeScript, esbuild, Vitest, Playwright, Chrome types, and Node types. Exact direct versions, the canonical Node/npm/TypeScript tuple, package-manager metadata, and the npm lockfile are committed, and clean verification installs with `npm ci`. Each architectural mechanism serves a present V0.2 requirement; the product remains one npm package implemented with plain TypeScript, HTML, and CSS.
 
 ## 6. Trusted configuration flow
 
@@ -132,17 +134,18 @@ The worker alone discovers local model IDs and performs bounded synthetic readin
 
 ## 7. Check and presentation flow
 
-For an eligible revision:
+1. Trusted input advances content revision, invalidates stale authority and resets that controller's settling timer. Expiry is local bookkeeping only. Idle, focus, navigation, startup and worker wakeup cause no provider traffic.
+2. A trusted content-side context-menu candidate and browser-owned `contextMenus.onClicked` invocation establish a one-use intent handoff under [SPEC Section 4.1](../SPEC.md#41-explicit-action-and-context-menu-handoff). Menu lifecycle uses the existing origin reconciliation owner; it confers no permission itself.
+3. The content adapter restores/verifies only the intended source, cancels settling, captures current eligible text and uses unchanged pure focus/context algorithms. It sends only bounded context/focus, source correlation/revision, intent/request token and settings revision in a strict protocol-2 one-shot message. Chrome supplies fresh sender identity separately.
+4. The worker reauthorizes sender, enabled origin, exact permission and configuration, then derives exact identity from its trusted provider/model/profile. The operation registry coalesces an identical owner or returns Busy for a distinct owner. No queue exists.
+5. One capability-driven policy handles any retained uncertainty. Local recovery performs one bounded status GET and permits dispatch only after a valid idle snapshot. Remote uncertainty excludes dispatch only until the original deadline. Recovery and cache behavior resolve through SPEC; transport termination never implies server termination.
+6. An exact eligible transient cache hit returns a validated derived outcome with fresh authority. Otherwise the worker acquires one lease, writes its text-free marker before possible inference, and uses the unchanged shared WorkerProvider processing and selected adapter. Recovery/catalog/response processing share the operation deadline.
+7. Transport separates known terminal from uncertain completion. Registry owner/fencing checks reject retired events before any cache/readiness/state update. The worker returns only trusted derived correction or typed outcome, never raw model content.
+8. Content rechecks source, document, revision, configuration, exact value/selection, focus and exposure before current presentation. The existing suggestion/Apply/Dismiss path supplies fresh capabilities and writer approval.
 
-1. The content script captures an opaque snapshot through `BrowserTextSurface` after debounce.
-2. Pure core policy selects the deterministic focus and bounded context under the canonical limits in [`SPEC.md`](../SPEC.md#3-v01-runtime-and-limits).
-3. The content script sends a one-shot authored payload containing only that bounded logical context, its exact focus range, request identity, and `settingsRevision`; Chrome separately supplies fresh `MessageSender` metadata. V0.1 uses no long-lived messaging port.
-4. The worker projects the sender to the minimum active-top-level authority fields, confirms the exact optional permission and enabled origin, validates configuration revision and message shape, splits the context into model-facing `before`, `focus`, and `after`, then adds its trusted profile and uses the selected private provider configuration for one request. It never tries another provider after failure.
-5. The worker strictly validates the external result, invokes pure scalar derivation, and returns only the trusted derived correction or typed failure in a versioned outcome. Model-authored `correctedFocus` never crosses into the content script.
-6. Before any provider outcome changes presentation, the content script proves the current revision plus exact captured source, document, snapshot value and selection, foreground focus, and exposure. A mismatch refreshes only a supported local baseline, invalidates the revision, and stays silent.
-7. Only then does the reducer accept the outcome and either return to `Idle`, present one suggestion, or enter `Error` according to the specification.
+Provider capability values are worker-composed semantic facts: status inspection is available for local oMLX and unavailable for OpenRouter; cancellation is best-effort for both. The registry does not own DOM or provider payload construction. Concrete transports own network uncertainty and local status projection. Keep these additions inside the existing worker/provider composition, without a generalized provider framework.
 
-No separate or unbounded full-document field, editor source identity, snapshot identity, DOM structure, API key, or model identifier crosses a boundary that does not own it. The bounded context may equal all text of a short document. Chrome-supplied URL and document metadata necessarily reach the worker listener, but are read only for current sender authority and are never persisted, logged, placed in errors, or forwarded.
+Raw DOM/editor identity, actual source/snapshot references and unbounded text remain content-local. Opaque correlation and Chrome sender data are confined to worker-memory authorization and exact cache identity. Provider input remains exactly the four linguistic fields. The worker-memory cache is the only bounded completed-result retention exception; raw response bodies and private durable records remain prohibited.
 
 ## 8. Revision and mutation authority
 
@@ -155,7 +158,7 @@ Apply is split deliberately:
 
 The authorized replacement request contains the opaque source and snapshot references, expected logical text, snapshot-relative scalar range, original, and replacement. The surface does not query or reproduce reducer revision policy.
 
-Immediately before the sole mutation leaf, runtime-gated `document.execCommand("insertText", false, replacement)`, the surface registers a one-use expected self-mutation containing the source, pre-edit text, post-edit text, target range, and replacement. Success requires `true`, the exact synchronous input, and the exact post-state; that input becomes `AppliedChange`, updates the text and resulting-selection baseline, emits no `ObservedChange`, advances authority without inference, and returns to `Idle`. A later queued or coalesced selection notification is self-authored only when current source and selection still equal that baseline. Any unexpected changed state is external and refreshes baseline/authority, but starts inference only with independent eligible paired provenance; an unchanged failure is a typed refusal and restores the captured caret only when source and value remain exact. No direct value assignment, DOM rewrite, clipboard operation, simulated input, fuzzy matching, or recovery mutation is allowed.
+Immediately before the sole mutation leaf, runtime-gated `document.execCommand("insertText", false, replacement)`, the surface registers a one-use expected self-mutation containing the source, pre-edit text, post-edit text, target range, and replacement. Success requires `true`, the exact synchronous input, and the exact post-state; that input becomes `AppliedChange`, updates the text and resulting-selection baseline, emits no `ObservedChange`, advances authority without inference, and returns to `Idle`. A later queued or coalesced selection notification is self-authored only when current source and selection still equal that baseline. Any unexpected changed state is external and refreshes baseline/authority, and ordinary input starts only local settling; inference additionally requires fresh explicit intent; an unchanged failure is a typed refusal and restores the captured caret only when source and value remain exact. No direct value assignment, DOM rewrite, clipboard operation, simulated input, fuzzy matching, or recovery mutation is allowed.
 
 Composition and foreground handling are centralized at the adapter/controller boundary. `compositionstart` invalidates current authority immediately, binds the pre-composition tuple, and creates an eligible generation only from a trusted event on a qualifying surface with a collapsed caret. Trusted same-generation `beforeinput`/`input` pairs refresh the exact text/selection baseline only; their in-bounds, losslessly mapped IME candidate ranges may be noncollapsed and matching delayed selection notifications are ignored. An untrusted, unpaired, malformed, or mismatching event disqualifies the generation. A trusted qualifying `compositionend` emits the sole committed change only at a losslessly mapped collapsed caret and when terminal text differs from the bound pre-composition text; that exact terminal state synchronously becomes the baseline bound to the new revision. Cancelled/no-op generations remain silent. Only an identical later paired text, source, and selection tuple is suppressed within that generation; any mismatch is external and must independently satisfy ordinary pairing. A hidden-document transition or window blur invalidates authority, clears provenance, cancels work best-effort, and removes presentation without retrying when focus returns.
 
@@ -167,7 +170,7 @@ The adapter has no DOM-tree text reconstruction or contenteditable mapping. The 
 
 ## 10. Origin lifecycle
 
-V0.1 requires Chrome 140 or newer and uses one dynamic registration:
+V0.2 requires Chrome 140 or newer and uses one dynamic registration:
 
 ```text
 emenda-enabled-origins
@@ -191,7 +194,7 @@ OpenRouter retains its explicit remote endpoint, required key/base-model ID, dis
 
 Both paths use the exact request and response contract in [`SPEC.md`](../SPEC.md#9-provider-request), including no credentials/cache/redirect/referrer fetch controls, strict media/envelope/model checks, typed redacted outcomes, 15-second writing/discovery/corpus deadline, the sole fixed 25-second explicit local Settings test exception, and the unchanged 32-KiB response bound. Content scripts never learn provider selection, model IDs, credentials, or raw model content.
 
-Local server logging is configured to `critical` and canary-tested; local model KV cache state is allowed. Extension code stores no text/body/history and makes no blanket guarantee about local model state or native crash diagnostics.
+Local server logging remains `critical` and canary-tested; local model KV state is allowed. Raw response bodies and persistent text/history remain prohibited. Only SPEC's four-entry/60-second/64-KiB worker-memory cache retains bounded input and validated outcomes; one text-free trusted-local marker survives restart. Local status inspection is read-only and provides an idle observation, not atomic reservation. The operation deadline and permanent fencing preserve the capability-specific recovery contract.
 
 ## 12. Gate ownership
 
@@ -203,7 +206,7 @@ Documentation
 → Architecture
 → Provider
 → Browser Integration
-→ V0.1 Conformance
+→ V0.2 Conformance
 ```
 
 | Gate | Architectural scope |
@@ -213,12 +216,12 @@ Documentation
 | Architecture | Strict core compilation, prohibited type absence, Zod placement, import direction, semantic ports, dependency allowlist, and absence of native scaffolding |
 | Provider | Runtime-message and external-result schema enforcement, worker/provider boundary behavior, and live structured-output compatibility |
 | Browser Integration | Manifest, permissions, registrations, trusted-storage isolation, lifecycle, DOM safety, overlay accessibility, and bundled-Chromium runtime behavior |
-| V0.1 Conformance | Clean final build, installed-Brave and personal-Mac evidence, separately identified compatibility evidence, final audit, pushed implementation and evidence identities, and stop condition |
+| V0.2 Conformance | Clean final build, installed-Brave and personal-Mac evidence, separately identified compatibility evidence, final audit, pushed implementation and evidence identities, and stop condition |
 
 A later-gate failure does not erase earlier evidence unless the underlying tested invariant changed.
 
 ## 13. Deferred architecture
 
-Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, contenteditable and broader editor support, native packaging and signing, store publication, release automation, commercial services, and general cross-platform claims are outside V0.1. They must not shape current ports, packages, or placeholders.
+Native hosts, Tauri, Rust, operating-system accessibility APIs, native credential stores, contenteditable and broader editor support, native packaging and signing, store publication, release automation, commercial services, and general cross-platform claims are outside V0.2. They must not shape current ports, packages, or placeholders.
 
 Builder choices remain those defined by [`AGENTS.md`](../AGENTS.md) and [`ENGINEERING.md`](ENGINEERING.md); they preserve every required ownership and observable boundary in this document.

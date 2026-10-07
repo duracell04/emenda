@@ -1,54 +1,54 @@
-# Emenda V0.1
+# Emenda V0.2
 
-> **Frozen clean-room constitution, version 2.2.1**
+> **Frozen clean-room constitution, version 2.3.0**
 
-This repository is the Markdown constitution for Emenda V0.1. It defines the product, architecture, implementation sequence, verification, interaction, brand, and agent operating contract. Product implementation belongs in a separately authorized implementation repository, and implementation mutation begins under the product objective defined below.
+This repository is Emenda's Markdown constitution. It defines product, architecture, sequence, verification, UX, brand and agent governance. Implementation belongs in the separately authorized repository.
 
 ## Entry point
 
-Every agent begins with this file and [AGENTS.md](AGENTS.md), completes the proportional preflight defined there, states the active gate, and then loads the authoritative documents relevant to the current decision. This progressive-disclosure path is the canonical reading method.
-
-This file owns objective authorization and completion conditions. A human objective owner authorizes every product, architecture, safety, UX, acceptance, implementation-order, brand, or governance change. Agents surface evidence and draft proposals for adoption by that owner.
-
-A documentation objective revises this repository through one new versioned atomic freeze. A product objective identifies a separate implementation repository, exact baseline, branch, frozen constitution commit and tree, and completion target before implementation mutation begins.
+Read this file and [AGENTS.md](AGENTS.md), complete its proportional preflight and load the authoritative subject documents. This file owns objective authorization and completion. The human objective owner authorizes material product, architecture, privacy, safety, UX, acceptance, sequence, brand or governance changes. Implementation facts cannot silently amend the constitution.
 
 ## Governing construction objective
 
 > **Build the smallest sufficient implementation through affirmative, precise, auditable instructions; deterministic verification; low complexity and maintenance burden; and explicit completion criteria.**
 
-The constitution is agent-agnostic and architecture-specific. Codex, Claude, Copilot, Gemini, and future coding agents receive the same authority hierarchy and observable contract. Agent-specific compatibility files remain thin integration layers that point here.
+The constitution is agent-agnostic and architecture-specific. Tool-specific compatibility files point to these subject homes rather than creating competing authority.
 
 ## Subject authority
 
-- [PROMPT.md](PROMPT.md) owns objective authorization and completion conditions.
-- [SPEC.md](SPEC.md) owns product behavior, safety, compatibility, failures, the trust model, the canonical provider prompt and schemas, and critical requirement IDs.
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) owns component responsibility, runtime boundaries, and dependency direction.
-- [docs/IMPLEMENTATION-PLAN.md](docs/IMPLEMENTATION-PLAN.md) owns build order and gate placement.
-- [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md) derives gate criteria and owns the canonical live-provider corpus.
-- [docs/ENGINEERING.md](docs/ENGINEERING.md) owns implementation quality, toolchain, verification, and evidence vocabulary.
-- [UX.md](UX.md) owns visible interaction and accessibility; [BRAND.md](BRAND.md) owns visual identity.
-- [AGENTS.md](AGENTS.md) owns preflight, objective execution, agent coordination, audit handling, Git discipline, and post-completion stop discipline.
+| Authority | Subject |
+| --- | --- |
+| PROMPT.md | Objective authorization and completion |
+| [SPEC.md](SPEC.md) | Product behavior, safety, privacy, providers/settings and critical IDs |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Ownership, runtime boundaries and dependency direction |
+| [docs/IMPLEMENTATION-PLAN.md](docs/IMPLEMENTATION-PLAN.md) | Ordered successor implementation and gates |
+| [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md) | Derived gates, traceability and unchanged canonical corpus |
+| [docs/ENGINEERING.md](docs/ENGINEERING.md) | Construction, toolchain, qualification, verification and evidence |
+| [UX.md](UX.md) | Interaction, accessibility and verbatim disclosure |
+| [BRAND.md](BRAND.md) | Visual identity |
+| [AGENTS.md](AGENTS.md) | Preflight, execution, coordination, Git and stop discipline |
+| [PACKAGE-MANIFEST.md](PACKAGE-MANIFEST.md) | Freeze identity, lineage, classification, integrity and lifecycle |
 
-The subject homes above govern decisions. Treat supporting and external documents as classified context or evidence. [PACKAGE-MANIFEST.md](PACKAGE-MANIFEST.md) records the exact freeze, lineage, document classification, and integrity data. [docs/EVIDENCE.md](docs/EVIDENCE.md) records facts through its ledger procedure.
+[README.md](README.md) and [ROADMAP.md](ROADMAP.md) are supplemental orientation. [docs/EVIDENCE.md](docs/EVIDENCE.md) is the append-only factual ledger.
 
-## Future V0.1 outcome
+## Authorized Sprint 2 documentation objective
 
-When a separate product objective authorizes it, Emenda V0.1 is one strict-TypeScript product core and one Chromium Manifest V3 extension. It proposes at most one bounded correction through one directly configured local oMLX model by default or one explicitly selected OpenRouter model, derives the edit deterministically, presents the complete identifiable proposal, and applies only the writer-approved correction to the specified supported textarea surface.
+The human-approved Sprint 2 plan authorizes one atomic v2.3.0 / V0.2 documentation freeze on `docs/v2.3.0-freeze`, published to that branch and blueprint `main`. Its sole parent is the published evidence checkpoint `958d96b22c94f5bc2cee5b13bd49356bd86c9f2a`, tree `c41fb653dfe98a67935e7606ec2429ca6aebbcb0`. The immutable v2.2.1 predecessor remains `cd0cfe77356b6d188f6b71c2c6f9307ad2d5c38d`, tree `7e232bca9fe2a36c7c20ce5eeb4ba12126e48104`, and all prior freeze refs/ancestry remain preserved.
 
-The detailed provider, permission, privacy, lifecycle, input-provenance, rendering, and Apply contracts remain exactly those in [SPEC.md](SPEC.md). The six gates and seven increments remain exactly those in [docs/IMPLEMENTATION-PLAN.md](docs/IMPLEMENTATION-PLAN.md).
+The positive permitted-change set is exactly `PROMPT.md`, `AGENTS.md`, `SPEC.md`, `docs/ARCHITECTURE.md`, `docs/IMPLEMENTATION-PLAN.md`, `docs/ACCEPTANCE.md`, `docs/ENGINEERING.md`, `UX.md`, `BRAND.md`, `PACKAGE-MANIFEST.md`, `README.md` and `ROADMAP.md`. The tracked inventory remains 13 Markdown files. Preserve `docs/EVIDENCE.md` byte for byte from the sole parent; no new tracked document, ADR, lock, executable or implementation file belongs to this objective. Scratch verification and a sanitized completion report may live outside the tracked package.
 
-## Authorized v2.2.1 clarification and continuation
+Adopt Sprint 1's measured native-spelling / explicit-Gemma architecture as the successor contract, including the approved refinements: one settling timer per active controller, one bounded authoritative client dispatch lease, capability-based uncertainty handling, textarea context-menu Proofread, protocol 2, bounded transient reuse and inherited qualification through deterministic equivalence. SPEC owns the requirements; derived documents adopt them without parallel policy. Preserve the existing linguistic contract, exact corpus, conservative editing/permission/privacy invariants, dependencies and visual identity, with the explicitly declared transient-retention and text-free recovery boundaries.
 
-Under the existing human-authorized autonomous implementation and debugging objective, this successor atomic freeze on `docs/v2.2.1-freeze` and blueprint `main` has sole parent [`11080a3c4be943f57ea35293b995d80453ffecad`](https://github.com/duracell04/emenda/commit/11080a3c4be943f57ea35293b995d80453ffecad), tree `6955e79551d9a4ea372729bf75e7c3317e3da894`. The published `docs/v2.2.0-freeze` remains at that exact commit and tree. Its preserved v2.1.1 baseline is `7a65e69e915a19b310db19fd425cbd2cbd67fb54` (tree `07bd030daaf1cc791f8e6a4d44afedcf97828851`), and all earlier ancestry remains intact.
+The implementation repository `https://github.com/duracell04/emenda-built` remains unchanged at predecessor `5a154ac6d7b19a4fc856a3c460dbae2ba3c31f63`, tree `154341857664f7da22560a6cd4980008b0f46609`, on `build/local-omlx`. The installed extension and local provider configuration/model state remain unchanged. Sprint 2 runs no inference and makes no V0.2 daily-use readiness claim.
 
-The authorized deltas are a semantic-preserving general clarification of the shared canonical prompt and the measured startup policy for the existing explicit local Settings test. The prompt clarifies profile/language mappings, compatible-clean versus unsupported decisions, compatibility before a necessary single local edit, literal final equality, and truthful actual-diff category/explanation; concise plain English explanations are preferred, not required. Only that worker-owned synthetic test has a fixed 25,000 ms full-processing bound, with the existing immutable fixture and production validation/derivation. Writing, discovery, OpenRouter and official corpus cases remain at 15,000 ms. No corpus examples, result repair, writing-deadline extension, automatic/background warm-up, application retry, quality reduction, profile/surface expansion, new dependency or privacy change is authorized.
+## Future V0.2 implementation boundary
 
-Continue the local/default oMLX and explicit OpenRouter implementation in `https://github.com/duracell04/emenda-built` on the existing `build/local-omlx` branch. Preserve its `build/v0.1` baseline `fa27dbfe5d18f8c8cec5d5c5a6c04cf7259f66aa` and prior constitution intakes. Import this successor’s exact commit/tree and update audit expectations before adopting its prompt and explicit-test policy. The objective retains autonomous measured candidate-model selection, independent named agent semantic review of one complete 15/15 canonical corpus, coherent commits, publication of the exact tested state, and verified personal installation into the user’s existing Brave profile on the local Mac. Existing failed attempts remain factual history; affected behavior receives fresh verification under this freeze. Runtime facts and qualified models remain measured evidence rather than compiled defaults or universal compatibility claims.
+A separate implementation objective names this freeze's exact published commit/tree, predecessor baseline, `build/v0.2` branch, active sprint/gate, permitted changes and terminal state. Before source mutation it imports the 13-file snapshot and five-field lock described in the Implementation Plan. That intake is read-only throughout implementation. The predecessor branch, prior intakes and qualified capture remain historical objects.
+
+V0.2 uses native spelling during ordinary writing and explicit deep proofreading through the unchanged linguistic path; one suggestion enters the preserved writer-approved Apply/Dismiss/native Undo loop. The binding Sprint 3 → Sprint 4 → Sprint 5 sequence and six gates are owned by the Implementation Plan. Passing this documentation objective authorizes no later source change, installation, provider run or release action by itself.
 
 ## Completion
 
-A documentation objective is complete when the Documentation Gate passes for the exact candidate tree, the atomic freeze commit is pushed to its authorized remote refs, remote identity and ancestry match, and the tracked worktree is clean.
+Sprint 2 completes when the exact final staged/committed candidate passes the Documentation Gate, receives independent read-only consistency/security/architecture/acceptance/implementability review, has all 11 staged-blob checksums verified, becomes one atomic single-parent freeze, and reaches verified matching `origin/docs/v2.3.0-freeze` and `origin/main`. Preserve the predecessor ledger and older refs, verify ancestry, and finish with a clean tracked worktree. The completion report binds the freeze ID/commit/tree, parent, gate/review results, checksum coverage, remote refs and implementation handoff.
 
-A future implementation objective is complete when all seven increments and six gates pass for the recorded implementation tree and commit, that commit is pushed and verified in the implementation repository, the later ledger-only factual evidence commit is pushed and verified in this constitution repository, both tracked worktrees are clean, and the continuing personal objective additionally has the tested local extension installed and verified after Brave restart on the recorded Mac. As before, passing an intermediate check alone does not complete the objective.
-
-Completion is a contract state: required behavior, evidence, repository integrity, remote identity, and the objective-specific terminal condition all hold.
+Future implementation completes only when the six gates pass with preserved qualification or required fresh qualification, the exact tested implementation and later ledger-only evidence are published/verified, the exact production build is installed and its bounded personal Mac/Brave acceptance holds, retained limitations are disclosed and both tracked worktrees are clean. Completion is the contract state, not an intermediate test result. Stop when the authorized terminal state holds.

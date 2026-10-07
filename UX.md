@@ -1,6 +1,6 @@
-# Emenda V0.1 UX
+# Emenda V0.2 UX
 
-> **Frozen interaction authority, version 2.2.1**
+> **Frozen interaction authority, version 2.3.0**
 
 ## 1. Interaction promise
 
@@ -21,27 +21,19 @@ Reactivate on this site
 
 Each origin is enabled independently. The toolbar action remains an Enable or Reactivate command; it is not an options shortcut. Reusing it on an enabled origin idempotently refreshes authorization. After successful activation with incomplete configuration, Emenda opens Settings and observation stays paused. An invalid or unavailable origin produces a concise permission error and no partial activation.
 
-Enable only origins the writer trusts. Emenda's one-use trusted input ticket rejects unattended synthetic changes, but page work nested in the same genuine editing event or queued ahead of ticket expiry cannot be distinguished completely and may cause one check.
+Enable only origins the writer trusts. Emenda's one-use trusted input ticket rejects unattended synthetic changes, but page work nested in the same genuine editing event or queued ahead of ticket expiry cannot be distinguished completely and may advance one observed revision; it cannot dispatch proofreading without the separate explicit action.
 
 Revoking an origin immediately disables new checks and Apply authorization there, then requests overlay and listener teardown. If a live document cannot be reached, it remains unauthorized and startup or document-lifecycle reconciliation retries cleanup; another enabled origin remains active.
 
 ## 3. Writing flow
 
-Emenda observes only a visible, foreground, focused, writable, midpoint-exposed, sequentially keyboard-focusable light-DOM textarea with a collapsed caret. Ordinary input must arrive as the browser's paired trusted `beforeinput` and `input`; synthetic, value-only, unpaired, or expired programmatic input creates no check. After eligible committed input Emenda waits for a 600 ms pause. Moving the caret, covering the textarea midpoint in the DOM hit test, hiding the document, or blurring the window invalidates current work and presentation without retrying when focus returns.
+Ordinary writing uses Brave/macOS native spelling independently of Emenda or oMLX availability. Emenda observes only the authorized supported textarea predicate in SPEC, tracks source revision and invalidates stale presentation. Trusted paired input and IME commitment restart one local 600 ms settling timer; expiry performs bookkeeping and returns to Idle. Typing, pauses, focus, navigation, startup and worker wakeup send no provider request.
 
-Composition invalidates an old suggestion immediately but produces no check while the writer is composing. Composition end supplies the one committed change. A duplicate terminal input does not create another check.
+The writer opens the textarea's native context menu and chooses **Proofread with Emenda**. Preserve native spelling/menu behavior. The browser item uses the editable context, but only the verified top-level supported textarea can proceed; inputs/contenteditable/frames remain unsupported even if the browser's menu filter also classifies them editable. No prior typing or 600 ms wait is needed. SPEC Section 4.1 owns one-use source/focus/authorization handoff and refusal. The action adds no floating button, persistent page UI or custom shortcut; the toolbar still only enables/reactivates.
 
-These outcomes are deliberately silent:
+An identical running action joins the current check; a distinct concurrent action receives **Emenda is busy. Try again after the current check.** It creates no backlog or automatic retry. Eligible completed reuse is exact and transient. Unavailable local deep checking displays **Deep check temporarily unavailable** with Dismiss and Open Settings only when configuration is the remedy. Writing/native spelling continues.
 
-- clean text;
-- empty or nonlinguistic focus;
-- unsupported language;
-- a non-collapsed selection;
-- a focus that exceeds its Unicode-scalar limit in [`SPEC.md`](SPEC.md);
-- an unsupported or ambiguous surface encountered during ordinary typing;
-- stale or cancelled background work.
-
-`Idle`, `Debouncing`, and `Checking` create no persistent visual noise. There is no Clean badge, success toast, or persistent clean state.
+Idle, Settling and Checking remain visually quiet. Clean/no-correction, unsupported-language, empty/nonlinguistic and over-limit focus return silently to Idle; there is no Clean badge or persistent success state. Unsupported explicit target uses a concise nonprivate action error when no content overlay is eligible. Stale results/failures are silent. Typing/selection/source/lifecycle/configuration changes retire old authority immediately; returning focus or saving settings never dispatches automatically.
 
 ## 4. Suggestion overlay
 
@@ -75,13 +67,13 @@ The exact before-and-after display is also the writer's semantic safeguard. Loca
 
 Apply acts only on the current suggestion through its current trusted native button. It enters `Applying`, obtains immediate worker authorization, restores the captured textarea and caret after the deliberate approval-UI handoff, verifies the snapshot, selects and re-verifies the exact correction range internally, changes that range once, and returns to `Idle`. The browser's next native Undo must restore the exact original text in one step.
 
-Emenda consumes the exact self-authored input from Apply internally. A successful Apply does not debounce, request inference, or create another suggestion.
+Emenda consumes the exact self-authored input from Apply internally. A successful Apply does not start settling, request inference, or create another suggestion.
 
-If the source, document, textarea value, captured selection, snapshot, mapping, worker authority, or original substring is no longer current, Apply makes no text mutation and shows a concise actionable error. A moved caret or selection invalidates the proposal. If mutation produces an unexpected external change, Emenda refreshes baseline and authority rather than treating it as acknowledgement; a new check starts only when that change independently has eligible paired provenance.
+If the source, document, textarea value, captured selection, snapshot, mapping, worker authority, or original substring is no longer current, Apply makes no text mutation and shows a concise actionable error. A moved caret or selection invalidates the proposal. If mutation produces an unexpected external change, Emenda refreshes baseline and authority rather than treating it as acknowledgement; ordinary input starts only settling, and a new deep check additionally requires fresh explicit intent.
 
 Suggestion Dismiss invalidates only the current suggestion and preserves page text exactly; error Dismiss clears only the current content error. Either variant best-effort restores the still-current unchanged textarea and captured caret, then returns to `Idle`. Stale suggestion and error controls are inert.
 
-Apply and Dismiss are native buttons operated by pointer or by their ordinary Enter/Space activation after the writer tabs into Emenda UI. V0.1 defines no page-level custom shortcut. Only trusted activation of a current, visible, DOM-hit-test-unobscured, focused Emenda control is accepted; synthetic, stale, hidden, moved, DOM-hit-test-covered, disconnected, or page-focused events do nothing. Page-controlled compositor-only or `pointer-events: none` visual covers are outside that proof boundary, so inline approval is supported only on trusted enabled origins.
+Apply and Dismiss are native buttons operated by pointer or by their ordinary Enter/Space activation after the writer tabs into Emenda UI. V0.2 defines no page-level custom shortcut. Only trusted activation of a current, visible, DOM-hit-test-unobscured, focused Emenda control is accepted; synthetic, stale, hidden, moved, DOM-hit-test-covered, disconnected, or page-focused events do nothing. Page-controlled compositor-only or `pointer-events: none` visual covers are outside that proof boundary, so inline approval is supported only on trusted enabled origins.
 
 ## 6. Focus and accessibility
 
@@ -101,7 +93,7 @@ Emenda-owned overlay and options UI target WCAG 2.2 AA:
 - stable placement and restrained motion;
 - no focus change caused solely by suggestion arrival.
 
-Each new current suggestion or content error produces exactly one polite assistive-technology notification. Hidden debounce and checking activity produces none. Browser Integration owns the accessibility evidence.
+Each new current suggestion or content error produces exactly one polite assistive-technology notification. Hidden settling and checking activity produces none. Browser Integration owns the accessibility evidence.
 
 ## 7. Settings
 
@@ -117,7 +109,7 @@ Local model selection uses the exact case-sensitive server catalog ID, with no c
 
 The profile choices remain `auto`, `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE` and `ru-RU`; a fixed profile is authoritative. Text not safely handled under the selected mode yields no suggestion.
 
-Options communicates only with the worker. No saved credential is displayed back. Provider choice, models, keys and profile never appear in the writing page/overlay. Invalid active configuration remains paused with Configuration required. Switching provider, either model/key, or profile invalidates active checks and suggestions and resumes only on the next committed input. The inactive provider configuration is remembered without becoming a fallback. Stale discovery/readiness status is discarded after configuration changes or restart.
+Options communicates only with the worker. No saved credential is displayed back. Provider choice, models, keys and profile never appear in the writing page/overlay. Invalid active configuration remains paused with Configuration required. Switching provider, either model/key, or profile invalidates active checks and suggestions and returns to Idle and starts deep work only on a later explicit action. The inactive provider configuration is remembered without becoming a fallback. Stale discovery/readiness status is discarded after configuration changes or restart.
 
 Origin enablement/revocation remains separate. There is no provider or model picker in the writing overlay.
 
@@ -130,7 +122,9 @@ Writer-visible errors are concise, typed, and actionable:
 | Active provider model or required credential missing | Configuration required, with **Open Settings** |
 | Site permission unavailable | Explain that Emenda could not be enabled for this site |
 | Revocation cleanup incomplete | Explain that the site is disabled and cleanup will be retried |
-| Current provider failure or 15-second timeout | Explain that the check failed and writing can continue |
+| Distinct concurrent deep action | Emenda is busy. Try again after the current check. |
+| Server/model/auth/resource unavailability, recovery busy/loading/failure or 15-second timeout | Deep check temporarily unavailable; writing and native spelling continue |
+| Other current provider failure | Explain that the check failed and writing can continue |
 | Invalid profile result or otherwise unsafe provider result | Explain that no safe suggestion could be produced |
 | Apply refusal after the writer acts | Explain that authority or the surface changed; claim nothing was applied only when the verified text did not change |
 
@@ -144,13 +138,13 @@ Errors never display an API key, authorization detail, raw request context, raw 
 
 The options page displays this text verbatim:
 
-> Emenda sends only the current bounded context to the selected provider. On a short document, that context can equal all of its text; Emenda sends no separate or unbounded full-document field. Local oMLX is the default: inference goes only to http://127.0.0.1:8000 on this Mac, and a local failure never sends text to OpenRouter or another remote provider. Local model KV caching may retain model state; oMLX request logging is set to critical. Emenda stores no raw context, provider bodies, or correction history and makes no guarantee about OS-native crash diagnostics. OpenRouter is an explicit alternative and may try more than one eligible endpoint for the same configured model inside one request; each attempted endpoint may receive the bounded text. A remote catalog ID may itself represent a routing service. Emenda disables web search, response healing, context compression, and Fusion in remote requests. Enforced account/workspace policies that prevent those overrides are unsupported and may add processing or cost. Remote calls use your OpenRouter quota and may incur charges. Requested data-collection denial is not a zero-retention guarantee; remote processing remains subject to OpenRouter’s, enforced account policy, and each attempted provider’s policies. Emenda sends neither provider the page URL, editor identity, DOM structure, or Chrome sender metadata. Enable only trusted origins: page work nested in a genuine editing event or queued ahead of ticket expiry may cause one check, and page-controlled visual covers that DOM hit-testing cannot detect may obscure an inline approval control. Saved provider credentials reside in the browser profile, not an operating-system secret vault.
+> Emenda uses Brave/macOS native spelling during ordinary writing. Typing, pauses, focus, navigation and startup do not send text to a provider. Proofread with Emenda explicitly sends only the current bounded context to the selected provider; on a short document it can equal all its text, with no separate unbounded full-document field. Local oMLX is the default: inference goes only to http://127.0.0.1:8000 on this Mac, and local failure never sends text to OpenRouter or another remote provider. Emenda may keep up to four exact bounded inputs and validated results in worker memory for at most 60 seconds, within a 64 KiB serialized-payload budget, to avoid repeated work; it stores no persistent text cache, correction history or raw provider bodies. A text-free operation marker survives restart for safe recovery. Local model KV caching may retain model state; oMLX request logging is set to critical, and Emenda makes no guarantee about OS-native crash diagnostics. OpenRouter is an explicit alternative and may try more than one eligible endpoint for the same configured model inside one request; each attempted endpoint may receive the bounded text. A remote catalog ID may itself represent a routing service. Emenda disables web search, response healing, context compression and Fusion in remote requests. Enforced account/workspace policies preventing those overrides are unsupported and may add processing or cost. Remote calls use your OpenRouter quota and may incur charges; requested data-collection denial is not a zero-retention guarantee, and processing follows OpenRouter's, enforced account policy and each attempted provider's policies. Cancellation stops client authority, not necessarily provider computation; an uncertain remote request may outlive its deadline and overlap a later explicit request. Emenda sends neither provider the page URL, editor identity, DOM structure, source/operation tokens or Chrome sender metadata. Enable only trusted origins: page work nested in a genuine editing event or queued ahead of ticket expiry may consume one provenance ticket, and page-controlled visual covers that DOM hit-testing cannot detect may obscure an inline approval control. Saved provider credentials reside in the browser profile, not an operating-system secret vault.
 
 The UI identifies synthetic readiness as connectivity/model compatibility rather than semantic qualification. It makes no claim of complete local-server persistence elimination, OS diagnostic suppression, human corpus review, or reliability beyond the recorded environment.
 
 ## 10. Supported and unsupported surfaces
 
-Positive V0.1 claims cover explicitly enabled, visible, window-focused top-level HTTP(S) pages with one active, visible, writable, midpoint-exposed, sequentially keyboard-focusable light-DOM textarea and a collapsed caret. Its exact value, captured selection, and scalar/UTF-16 replacement range must map losslessly. Exposure is the conservative DOM midpoint hit test in [`SPEC.md`](SPEC.md), not a claim to detect compositor-only visual covers.
+Positive V0.2 claims cover explicitly enabled, visible, window-focused top-level HTTP(S) pages with one active, visible, writable, midpoint-exposed, sequentially keyboard-focusable light-DOM textarea and a collapsed caret. Its exact value, captured selection, and scalar/UTF-16 replacement range must map losslessly. Exposure is the conservative DOM midpoint hit test in [`SPEC.md`](SPEC.md), not a claim to detect compositor-only visual covers.
 
 Inputs, contenteditable hosts, iframes, shadow-DOM editors, rich, virtualized, canvas, and Google Docs-style editors, restricted or extension pages, file URLs, PDFs, hidden or offscreen surfaces, readonly, disabled, inert, or non-sequential surfaces, and incognito are unsupported. Ordinary typing in them remains silent rather than unreliable.
 
@@ -167,7 +161,8 @@ The future implemented experience is complete when a writer can:
 ```text
 enable one origin
 → write in a supported surface
-→ pause
+→ native spelling while typing
+→ choose Proofread with Emenda in the textarea context menu
 → receive at most one exact suggestion without losing focus
 → Apply or Dismiss
 → Undo an Apply in one native step

@@ -1,32 +1,33 @@
 # Emenda
 
-> **Frozen supplemental orientation, version 2.2.1**
+> **Frozen supplemental orientation, version 2.3.0**
 
 > **Preserve your Duktus**
 
-Emenda V0.1 is a quiet personal writing assistant for Chromium. It observes committed textarea changes on explicitly enabled sites, waits 600 ms, sends one bounded context through local oMLX by default or explicitly selected OpenRouter, validates the complete corrected focus, derives at most one Unicode-scalar edit locally, and presents the exact correction for the writer to Apply or Dismiss. Apply preserves one-step native Undo.
+Emenda V0.2 is a private, conservative browser writing assistant. Ordinary typing uses Brave/macOS native spelling. Emenda tracks authorized textarea state and settles locally after 600 ms without provider traffic. Choose **Proofread with Emenda** in the textarea context menu for deeper contextual proofreading, then review one exact suggestion and Apply or Dismiss. Apply retains one-step native Undo.
 
-This non-authoritative orientation summarizes the 13-Markdown-file v2.2.1 freeze. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) owns inventory, authority, lineage and integrity. [`PROMPT.md`](PROMPT.md) records the successor prompt clarification and measured explicit-test startup policy, preserved migration baselines, and continuing personal Mac/Brave terminal state.
+This orientation is supplemental. [PACKAGE-MANIFEST](PACKAGE-MANIFEST.md) owns the exact 13-file freeze, lineage and integrity; [PROMPT](PROMPT.md) owns the bounded Sprint 2 objective and completion. The freeze defines the successor contract, not an implemented or installed V0.2 release.
 
-## Settings and access
+## Daily-use contract
 
-- Local requests use only `http://127.0.0.1:8000`, one case-sensitive direct catalog model ID, strict structured output and the actual local authentication policy. A local failure never selects a remote provider.
-- OpenRouter is an explicit alternative with separately remembered key/base-model ID, same-model endpoint fallback inside one request, account quota and possible charges.
-- Both credentials are write-only. Provider/model/key/profile changes invalidate current work and resume only after the next committed input.
-- Profiles are `auto` (default), `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE` and `ru-RU`.
-- Local discovery retains 15 seconds. The explicit synthetic **Test connection and model** action has a fixed 25-second bound and may warm the local model; writing checks and official qualification remain at 15 seconds. Readiness is ephemeral, can lapse after restart/eviction, grants no authority and is separate from linguistic qualification. No warm-up or retry runs automatically.
-- The toolbar explicitly enables one exact HTTP(S) origin/port. Provider permissions never enable a writing site implicitly. Revocation immediately removes authority and reconciles live scripts/grants/registration.
+- Ambient typing, pauses, focus, navigation, browser startup and worker wakeup cause zero inference/catalog/readiness/status traffic, automatic warm-up or model loading.
+- One cheap settling timer belongs to each active content controller. One expensive client operation globally spans tabs and diagnostics, with exact coalescing, Busy for distinct concurrent actions and zero backlog.
+- Up to four exact writing results may be reused in worker memory for 60 seconds within 64 KiB of serialized retained payload; no text cache is persisted. Unknown execution survives restart only through a text-free marker.
+- Local uncertainty uses one read-only status inspection on the next explicit deep action. Remote uncertainty releases the client lease at its original deadline; retired results never regain authority, while remote computation may continue.
+- Local admission failure shows Deep check temporarily unavailable. Native spelling stays available. Emenda adds no language runtime and never weakens oMLX's memory guard.
 
-## Supported experience and privacy
+## Settings, scope and privacy
 
-V0.1 requires Chromium 140 or newer and supports only an active, visible, writable, midpoint-exposed, sequentially keyboard-focusable light-DOM textarea with a collapsed caret in a visible window-focused top-level page. Paired trusted input is required; inputs, contenteditable, iframes, shadow/rich/virtualized editors, restricted pages, file URLs, PDFs, hidden/readonly/disabled surfaces and incognito fail closed. Positive runtime claims name the tested browser/device; untested minimum-runtime/other-device compatibility remains explicit.
+Local oMLX remains the default at fixed `http://127.0.0.1:8000`, using one exact case-sensitive direct catalog model and the actual credential policy. OpenRouter is explicitly selected, with a separately remembered model/key and same-model endpoint fallback inside its own request. There is no application retry or cross-provider fallback. Settings changes invalidate current authority; typing never resumes inference automatically. The existing explicit synthetic local Settings Test retains 25 seconds; writing/discovery and official corpus cases retain 15 seconds. Readiness promises neither residency, admission nor linguistic qualification.
 
-Only bounded page context reaches the selected provider; on short text it may equal all document text. URL, DOM/editor identity and browser metadata never enter either request. Emenda stores no raw context, provider body, text history, telemetry or analytics, and performs no application retry or cross-provider fallback. Local oMLX remains loopback-bound with request logging at `critical`; model KV cache state may remain, and native crash diagnostics are outside Emenda’s guarantee. OpenRouter processing/retention remains subject to attempted providers’ policies. Credentials are stored in the browser profile.
+Toolbar Enable/Reactivate authorizes one exact HTTP(S) origin/port; Proofread requests deep work; the suggestion overlay owns writer review. Minimum Chrome remains 140. Only a visible, foreground, writable, exposed, keyboard-focusable light-DOM textarea with a lossless collapsed caret is supported. Inputs, contenteditable, frames, shadow/rich/virtualized editors, restricted/file/PDF and incognito surfaces fail closed.
 
-Enabled-origin residual risks, the complete exact disclosure and writer controls are owned by [`UX.md`](UX.md). Structural validation cannot prove meaning preservation: independent agents qualify the canonical corpus, and the writer approves every actual proposal.
+Only bounded linguistic context reaches the selected provider. No page URL, DOM/browser/source identity, credentials or operation token enters linguistic input. Emenda retains no raw provider body or persistent text history/cache and emits no telemetry. [UX Section 9](UX.md#9-privacy-disclosure) owns the complete disclosure, including transient reuse, local KV/logging/native-diagnostic limits, remote processing/cost/uncertainty and enabled-origin risks.
 
-## Document map
+## Evidence and handoff
 
-[`SPEC.md`](SPEC.md) owns behavior/trust/provider/settings. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) owns responsibility and dependency boundaries. [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) owns ordered increments and the migration. [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md) owns the six gates/corpus, and [`docs/ENGINEERING.md`](docs/ENGINEERING.md) owns construction/verification/evidence. [`AGENTS.md`](AGENTS.md), [`BRAND.md`](BRAND.md), [`ROADMAP.md`](ROADMAP.md) and the initially empty [`docs/EVIDENCE.md`](docs/EVIDENCE.md) retain their manifest-classified roles.
+The predecessor implementation `5a154ac6d7b19a4fc856a3c460dbae2ba3c31f63` and installed extension remain unchanged during Sprint 2. Its qualified `gemma-3-12b-it-4bit` run passed 15/15 with two independent complete semantic reviews, while personal cold-admission and daily-use conformance remained incomplete. [The retained ledger](docs/EVIDENCE.md) preserves both gains and limitations.
 
-Native runtimes, native credential stores, broader editors, packaging/signing, store publication, release automation and commercial infrastructure remain Deferred. The authorized personal unpacked Brave installation is part of this objective.
+The successor preserves prompt/model-facing/context/schema/derivation semantics. Deterministic equivalence permits inherited linguistic qualification; scheduler/browser/resource evidence is freshly verified. [IMPLEMENTATION-PLAN](docs/IMPLEMENTATION-PLAN.md) orders Sprint 3 core, Sprint 4 context-menu/browser integration and Sprint 5 real-Mac acceptance/release. [ACCEPTANCE](docs/ACCEPTANCE.md) owns six gates and 23 critical-ID mappings. [ARCHITECTURE](docs/ARCHITECTURE.md), [ENGINEERING](docs/ENGINEERING.md), [AGENTS](AGENTS.md), [BRAND](BRAND.md) and [ROADMAP](ROADMAP.md) retain their manifest-classified roles.
+
+Broader editors, automatic grammar engines, additional writing actions, floating buttons/shortcuts, native integration, CLI/MCP, oMLX changes, distribution and broader support remain later objectives.
