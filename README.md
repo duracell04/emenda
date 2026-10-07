@@ -1,12 +1,12 @@
 # Emenda
 
-> **Frozen supplemental orientation, version 2.3.0**
+> **supplemental orientation, version 2.3.1**
 
 > **Preserve your Duktus**
 
 Emenda V0.2 is a private, conservative browser writing assistant. Ordinary typing uses Brave/macOS native spelling. Emenda tracks authorized textarea state and settles locally after 600 ms without provider traffic. Choose **Proofread with Emenda** in the textarea context menu for deeper contextual proofreading, then review one exact suggestion and Apply or Dismiss. Apply retains one-step native Undo.
 
-This orientation is supplemental. [PACKAGE-MANIFEST](PACKAGE-MANIFEST.md) owns the exact 13-file freeze, lineage and integrity; [PROMPT](PROMPT.md) owns the bounded Sprint 2 objective and completion. The freeze defines the successor contract, not an implemented or installed V0.2 release.
+This orientation is supplemental. [PACKAGE-MANIFEST](PACKAGE-MANIFEST.md) owns the thirteen-file inventory, lineage and source provenance; [PROMPT](PROMPT.md) owns the approved Sprint 4 objective and completion. v2.3.1 corrects IME provenance and permits authorized versioned revisions; runtime and installed claims require their own evidence.
 
 ## Daily-use contract
 
@@ -26,7 +26,7 @@ Only bounded linguistic context reaches the selected provider. No page URL, DOM/
 
 ## Evidence and handoff
 
-The predecessor implementation `5a154ac6d7b19a4fc856a3c460dbae2ba3c31f63` and installed extension remain unchanged during Sprint 2. Its qualified `gemma-3-12b-it-4bit` run passed 15/15 with two independent complete semantic reviews, while personal cold-admission and daily-use conformance remained incomplete. [The retained ledger](docs/EVIDENCE.md) preserves both gains and limitations.
+Sprint 4 starts from verified implementation `822d1fcbf759e80a8b4251e8ca12e0200ab5fb9c`; preserved qualification originated at predecessor `5a154ac6d7b19a4fc856a3c460dbae2ba3c31f63`. Installed bytes remain untouched. Its qualified `gemma-3-12b-it-4bit` run passed 15/15 with two independent complete semantic reviews, while personal cold-admission and daily-use conformance remained incomplete. [The retained ledger](docs/EVIDENCE.md) preserves both gains and limitations.
 
 The successor preserves prompt/model-facing/context/schema/derivation semantics. Deterministic equivalence permits inherited linguistic qualification; scheduler/browser/resource evidence is freshly verified. [IMPLEMENTATION-PLAN](docs/IMPLEMENTATION-PLAN.md) orders Sprint 3 core, Sprint 4 context-menu/browser integration and Sprint 5 real-Mac acceptance/release. [ACCEPTANCE](docs/ACCEPTANCE.md) owns six gates and 23 critical-ID mappings. [ARCHITECTURE](docs/ARCHITECTURE.md), [ENGINEERING](docs/ENGINEERING.md), [AGENTS](AGENTS.md), [BRAND](BRAND.md) and [ROADMAP](ROADMAP.md) retain their manifest-classified roles.
 

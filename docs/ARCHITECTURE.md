@@ -1,10 +1,10 @@
 # Emenda V0.2 Architecture
 
-> **Frozen architecture, version 2.3.0**
+> **architecture, version 2.3.1**
 
 ## 1. Authority and objective boundary
 
-[`SPEC.md`](../SPEC.md) defines product behavior and the authoritative trust model. This document defines ownership, boundaries, import direction, and runtime data flow. [`IMPLEMENTATION-PLAN.md`](IMPLEMENTATION-PLAN.md) defines build order, and [`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md) defines freeze identity and lineage.
+[`SPEC.md`](../SPEC.md) defines product behavior and the authoritative trust model. This document defines ownership, boundaries, import direction, and runtime data flow. [`IMPLEMENTATION-PLAN.md`](IMPLEMENTATION-PLAN.md) defines build order, and [`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md) defines version, provenance and lineage.
 
 ## 2. System shape
 
@@ -160,7 +160,7 @@ The authorized replacement request contains the opaque source and snapshot refer
 
 Immediately before the sole mutation leaf, runtime-gated `document.execCommand("insertText", false, replacement)`, the surface registers a one-use expected self-mutation containing the source, pre-edit text, post-edit text, target range, and replacement. Success requires `true`, the exact synchronous input, and the exact post-state; that input becomes `AppliedChange`, updates the text and resulting-selection baseline, emits no `ObservedChange`, advances authority without inference, and returns to `Idle`. A later queued or coalesced selection notification is self-authored only when current source and selection still equal that baseline. Any unexpected changed state is external and refreshes baseline/authority, and ordinary input starts only local settling; inference additionally requires fresh explicit intent; an unchanged failure is a typed refusal and restores the captured caret only when source and value remain exact. No direct value assignment, DOM rewrite, clipboard operation, simulated input, fuzzy matching, or recovery mutation is allowed.
 
-Composition and foreground handling are centralized at the adapter/controller boundary. `compositionstart` invalidates current authority immediately, binds the pre-composition tuple, and creates an eligible generation only from a trusted event on a qualifying surface with a collapsed caret. Trusted same-generation `beforeinput`/`input` pairs refresh the exact text/selection baseline only; their in-bounds, losslessly mapped IME candidate ranges may be noncollapsed and matching delayed selection notifications are ignored. An untrusted, unpaired, malformed, or mismatching event disqualifies the generation. A trusted qualifying `compositionend` emits the sole committed change only at a losslessly mapped collapsed caret and when terminal text differs from the bound pre-composition text; that exact terminal state synchronously becomes the baseline bound to the new revision. Cancelled/no-op generations remain silent. Only an identical later paired text, source, and selection tuple is suppressed within that generation; any mismatch is external and must independently satisfy ordinary pairing. A hidden-document transition or window blur invalidates authority, clears provenance, cancels work best-effort, and removes presentation without retrying when focus returns.
+Composition and foreground handling are centralized at the adapter/controller boundary. `compositionstart` invalidates current authority immediately, binds the pre-composition tuple, and creates an eligible generation only from a trusted event on a qualifying surface with a collapsed caret. Trusted same-generation `beforeinput`/`input` pairs refresh the exact text/selection baseline only; their in-bounds, losslessly mapped IME candidate ranges may be noncollapsed and matching delayed selection notifications are ignored. An untrusted, unpaired, malformed, or mismatching event disqualifies the generation. SPEC Section 6 owns the single IME qualification rule: an end notification closes the same native-fed generation once only with unchanged last-paired text and a freshly eligible collapsed caret; its trust flag supplies no authority. A changed committed tuple synchronously becomes the new revision baseline. Cancelled/no-op generations remain silent. Only an identical later paired text, source, and selection tuple is suppressed within that generation; any mismatch is external and must independently satisfy ordinary pairing. A hidden-document transition or window blur invalidates authority, clears provenance, cancels work best-effort, and removes presentation without retrying when focus returns.
 
 ## 9. Browser text mapping
 
@@ -211,7 +211,7 @@ Documentation
 
 | Gate | Architectural scope |
 | --- | --- |
-| Documentation | Frozen Markdown identity, consistency, links, staged hashes, and documentation-only ancestry |
+| Documentation | Versioned Markdown source provenance, consistency, links, traceability and preserved history |
 | Mock Product | Complete reducer-and-effects behavior through deterministic ports and mocks |
 | Architecture | Strict core compilation, prohibited type absence, Zod placement, import direction, semantic ports, dependency allowlist, and absence of native scaffolding |
 | Provider | Runtime-message and external-result schema enforcement, worker/provider boundary behavior, and live structured-output compatibility |

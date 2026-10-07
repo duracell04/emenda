@@ -1,10 +1,10 @@
 # Emenda V0.2 Implementation Plan
 
-> **Frozen implementation plan, version 2.3.0**
+> **implementation plan, version 2.3.1**
 
 ## 1. Objective boundary
 
-[PROMPT](../PROMPT.md) owns authorization and completion; this document owns successor sequence and gate placement subject to [SPEC](../SPEC.md) and [ARCHITECTURE](ARCHITECTURE.md). [PACKAGE-MANIFEST](../PACKAGE-MANIFEST.md) owns freeze identity. The Documentation Gate completes Sprint 2; implementation begins only under a separate objective.
+[PROMPT](../PROMPT.md) owns authorization and completion; this document owns successor sequence and gate placement subject to [SPEC](../SPEC.md) and [ARCHITECTURE](ARCHITECTURE.md). [PACKAGE-MANIFEST](../PACKAGE-MANIFEST.md) owns version and source provenance. Documentation validates each authorized revision; PROMPT defines the current Sprint 4 scope.
 
 ## 2. Canonical sequence
 
@@ -20,11 +20,11 @@ Six gates remain in order: Documentation → Mock Product → Architecture → P
 
 ## 3. Documentation baseline and implementation intake
 
-Sprint 2 freezes only the manifest-classified Markdown package. Its Documentation Gate verifies exact parent, ledger preservation, authorized semantic delta, singular authority, traceability, links, canonical sequence, staged hashes, independent exact-tree review and publication closure.
+The specification is revised through ordinary authorized versioned commits. Documentation verifies inventory, links, traceability, preserved corpus/contracts, reviewed delta, history and publication.
 
-Before product source mutation, copy every path from the exact published v2.3.0 freeze into `constitution/`, preserving paths and raw bytes, including the retained historical ledger snapshot. Commit one strict `constitution.lock.json` object with exactly five fields and no extras: `schemaVersion: 1`, `repository: "https://github.com/duracell04/emenda"`, the exact manifest `freezeId`, and the corresponding 40-character lowercase hexadecimal `commit` and `tree`. The copied manifest supplies inventory and individual hashes; do not duplicate them in the lock. The local audit verifies exact snapshot tree/bytes, inventory, lock and 11 checksums without network access. Later blueprint ledger appends never change this imported snapshot.
+Import every raw path/byte from the exact published source commit into `constitution/`, including its historical ledger snapshot. `constitution.source.json` is one strict five-field object: `schemaVersion: 1`, `repository: "https://github.com/duracell04/emenda"`, `version: "2.3.1"`, and the corresponding forty-character lowercase hexadecimal `commit` and `tree`. Audit verifies the imported raw Git tree, inventory, links and twenty-three critical-ID mappings without network. Future authorized revisions update the source record and imported documents together; later blueprint ledger appends do not change an earlier import.
 
-Begin the separately authorized implementation on new `build/v0.2` from `5a154ac6d7b19a4fc856a3c460dbae2ba3c31f63` / tree `154341857664f7da22560a6cd4980008b0f46609`. Preserve `build/local-omlx`, `build/v0.1`, prior intakes and qualification artifacts. Intake is one coherent commit before source changes. Update the existing sole audit entry point's freeze/intake/control identities, protocol-2 and contextMenus permission expectations, exact UX disclosure, 23 critical IDs and qualification inheritance checks without weakening compiler/dependency/confinement rules. Keep lock schema 1, settings schema 2 and the canonical toolchain/dependency set.
+Sprint 4 descends from `822d1fcbf759e80a8b4251e8ca12e0200ab5fb9c` / tree `d8c4586bc3084c8d95d7da12012aaed1e4b46419` on `build/v0.2`. Preserve predecessors, installed bytes, historical intakes and qualification artifacts. Import the published revision and update governance/audit provenance before product changes. Keep settings schema 2 and the canonical toolchain/dependencies.
 
 ## 4. Sprint 3: Resource-aware deep-operation core
 
@@ -58,6 +58,6 @@ Retain inherited 15/15 qualification only with proved equivalence and unchanged 
 
 ## 7. Future execution policy
 
-Use the single cross-platform audit command from [ENGINEERING](ENGINEERING.md), exact gate criteria from [ACCEPTANCE](ACCEPTANCE.md) and execution/Git discipline from [AGENTS](../AGENTS.md). The baseline audit is locked to v2.2.1 and is updated only during successor intake; Sprint 2 adds no tracked audit implementation. Internal names, helpers and equivalent techniques are Builder choices that preserve every observable contract.
+Use the single cross-platform audit command from [ENGINEERING](ENGINEERING.md), exact gate criteria from [ACCEPTANCE](ACCEPTANCE.md) and execution/Git discipline from [AGENTS](../AGENTS.md). The sole audit verifies the active imported source record and cumulative Browser coverage. Its automated gate ends at Browser Integration; Conformance combines that evidence with Sprint 5 installed-environment assessment. Internal names, helpers and equivalent techniques are Builder choices that preserve every observable contract.
 
 Contenteditable, rich editors, multiple suggestions, grammar fast engines, spelling runtimes, floating buttons, shortcuts, extra writing actions, CLI/MCP, native integration, oMLX modifications and broader support remain separate future objectives.

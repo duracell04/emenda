@@ -1,6 +1,6 @@
 # Emenda Engineering Standard
 
-> **Frozen engineering standard, version 2.3.0**
+> **engineering standard, version 2.3.1**
 
 ## 1. Authority
 
@@ -8,18 +8,18 @@ This document owns implementation quality, the canonical toolchain policy, verif
 
 ## 2. Smallest sufficient implementation
 
-- **Required:** Choose the simplest clear implementation that completely satisfies the current frozen contract.
+- **Required:** Choose the simplest clear implementation that completely satisfies the current authorized contract.
 - **Required:** Give every dependency, abstraction, interface, layer, service, configuration path, asynchronous boundary, and extension point a present-requirement justification.
 - **Required:** Implement the current concrete case before generalizing from demonstrated common structure.
 - **Required:** Minimize concepts, ownership boundaries, synchronization, states, interfaces, dependencies, and failure modes across the whole product.
 - **Required:** Prefer direct typed code and explicit boundary conversion over defensive machinery spread through trusted internals.
 - **Deferred:** Future runtime families, product surfaces, infrastructure, and speculative extension points enter only through their future objectives.
 
-Maintenance burden is an acceptance concern. Keep the global interaction surface at the smallest size that satisfies the frozen contract, and add surface when a present requirement justifies it.
+Maintenance burden is an acceptance concern. Keep the global interaction surface at the smallest size that satisfies the authorized contract, and add surface when a present requirement justifies it.
 
 ## 3. Canonical toolchain and dependency set
 
-At initial implementation preflight, select one exact Node, npm, and TypeScript version tuple. The v2.3.0 continuation retains the baseline’s committed tuple unless an evidence-backed compatibility fix requires a separately coherent update. Commit that tuple before product source through exact engine metadata, an exact packageManager value, the exact TypeScript development dependency, and the implementation's toolchain record. Generate and commit the npm lockfile under that tuple.
+At initial implementation preflight, select one exact Node, npm, and TypeScript version tuple. The v2.3.1 continuation retains the baseline’s committed tuple unless an evidence-backed compatibility fix requires a separately coherent update. Commit that tuple before product source through exact engine metadata, an exact packageManager value, the exact TypeScript development dependency, and the implementation's toolchain record. Generate and commit the npm lockfile under that tuple.
 
 That tuple is canonical for the objective. The audit passes when the running versions match it. Label another-environment run as compatibility evidence; canonical conformance comes from the canonical tuple. Package scripts and verification resolve executables from committed, lockfile-installed local tools.
 
@@ -96,8 +96,7 @@ Apply verification cost where it produces information: focused deterministic che
 
 The implementation provides one cross-platform audit command as the sole audit entry point. It is read-only with respect to constitution and product sources and orchestrates every check available at the active phase:
 
-- read-only constitution snapshot and lock verification;
-- all 11 independent constitution checksums;
+- exact imported specification source record, raw Git tree, inventory, links and critical-ID mapping verification;
 - canonical toolchain and clean npm installation;
 - strict compilation and focused exceptional-boundary verification;
 - deterministic tests;
@@ -109,7 +108,7 @@ Its internal helpers and output format are Builder choices. Keep every helper in
 
 The deterministic CI workflow uses one invocation of that audit command as its complete audit path. Record environment-dependent live-provider, minimum-Chrome, current-Stable, and physical-device results as their separate evidence layers.
 
-Use focused review while constructing and one complete consistency, security, architecture, and acceptance review for the exact final candidate at the owning gate. Repeat complete review after a substantive change to an audited invariant. Freeze when every verified actionable blocker is resolved and required checks pass.
+Use focused review while constructing and one complete consistency, security, architecture, and acceptance review for the exact final candidate at the owning gate. Repeat complete review after a substantive change to an audited invariant. Publish when every verified actionable blocker is resolved and required checks pass.
 
 SPEC is the sole home for critical-requirement definitions and semantic ownership; derived documents reference their IDs. Keep each ID permanently bound to one semantic requirement, assign a fresh ID to new semantics, and audit acceptance coverage for every active ID.
 
@@ -124,7 +123,7 @@ Use these exact levels:
 - **live:** real selected-provider behavior (local oMLX or explicitly selected OpenRouter);
 - **runtime:** exact installed-Brave, minimum-version/current-Stable compatibility, or named-device smoke.
 
-Every entry records UTC time, gate or increment, constitution freeze ID/commit/tree, applicable critical requirement IDs, tested implementation tree/commit, commands or actions, exact result, environment and toolchain, evidence level, limitations or failures, and next checkpoint.
+Every entry records UTC time, gate or increment, specification version/commit/tree, applicable critical requirement IDs, tested implementation tree/commit, commands or actions, exact result, environment and toolchain, evidence level, limitations or failures, and next checkpoint.
 
 The canonical evidence ledger is `docs/EVIDENCE.md` in the constitution repository; the implementation's `constitution/` snapshot remains read-only. An evidence commit in the constitution repository changes exactly that ledger and describes an already-existing tested implementation commit. Preserve failures and later recoveries separately. State the inspected scope, executed procedures, verified results, and open verification fields.
 

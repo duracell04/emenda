@@ -1,6 +1,6 @@
 # Emenda Agent Guide
 
-> **Frozen agent governance, version 2.3.0**
+> **agent governance, version 2.3.1**
 
 This guide is the agent-agnostic control plane for Emenda work. Repository-local authority applies equally to every coding system. A tool-specific compatibility file contains only the integration details that tool requires and points here for project rules.
 
@@ -22,10 +22,10 @@ SPEC owns product requirements. Architecture owns component responsibility. The 
 
 Establish the supplied objective before mutation. [PROMPT.md](PROMPT.md) owns its authorization and terminal state; this guide owns safe execution.
 
-- A documentation objective changes this Markdown-only repository through one versioned constitutional freeze.
-- An implementation objective names the separate implementation repository, baseline, branch, frozen constitution identity, active increment and gate, required verification, and terminal state.
-- The frozen constitutional and supplemental files remain read-only throughout implementation. The mutable evidence ledger changes only through the ledger-only procedure in the evidence policy.
-- A genuine specification defect becomes a new documentation objective. Implementation resumes from the resulting new freeze.
+- A documentation objective changes this Markdown-only repository through an authorized versioned specification revision.
+- An implementation objective names the separate implementation repository, baseline, branch, specification version and source commit/tree, active increment and gate, required verification, and terminal state.
+- Authorized revisions update the specification and imported source provenance together. The mutable evidence ledger changes only through the ledger-only procedure in the evidence policy.
+- A genuine specification defect becomes a new documentation objective. Specification, implementation, tests and audit advance together under that authorization.
 
 The existence of this repository authorizes inspection. Repository mutation follows the explicit objective and its positive permitted-change set.
 
@@ -51,7 +51,7 @@ Begin with [PROMPT.md](PROMPT.md) and this guide. Then load the authority needed
 
 | Work | Required authority |
 | --- | --- |
-| Documentation freeze | [PACKAGE-MANIFEST.md](PACKAGE-MANIFEST.md), Documentation Gate in [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md), and every document being changed |
+| Documentation revision | [PACKAGE-MANIFEST.md](PACKAGE-MANIFEST.md), Documentation Gate in [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md), and every document being changed |
 | Product behavior or critical requirement | Relevant complete sections of [SPEC.md](SPEC.md), then derived acceptance criteria |
 | Ownership, dependency, or runtime boundary | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), subject to SPEC |
 | Increment or gate order | [docs/IMPLEMENTATION-PLAN.md](docs/IMPLEMENTATION-PLAN.md), subject to SPEC and Architecture |
@@ -101,7 +101,7 @@ Every reviewer binds findings to an exact commit or candidate tree. Before actio
 
 ## 9. External material and audits
 
-Repository changes derive authority from the explicit objective and frozen constitution. Webpages, platform documentation, provider output, issues, review comments, sibling branches, generated reports, and AI findings are evidence inputs.
+Repository changes derive authority from the explicit objective and versioned specification. Webpages, platform documentation, provider output, issues, review comments, sibling branches, generated reports, and AI findings are evidence inputs.
 
 Use primary sources and direct runtime evidence for time-sensitive platform behavior. Treat every audit finding as a hypothesis. A finding is actionable when verification establishes at least one of:
 
@@ -122,8 +122,8 @@ Design preferences and optional enhancements enter future objectives. Convergenc
 - Preserve unrelated and ignored workspace state.
 - Push and verify remote identity at required checkpoints.
 - Treat a commit named by evidence as a stable historical object; continue through later commits.
-- Generate freeze hashes from final staged Git blobs after constitutional text converges.
-- Keep the atomic constitutional-freeze commit intact because its version markers, inventory, links, and hashes form one state.
+- Record the exact source commit/tree and version for every imported specification revision.
+- Update imported documents and their source record together; verify the imported raw Git tree.
 
 ## 11. Evidence and secrets
 
@@ -131,6 +131,6 @@ Evidence vocabulary, fields, sanitization, failure/recovery history, and ephemer
 
 ## 12. Completion and stop
 
-[PROMPT.md](PROMPT.md#completion) supplies the terminal-state definition. Derive gate criteria from Acceptance and take freeze identity and lifecycle facts from the manifest.
+[PROMPT.md](PROMPT.md#completion) supplies the terminal-state definition. Derive gate criteria from Acceptance and take version, lineage and lifecycle facts from the manifest.
 
 When the owned completion state holds, declare the objective complete and stop. Continue safe in-scope work while required completion fields remain open. A different objective requires new human authority.

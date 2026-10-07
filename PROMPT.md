@@ -1,6 +1,6 @@
 # Emenda V0.2
 
-> **Frozen clean-room constitution, version 2.3.0**
+> **clean-room constitution, version 2.3.1**
 
 This repository is Emenda's Markdown constitution. It defines product, architecture, sequence, verification, UX, brand and agent governance. Implementation belongs in the separately authorized repository.
 
@@ -27,28 +27,22 @@ The constitution is agent-agnostic and architecture-specific. Tool-specific comp
 | [UX.md](UX.md) | Interaction, accessibility and verbatim disclosure |
 | [BRAND.md](BRAND.md) | Visual identity |
 | [AGENTS.md](AGENTS.md) | Preflight, execution, coordination, Git and stop discipline |
-| [PACKAGE-MANIFEST.md](PACKAGE-MANIFEST.md) | Freeze identity, lineage, classification, integrity and lifecycle |
+| [PACKAGE-MANIFEST.md](PACKAGE-MANIFEST.md) | Version, lineage, classification, source provenance and lifecycle |
 
 [README.md](README.md) and [ROADMAP.md](ROADMAP.md) are supplemental orientation. [docs/EVIDENCE.md](docs/EVIDENCE.md) is the append-only factual ledger.
 
-## Authorized Sprint 2 documentation objective
+## Authorized Sprint 4 objective
 
-The human-approved Sprint 2 plan authorizes one atomic v2.3.0 / V0.2 documentation freeze on `docs/v2.3.0-freeze`, published to that branch and blueprint `main`. Its sole parent is the published evidence checkpoint `958d96b22c94f5bc2cee5b13bd49356bd86c9f2a`, tree `c41fb653dfe98a67935e7606ec2429ca6aebbcb0`. The immutable v2.2.1 predecessor remains `cd0cfe77356b6d188f6b71c2c6f9307ad2d5c38d`, tree `7e232bca9fe2a36c7c20ce5eeb4ba12126e48104`, and all prior freeze refs/ancestry remain preserved.
+The human-approved Sprint 4 plan authorizes specification v2.3.1 from commit `429c6e30905c748bafda9d211ec2a2dc6433596a`, tree `9e4e0aed672379cc16a9217f8135924fae34ddfc`, on `docs/v2.3.1`, published there and to blueprint `main`. Revise the twelve specification/orientation documents; preserve the historical ledger until a later ledger-only evidence commit. The package remains thirteen Markdown files.
 
-The positive permitted-change set is exactly `PROMPT.md`, `AGENTS.md`, `SPEC.md`, `docs/ARCHITECTURE.md`, `docs/IMPLEMENTATION-PLAN.md`, `docs/ACCEPTANCE.md`, `docs/ENGINEERING.md`, `UX.md`, `BRAND.md`, `PACKAGE-MANIFEST.md`, `README.md` and `ROADMAP.md`. The tracked inventory remains 13 Markdown files. Preserve `docs/EVIDENCE.md` byte for byte from the sole parent; no new tracked document, ADR, lock, executable or implementation file belongs to this objective. Scratch verification and a sanitized completion report may live outside the tracked package.
+Remove active immutability, atomic-freeze requirements, freeze identifiers and duplicate per-document checksum machinery. Retain subject ownership, explicit authorization, traceability, Git history and evidence policy. Correct the incompatible IME end-event requirement under SPEC Section 6 and update derived architecture, acceptance and disclosure. Preserve the linguistic contract, corpus, resource limits, dependencies and brand.
 
-Adopt Sprint 1's measured native-spelling / explicit-Gemma architecture as the successor contract, including the approved refinements: one settling timer per active controller, one bounded authoritative client dispatch lease, capability-based uncertainty handling, textarea context-menu Proofread, protocol 2, bounded transient reuse and inherited qualification through deterministic equivalence. SPEC owns the requirements; derived documents adopt them without parallel policy. Preserve the existing linguistic contract, exact corpus, conservative editing/permission/privacy invariants, dependencies and visual identity, with the explicitly declared transient-retention and text-free recovery boundaries.
+The measured Chromium path supplies a trusted start and strictly paired trusted native edits but an untrusted end notification. Requiring a trusted end rejects that valid native-fed generation. The corrected rule derives provenance from the start and pairs; the end may close only that existing generation with unchanged last-paired text and a currently eligible collapsed caret. A matching page-authored notification can close that generation once, but cannot introduce terminal text, create a generation, mint proofreading intent, dispatch inference or authorize Apply. Physical native OS IME behavior remains separate Sprint 5 evidence. A normal versioned revision makes this correction auditable without maintaining contradictory frozen policy or a browser-specific exception.
 
-The implementation repository `https://github.com/duracell04/emenda-built` remains unchanged at predecessor `5a154ac6d7b19a4fc856a3c460dbae2ba3c31f63`, tree `154341857664f7da22560a6cd4980008b0f46609`, on `build/local-omlx`. The installed extension and local provider configuration/model state remain unchanged. Sprint 2 runs no inference and makes no V0.2 daily-use readiness claim.
-
-## Future V0.2 implementation boundary
-
-A separate implementation objective names this freeze's exact published commit/tree, predecessor baseline, `build/v0.2` branch, active sprint/gate, permitted changes and terminal state. Before source mutation it imports the 13-file snapshot and five-field lock described in the Implementation Plan. That intake is read-only throughout implementation. The predecessor branch, prior intakes and qualified capture remain historical objects.
-
-V0.2 uses native spelling during ordinary writing and explicit deep proofreading through the unchanged linguistic path; one suggestion enters the preserved writer-approved Apply/Dismiss/native Undo loop. The binding Sprint 3 → Sprint 4 → Sprint 5 sequence and six gates are owned by the Implementation Plan. Passing this documentation objective authorizes no later source change, installation, provider run or release action by itself.
+Implementation starts from verified Sprint 3 commit `822d1fcbf759e80a8b4251e8ca12e0200ab5fb9c`, tree `d8c4586bc3084c8d95d7da12012aaed1e4b46419`, on `build/v0.2` in `https://github.com/duracell04/emenda-built`. Isolated checkouts preserve inspected predecessor and installed paths. Import this published revision with the strict five-field `constitution.source.json` record defined in the Implementation Plan. Implement native-menu lifecycle, trusted candidate and bound one-use intent handoff, cold-document Apply authorization, current-action presentation, browser regression closure and cumulative audit/CI. Run synthetic providers only: zero real-model requests and no provider/model configuration changes.
 
 ## Completion
 
-Sprint 2 completes when the exact final staged/committed candidate passes the Documentation Gate, receives independent read-only consistency/security/architecture/acceptance/implementability review, has all 11 staged-blob checksums verified, becomes one atomic single-parent freeze, and reaches verified matching `origin/docs/v2.3.0-freeze` and `origin/main`. Preserve the predecessor ledger and older refs, verify ancestry, and finish with a clean tracked worktree. The completion report binds the freeze ID/commit/tree, parent, gate/review results, checksum coverage, remote refs and implementation handoff.
+Sprint 4 completes when the published specification, imported tree and source record agree; deterministic and revised Browser Integration checks pass; the exact committed candidate passes clean-clone audit and hosted Windows Browser CI; published implementation commit/tree match the tested candidate; historical refs and qualification evidence remain preserved; both active worktrees are clean; and a sanitized report plus exact verified unpacked production build and SHA-256 inventory provide the Sprint 5 handoff. Append factual blueprint evidence in a separate ledger-only commit naming that already-existing tested implementation.
 
-Future implementation completes only when the six gates pass with preserved qualification or required fresh qualification, the exact tested implementation and later ledger-only evidence are published/verified, the exact production build is installed and its bounded personal Mac/Brave acceptance holds, retained limitations are disclosed and both tracked worktrees are clean. Completion is the contract state, not an intermediate test result. Stop when the authorized terminal state holds.
+The report distinguishes browser-delivered DOM behavior, instrumented Chrome callbacks, deterministic simulation and personal Brave/native OS observation. Physical native menu selection, installed Brave/native OS IME, resource observations and one bounded real local smoke belong to separately authorized Sprint 5. V0.2 Conformance remains pending. Stop when the authorized terminal state holds.
