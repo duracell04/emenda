@@ -1,6 +1,6 @@
 # Emenda Engineering Standard
 
-> **Frozen engineering standard, version 2.2.0**
+> **Frozen engineering standard, version 2.2.1**
 
 ## 1. Authority
 
@@ -19,7 +19,7 @@ Maintenance burden is an acceptance concern. Keep the global interaction surface
 
 ## 3. Canonical toolchain and dependency set
 
-At initial implementation preflight, select one exact Node, npm, and TypeScript version tuple. The v2.2.0 migration retains the baseline’s committed tuple unless an evidence-backed compatibility fix requires a separately coherent update. Commit that tuple before product source through exact engine metadata, an exact packageManager value, the exact TypeScript development dependency, and the implementation's toolchain record. Generate and commit the npm lockfile under that tuple.
+At initial implementation preflight, select one exact Node, npm, and TypeScript version tuple. The v2.2.1 continuation retains the baseline’s committed tuple unless an evidence-backed compatibility fix requires a separately coherent update. Commit that tuple before product source through exact engine metadata, an exact packageManager value, the exact TypeScript development dependency, and the implementation's toolchain record. Generate and commit the npm lockfile under that tuple.
 
 That tuple is canonical for the objective. The audit passes when the running versions match it. Label another-environment run as compatibility evidence; canonical conformance comes from the canonical tuple. Package scripts and verification resolve executables from committed, lockfile-installed local tools.
 
@@ -66,7 +66,7 @@ Timing tests control exact boundaries and completion order. A timing fix changes
 
 Controlled tests prove the canonical serialization, authored headers, fetch controls, prompt, routing, structured-output schema, no local plugins and the four disabled remote plugin directives, declared non-reasoning response projection, completion bound, exact returned model identity, timeout, incremental body limit, cancellation, local derivation, and redacted failures.
 
-The canonical 15-case corpus runs strictly sequentially through production validation using one directly configured documented model and ephemeral credential delivery when required. Independent named agents apply Acceptance’s semantic method after structural/exact-string checks, cover every language/profile and actual parsed result, and record agent/model identity, case coverage and findings truthfully as agent review. The personal objective requires a local 15/15 run with Brave running; local discovery/readiness alone is not qualification. A failed or interrupted run remains factual evidence; a complete later run records recovery.
+The canonical 15-case corpus runs strictly sequentially through production validation using one directly configured documented model and ephemeral credential delivery when required. Independent named agents apply Acceptance’s semantic method after structural/exact-string checks, cover every language/profile and actual parsed result, and record agent/model identity, case coverage and findings truthfully as agent review. The personal objective requires a local 15/15 run with Brave running; every official case retains the 15-second full-processing deadline. The existing explicit local Settings test alone uses its fixed 25-second startup bound and production parsing/derivation; local discovery/readiness is not qualification or a future-latency/residency guarantee. Any explicit test performed before a corpus is recorded as a separate setup operation with its actual cold/warm condition and outcome; the runner never performs implicit warm-up, preload or per-case retry. A failed or interrupted run remains factual evidence; a complete later run records recovery.
 
 ### Browser
 

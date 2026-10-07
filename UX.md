@@ -1,6 +1,6 @@
 # Emenda V0.1 UX
 
-> **Frozen interaction authority, version 2.2.0**
+> **Frozen interaction authority, version 2.2.1**
 
 ## 1. Interaction promise
 
@@ -110,10 +110,10 @@ The options page provides:
 - provider choice, defaulting to **Local oMLX**, with **OpenRouter** as an explicit alternative;
 - a local direct-model field/catalog discovery and a separate remembered remote base-model field;
 - independent write-only local and remote credentials with Keep, Replace and Clear actions;
-- local model discovery and a synthetic **Test connection and model** action with ephemeral redacted status;
+- local model discovery and an explicit synthetic **Test connection and model** action with ephemeral redacted status;
 - profile selection, defaulting to `auto`, enabled-origin review/revocation and the disclosure below.
 
-Local model selection uses the exact case-sensitive server catalog ID, with no compiled default. Local auth is optional only when the actual loopback server is unauthenticated; the current authenticated installation retains its key. Remote mode requires its model and key. Discovery/readiness does not mean that the model passed linguistic qualification and never uses page text. Model/server/auth/resource failure explains the actionable Settings remedy without exposing raw responses.
+Local model selection uses the exact case-sensitive server catalog ID, with no compiled default. Local auth is optional only when the actual loopback server is unauthenticated; the current authenticated installation retains its key. Remote mode requires its model and key. Discovery/readiness does not mean that the model passed linguistic qualification and never uses page text. Discovery and writing checks retain 15 seconds; the explicit local test may take up to 25 seconds and may initialize/warm the saved model with the fixed synthetic fixture. It receives readiness only after production parsing/derivation succeeds, never from health, catalog membership or preload alone. A timeout or model/server/auth/resource failure explains the actionable Settings remedy without exposing raw responses. There is no automatic warm-up, preload, retry or model-pinning requirement. After server restart or eviction, the writer may perform this explicit test again; prior readiness does not guarantee that a later writing check will complete within 15 seconds.
 
 The profile choices remain `auto`, `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE` and `ru-RU`; a fixed profile is authoritative. Text not safely handled under the selected mode yields no suggestion.
 

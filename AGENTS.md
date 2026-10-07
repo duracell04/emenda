@@ -1,6 +1,6 @@
 # Emenda Agent Guide
 
-> **Frozen agent governance, version 2.2.0**
+> **Frozen agent governance, version 2.2.1**
 
 This guide is the agent-agnostic control plane for Emenda work. Repository-local authority applies equally to every coding system. A tool-specific compatibility file contains only the integration details that tool requires and points here for project rules.
 

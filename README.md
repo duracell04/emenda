@@ -1,12 +1,12 @@
 # Emenda
 
-> **Frozen supplemental orientation, version 2.2.0**
+> **Frozen supplemental orientation, version 2.2.1**
 
 > **Preserve your Duktus**
 
 Emenda V0.1 is a quiet personal writing assistant for Chromium. It observes committed textarea changes on explicitly enabled sites, waits 600 ms, sends one bounded context through local oMLX by default or explicitly selected OpenRouter, validates the complete corrected focus, derives at most one Unicode-scalar edit locally, and presents the exact correction for the writer to Apply or Dismiss. Apply preserves one-step native Undo.
 
-This non-authoritative orientation summarizes the 13-Markdown-file v2.2.0 freeze. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) owns inventory, authority, lineage and integrity. [`PROMPT.md`](PROMPT.md) records the authorized migration from the preserved implementation baseline and its personal Mac/Brave terminal state.
+This non-authoritative orientation summarizes the 13-Markdown-file v2.2.1 freeze. [`PACKAGE-MANIFEST.md`](PACKAGE-MANIFEST.md) owns inventory, authority, lineage and integrity. [`PROMPT.md`](PROMPT.md) records the successor prompt clarification and measured explicit-test startup policy, preserved migration baselines, and continuing personal Mac/Brave terminal state.
 
 ## Settings and access
 
@@ -14,7 +14,7 @@ This non-authoritative orientation summarizes the 13-Markdown-file v2.2.0 freeze
 - OpenRouter is an explicit alternative with separately remembered key/base-model ID, same-model endpoint fallback inside one request, account quota and possible charges.
 - Both credentials are write-only. Provider/model/key/profile changes invalidate current work and resume only after the next committed input.
 - Profiles are `auto` (default), `de-CH`, `en-GB`, `en-US`, `fr-FR`, `ka-GE` and `ru-RU`.
-- Local model discovery and a synthetic connection/model test are worker-owned, ephemeral and separate from full linguistic qualification.
+- Local discovery retains 15 seconds. The explicit synthetic **Test connection and model** action has a fixed 25-second bound and may warm the local model; writing checks and official qualification remain at 15 seconds. Readiness is ephemeral, can lapse after restart/eviction, grants no authority and is separate from linguistic qualification. No warm-up or retry runs automatically.
 - The toolbar explicitly enables one exact HTTP(S) origin/port. Provider permissions never enable a writing site implicitly. Revocation immediately removes authority and reconciles live scripts/grants/registration.
 
 ## Supported experience and privacy

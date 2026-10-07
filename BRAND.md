@@ -1,6 +1,6 @@
 # Emenda Brand System
 
-> **Frozen brand system, version 2.2.0**
+> **Frozen brand system, version 2.2.1**
 
 > **Preserve your Duktus**
 

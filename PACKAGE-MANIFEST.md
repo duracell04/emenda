@@ -1,18 +1,19 @@
 # Emenda Frozen Clean-Room Constitution
 
-> **Frozen package manifest, version 2.2.0**
+> **Frozen package manifest, version 2.2.1**
 
-> **Freeze ID: emenda-clean-room-v2.2.0-2026-10-06**
+> **Freeze ID: emenda-clean-room-v2.2.1-2026-10-06**
 
-This complete 13-Markdown-file package authorizes the local-oMLX migration of the separately maintained Emenda V0.1 extension. It preserves the existing browser correction loop and explicit writer approval while adding local/default and explicit remote provider operation.
+This complete 13-Markdown-file successor package continues the authorized local-oMLX migration of the separately maintained Emenda V0.1 extension. It clarifies the shared canonical proofreading prompt and specifies a measured fixed 25-second bound only for the existing explicit local Settings synthetic test, preserving 15-second writing/discovery/corpus checks and the v2.2.0 correction, approval, privacy and qualification contract.
 
 ## Canonical state and lineage
 
-Version 2.2.0 is one atomic single-parent documentation freeze:
+Version 2.2.1 is one atomic single-parent documentation freeze:
 
 | Role | Commit | Tree | Meaning |
 | --- | --- | --- | --- |
-| Sole parent and v2.1.1 baseline | 7a65e69e915a19b310db19fd425cbd2cbd67fb54 | 07bd030daaf1cc791f8e6a4d44afedcf97828851 | Preserved Markdown-only governance-streamlined constitution |
+| Sole parent and preserved v2.2.0 freeze | [11080a3c4be943f57ea35293b995d80453ffecad](https://github.com/duracell04/emenda/commit/11080a3c4be943f57ea35293b995d80453ffecad) | 6955e79551d9a4ea372729bf75e7c3317e3da894 | Published local/default provider contract; `docs/v2.2.0-freeze` remains at this exact commit/tree |
+| Preserved v2.1.1 baseline | 7a65e69e915a19b310db19fd425cbd2cbd67fb54 | 07bd030daaf1cc791f8e6a4d44afedcf97828851 | Markdown-only governance-streamlined constitution |
 | Preserved v2.1.0 ancestor | 39c243b8a9652ccf0e65db1683e32e13e4f6eac0 | ff5ec520609517ad30eaeeb2b8249a9191c90609 | Governance-hardened freeze and preserved two-parent convergence |
 | Preserved behavioral ancestor | 5295799c637f89a5db12b2971dee12ead7977270 | e1c9227682c0d925750689b6da62b645cca7b6d1 | v2.0.3 constitution and first parent of v2.1.0 |
 | Preserved proposal ancestor | 05eadea4dc05e02b715618c458f7df4bbd9c0b10 | 8b032780267e26026d839ee887e58b668aabf95d | Historical logo proposal and second parent of v2.1.0 |
@@ -20,11 +21,11 @@ Version 2.2.0 is one atomic single-parent documentation freeze:
 
 Versions 2.0.1 and 2.0.0 remain preserved at `d70b277998a23663ee6befc77dd6bb0da50ebcca` and `a1a13607867db8e6eb2ea904f6387ba130f22ce7`. The complete historical logo proposal remains at `05eadea4dc05e02b715618c458f7df4bbd9c0b10`; it is not an active package path.
 
-The implementation baseline remains preserved on `build/v0.1` at `fa27dbfe5d18f8c8cec5d5c5a6c04cf7259f66aa` in `https://github.com/duracell04/emenda-built`. The authorized `build/local-omlx` migration imports this freeze’s exact committed identity and tree before product mutation.
+The implementation baseline remains preserved on `build/v0.1` at `fa27dbfe5d18f8c8cec5d5c5a6c04cf7259f66aa` in `https://github.com/duracell04/emenda-built`. The authorized existing `build/local-omlx` migration preserves its prior constitution intakes and imports this successor’s exact committed identity and tree before adopting its clarified shared prompt and explicit-test startup policy.
 
 ## Authorization boundary
 
-[`PROMPT.md`](PROMPT.md) owns authorization and terminal state. Version 2.2.0 incorporates the human-authorized local/default provider, explicit remote alternative, independent named agent corpus review, autonomous measured implementation and personal Mac/Brave installation objective. Runtime facts and qualifications belong in the later factual ledger, not universal compatibility assertions.
+[`PROMPT.md`](PROMPT.md) owns authorization and terminal state. Version 2.2.1 clarifies the shared prompt and measured explicit-test startup policy under the existing human-authorized autonomous debugging objective and retains the local/default provider, explicit remote alternative, independent named agent corpus review, measured implementation and personal Mac/Brave installation objective. SPEC records the bounded measured startup rationale; exact tested identities/artifacts, failed attempts and qualifications belong in the later factual ledger, never universal compatibility assertions.
 
 ## Complete tracked-document classification
 
@@ -67,38 +68,38 @@ Each normative rule resolves to its singular subject home. Supporting documents 
 
 ## Authorized behavior delta
 
-Version 2.2.0 adds local oMLX as default and OpenRouter as an explicit alternative, shared provider processing with separate concrete transports and explicit output-key/category/profile instructions for grammar-only schema visibility, exact catalog identity guarding, strict settings v2 with sole valid-v1 migration, separate remembered write-only credentials/models, worker-only local discovery and synthetic readiness, both locked provider permissions, local/remote privacy and server logging/cache boundaries, autonomous measured candidate selection, independent named agent corpus review and truthful personal Mac/Brave conformance. It preserves all 18 critical IDs and acceptance mappings, the canonical 15-case corpus, text/scalar policy, textarea/editor exclusions, deterministic result derivation, writer-approved Apply, native Undo, stale-result authority, dependency boundaries, gate/increment order, exact package inventory and visual identity. Untested direct-minimum-runtime and other-device compatibility remains explicit rather than inferred.
+Version 2.2.1 changes the general shared prompt, the existing explicit local Settings test’s measured startup policy, and successor metadata. The prompt makes the six existing profile/language mappings explicit, distinguishes compatible supported clean text from unsupported language, reports the requested compatible fixed profile, orders compatibility before a necessary single local edit and literal final equality, and ties category/explanation and edit direction to the actual difference. Concise plain English explanations are preferred rather than required. Only the dedicated worker-owned synthetic local Settings test has a fixed 25,000 ms full-processing bound with the immutable existing fixture and production validation/derivation; writing, independent discovery, OpenRouter and every official corpus case remain at 15,000 ms. It makes no separate preload, automatic/background warm-up, retry, model substitution or keepalive/pinning requirement; readiness remains ephemeral and grants no authority or qualification. No corpus examples, schema/result repair, generation/response-bound change, quality exception, new profile/surface, dependency or privacy change is added. All 18 critical IDs/mappings, the exact 15-case corpus and full 15/15 independent agent qualification, provider payloads, settings/migration, credentials, identity guard, permissions/logging/cache, text/scalar policy, textarea/editor exclusions, deterministic derivation, writer-approved Apply, native Undo, stale-result authority, dependency boundaries, gate/increment order, package inventory and visual identity remain intact. Untested direct-minimum-runtime, other-device and future cold/warm latency remain explicitly unproven.
 
 ## Integrity checksums
 
 These SHA-256 values cover exact final staged raw Git-blob bytes for the 11 immutable non-self files. The manifest is excluded because it is self-referential, and the mutable ledger follows its ledger-only procedure. Working-tree line-ending conversion is not the boundary. Final values are generated only after text convergence and final staging.
 
-- AGENTS.md: SHA-256 2463cdc258f853817eb48066c3057d255f02e6c88ac9c3668fd65f10b8f00ea5
-- BRAND.md: SHA-256 c2e776c1028bc4a84a70f65cf0808af97069db26a04d16698e2ce5ff7e7ff3dc
-- PROMPT.md: SHA-256 dd1dace06d6f7ca980a08518d36e3b553b0aacce2787db11f1ebd0f26cf400d8
-- README.md: SHA-256 976f219437ec7611ea5b1ebf572b2dfd39a202cec9e9ca224a37a052d3958d4e
-- ROADMAP.md: SHA-256 7a3fe65a00bdeb5c3fa57299ea935da994dfb544f73e1cd1c46835eff25c680e
-- SPEC.md: SHA-256 60c28fc739aef04bc35a3b85fdbc4f00bd08df0f0ace5e4fccaa2bd03a64e18e
-- UX.md: SHA-256 a38499df5f7bdbf9624592bd928d37b7e0cc737c4bcc69c69c87efd858fbd041
-- docs/ACCEPTANCE.md: SHA-256 7f9308991727ffe8e08f82330728c13a7b0efb5906f81e7a80af708dfa217ca5
-- docs/ARCHITECTURE.md: SHA-256 049e4967ebebf748ae43c51d441d19203bb8ee32cdb836cdfce8fc749e20f13b
-- docs/ENGINEERING.md: SHA-256 faf0ce23c709f6809e82c22c04b7dacd3b27001cbd8972bc46701c329166eab7
-- docs/IMPLEMENTATION-PLAN.md: SHA-256 00309129501d021493c7d6e9a2cb5c9efd0c7cefec7a03e85a902583272fe234
+- AGENTS.md: SHA-256 ff0419c6f4439de8561a1434611fd2a20d7084a658c75051520adf8ba5bea284
+- BRAND.md: SHA-256 1bf2efa2d7fe20571963ed2949b38f1c49eb80819e8d5f478205b375aa821bbc
+- PROMPT.md: SHA-256 c590c6ef494e61d73d87cdbe67a984fa2112f25ef7522ac1e7717e2620b3dd3a
+- README.md: SHA-256 7e611f8109f59cc400c1362e1ffac3baf60e246a0aec2941903527a10115ca6d
+- ROADMAP.md: SHA-256 daf46fa25cc92d75ff4a82fb16cbc0f10daf86c0a1fe6f866373d27561ed967a
+- SPEC.md: SHA-256 46e95df4dba672f7bae81e62ed0f95792f4ff989b0200ee7f49d799852aab7d0
+- UX.md: SHA-256 7b2c9bf04d3a803c87d2a6f6f0904c3bdae8dc0a3df5c919e5d2c3f3b69866fc
+- docs/ACCEPTANCE.md: SHA-256 509b4fc32f17594634276acc97d31a730bce996b16b5951cfdc6dde4ca8a107e
+- docs/ARCHITECTURE.md: SHA-256 fbea68c8c71b48f16a15cf4a78148e58a9e95094e21168ab3872ff2cfdc953da
+- docs/ENGINEERING.md: SHA-256 9c85df26ee7ab814c542b3977d5382ac1b38ab3e0fc848717bdc01aadb827979
+- docs/IMPLEMENTATION-PLAN.md: SHA-256 6ebc08a595a833f03620b658fcea5b3566d2b11fb97906020b10cc402b7db868
 
 ## Freeze validation
 
-A valid v2.2.0 freeze proves:
+A valid v2.2.1 freeze proves:
 
 1. The tracked tree contains exactly the declared 13 Markdown paths.
-2. Every package document identifies version 2.2.0; every freeze-ID occurrence is `emenda-clean-room-v2.2.0-2026-10-06`.
+2. Every package document identifies version 2.2.1; every freeze-ID occurrence is `emenda-clean-room-v2.2.1-2026-10-06`.
 3. Subject authority is singular, local links resolve, canonical-sequence blocks agree, and six gate names/order and seven increments remain consistent.
 4. All 18 active critical IDs are unique in SPEC and map to Acceptance; the unchanged canonical corpus retains exactly 15 cases.
-5. Review against sole parent v2.1.1 confirms the authorized delta above and preservation of unrelated behavior and active visual identity.
+5. Review against sole parent v2.2.0 confirms only the authorized prompt, measured explicit-test startup policy and metadata delta above and preservation of all unrelated behavior, acceptance and active visual identity.
 6. The 11 final staged raw-blob SHA-256 values match this manifest and declared exclusions.
 7. The evidence ledger remains an empty factual template with tested implementation tree/commit fields and truthful agent-review/provider/runtime fields.
 8. The candidate contains only this Markdown package, `git diff --check` passes, and the final exact staged tree receives consistency, security, architecture and implementability review after text convergence.
-9. The atomic freeze has sole parent `7a65e69e915a19b310db19fd425cbd2cbd67fb54` and preserves prior ancestry.
-10. `origin/docs/v2.2.0-freeze` and `origin/main` resolve to that same freeze commit after publication; local/remote identities and ancestry match.
+9. The atomic freeze has sole parent `11080a3c4be943f57ea35293b995d80453ffecad` and preserves prior ancestry; `docs/v2.2.0-freeze` remains unchanged at that parent and its tree `6955e79551d9a4ea372729bf75e7c3317e3da894`.
+10. `origin/docs/v2.2.1-freeze` and `origin/main` resolve to that same freeze commit after publication; local/remote identities and ancestry match.
 11. The tracked worktree is clean and pre-existing ignored state remains preserved.
 
 ## Freeze lifecycle

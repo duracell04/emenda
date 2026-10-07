@@ -1,6 +1,6 @@
 # Emenda V0.1
 
-> **Frozen clean-room constitution, version 2.2.0**
+> **Frozen clean-room constitution, version 2.2.1**
 
 This repository is the Markdown constitution for Emenda V0.1. It defines the product, architecture, implementation sequence, verification, interaction, brand, and agent operating contract. Product implementation belongs in a separately authorized implementation repository, and implementation mutation begins under the product objective defined below.
 
@@ -37,16 +37,18 @@ When a separate product objective authorizes it, Emenda V0.1 is one strict-TypeS
 
 The detailed provider, permission, privacy, lifecycle, input-provenance, rendering, and Apply contracts remain exactly those in [SPEC.md](SPEC.md). The six gates and seven increments remain exactly those in [docs/IMPLEMENTATION-PLAN.md](docs/IMPLEMENTATION-PLAN.md).
 
-## Authorized v2.2.0 migration
+## Authorized v2.2.1 clarification and continuation
 
-The human-authorized objective creates this atomic freeze on `docs/v2.2.0-freeze` and blueprint `main` from sole parent `7a65e69e915a19b310db19fd425cbd2cbd67fb54` (tree `07bd030daaf1cc791f8e6a4d44afedcf97828851`). It implements local oMLX as the default while retaining explicitly selected OpenRouter in `https://github.com/duracell04/emenda-built`, on `build/local-omlx` from the preserved `build/v0.1` baseline `fa27dbfe5d18f8c8cec5d5c5a6c04cf7259f66aa`. The implementation imports this freeze’s exact commit/tree before product mutation.
+Under the existing human-authorized autonomous implementation and debugging objective, this successor atomic freeze on `docs/v2.2.1-freeze` and blueprint `main` has sole parent [`11080a3c4be943f57ea35293b995d80453ffecad`](https://github.com/duracell04/emenda/commit/11080a3c4be943f57ea35293b995d80453ffecad), tree `6955e79551d9a4ea372729bf75e7c3317e3da894`. The published `docs/v2.2.0-freeze` remains at that exact commit and tree. Its preserved v2.1.1 baseline is `7a65e69e915a19b310db19fd425cbd2cbd67fb54` (tree `07bd030daaf1cc791f8e6a4d44afedcf97828851`), and all earlier ancestry remains intact.
 
-The objective includes autonomous measured candidate-model selection, independent named agent semantic review of the complete canonical corpus, coherent commits, publication of the tested state, and a verified personal installation into the user’s existing Brave profile on the local Mac. Existing evidence remains historical; affected behavior is reverified under this freeze. Local API/model facts and qualified models are measured evidence rather than compiled defaults or universal compatibility claims.
+The authorized deltas are a semantic-preserving general clarification of the shared canonical prompt and the measured startup policy for the existing explicit local Settings test. The prompt clarifies profile/language mappings, compatible-clean versus unsupported decisions, compatibility before a necessary single local edit, literal final equality, and truthful actual-diff category/explanation; concise plain English explanations are preferred, not required. Only that worker-owned synthetic test has a fixed 25,000 ms full-processing bound, with the existing immutable fixture and production validation/derivation. Writing, discovery, OpenRouter and official corpus cases remain at 15,000 ms. No corpus examples, result repair, writing-deadline extension, automatic/background warm-up, application retry, quality reduction, profile/surface expansion, new dependency or privacy change is authorized.
+
+Continue the local/default oMLX and explicit OpenRouter implementation in `https://github.com/duracell04/emenda-built` on the existing `build/local-omlx` branch. Preserve its `build/v0.1` baseline `fa27dbfe5d18f8c8cec5d5c5a6c04cf7259f66aa` and prior constitution intakes. Import this successor’s exact commit/tree and update audit expectations before adopting its prompt and explicit-test policy. The objective retains autonomous measured candidate-model selection, independent named agent semantic review of one complete 15/15 canonical corpus, coherent commits, publication of the exact tested state, and verified personal installation into the user’s existing Brave profile on the local Mac. Existing failed attempts remain factual history; affected behavior receives fresh verification under this freeze. Runtime facts and qualified models remain measured evidence rather than compiled defaults or universal compatibility claims.
 
 ## Completion
 
 A documentation objective is complete when the Documentation Gate passes for the exact candidate tree, the atomic freeze commit is pushed to its authorized remote refs, remote identity and ancestry match, and the tracked worktree is clean.
 
-A future implementation objective is complete when all seven increments and six gates pass for the recorded implementation tree and commit, that commit is pushed and verified in the implementation repository, the later ledger-only factual evidence commit is pushed and verified in this constitution repository, both tracked worktrees are clean, and the v2.2.0 personal objective additionally has the tested local extension installed and verified after Brave restart on the recorded Mac. As before, passing an intermediate check alone does not complete the objective.
+A future implementation objective is complete when all seven increments and six gates pass for the recorded implementation tree and commit, that commit is pushed and verified in the implementation repository, the later ledger-only factual evidence commit is pushed and verified in this constitution repository, both tracked worktrees are clean, and the continuing personal objective additionally has the tested local extension installed and verified after Brave restart on the recorded Mac. As before, passing an intermediate check alone does not complete the objective.
 
 Completion is a contract state: required behavior, evidence, repository integrity, remote identity, and the objective-specific terminal condition all hold.

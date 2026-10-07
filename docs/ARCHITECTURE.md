@@ -1,6 +1,6 @@
 # Emenda V0.1 Architecture
 
-> **Frozen architecture, version 2.2.0**
+> **Frozen architecture, version 2.2.1**
 
 ## 1. Authority and objective boundary
 
@@ -128,7 +128,7 @@ settingsRevision
 
 One worker-owned active-configuration predicate is reused for inference, public configuration, and immediate pre-Apply authorization. Provider, either model, either credential, or profile changes increment the revision, cancel inference, invalidate suggestions/errors, and broadcast only that public view. Origin transitions remain separate. A stale check resynchronizes configuration without retrying the revision.
 
-The worker alone discovers local model IDs and performs bounded synthetic readiness calls. Ephemeral results are keyed to settings revision, become invalid after settings changes/restart, contain no raw response or credential, and authorize no page text or mutation. They establish connectivity/compatibility rather than linguistic qualification.
+The worker alone discovers local model IDs and performs bounded synthetic readiness calls. A dedicated trusted-worker local method handles only the explicit packaged-options Test command, using the immutable fixture and fixed internal 25,000 ms full-processing bound from SPEC; it cannot accept a caller-selected deadline or alter the core WorkerProvider writing port. Discovery and every writing/corpus request retain 15,000 ms. Ephemeral results are keyed to settings revision and worker lifetime, become invalid after settings changes/restart, contain no raw response or credential, and authorize no page text or mutation. A production-parsed/derived synthetic success establishes observed connectivity/compatibility rather than linguistic qualification, pinned residency or future latency.
 
 ## 7. Check and presentation flow
 
@@ -183,13 +183,13 @@ The content script's permanent control and lifecycle bootstrap remain inert when
 
 ## 11. Provider boundary
 
-Reuse `WorkerProvider` rather than introducing another core provider abstraction. Shared processing owns canonical prompt, bounded input, JSON schema, response bound, fatal decoding, outer/model validation, pure derivation, cancellation, and the full-processing deadline. Separate concrete local oMLX and OpenRouter transport adapters own only their fixed endpoint, selected credential, and provider-specific request fields. A worker composition chooses exactly the active adapter.
+Reuse `WorkerProvider` rather than introducing another core provider abstraction. Shared processing owns canonical prompt, bounded input, JSON schema, response bound, fatal decoding, outer/model validation, pure derivation, cancellation, and the full-processing deadline selected by the trusted operation: 15 seconds for writing/discovery and 25 seconds only for the explicit local Settings test. Separate concrete local oMLX and OpenRouter transport adapters own only their fixed endpoint, selected credential, and provider-specific request fields. A worker composition chooses exactly the active adapter.
 
-The local adapter performs one fresh bounded authenticated catalog GET before inference, verifies exact case-sensitive membership inside the same deadline, then uses the exact loopback completion endpoint, direct catalog model, optional auth, nonstreaming strict schema, bounded completion, no thinking/tools, and no OpenRouter fields. The server remains loopback-bound with model fallback disabled. Grammar-downgrade warnings and HTTP-200 error envelopes fail closed. Local discovery and synthetic readiness are worker-owned options operations under the same confinement, cancellation, and revision policy.
+The local adapter performs one fresh bounded authenticated catalog GET before inference, verifies exact case-sensitive membership inside the same deadline, then uses the exact loopback completion endpoint, direct catalog model, optional auth, nonstreaming strict schema, bounded completion, no thinking/tools, and no OpenRouter fields. The server remains loopback-bound with model fallback disabled. Grammar-downgrade warnings and HTTP-200 error envelopes fail closed. Local discovery and synthetic readiness are worker-owned options operations under the same confinement, cancellation and revision policy. The explicit synthetic test alone receives the fixed startup bound; it makes no separate preload or background call and cannot retry or select another model/provider.
 
 OpenRouter retains its explicit remote endpoint, required key/base-model ID, disabled plugins, routing constraints, omitted reasoning trace, and within-request eligible-endpoint fallback for the same model. That provider-specific behavior never enters local traffic or supplies application-level/cross-provider fallback.
 
-Both paths use the exact request and response contract in [`SPEC.md`](../SPEC.md#9-provider-request), including no credentials/cache/redirect/referrer fetch controls, strict media/envelope/model checks, typed redacted outcomes, 15-second processing deadline, and 32-KiB response bound. Content scripts never learn provider selection, model IDs, credentials, or raw model content.
+Both paths use the exact request and response contract in [`SPEC.md`](../SPEC.md#9-provider-request), including no credentials/cache/redirect/referrer fetch controls, strict media/envelope/model checks, typed redacted outcomes, 15-second writing/discovery/corpus deadline, the sole fixed 25-second explicit local Settings test exception, and the unchanged 32-KiB response bound. Content scripts never learn provider selection, model IDs, credentials, or raw model content.
 
 Local server logging is configured to `critical` and canary-tested; local model KV cache state is allowed. Extension code stores no text/body/history and makes no blanket guarantee about local model state or native crash diagnostics.
 

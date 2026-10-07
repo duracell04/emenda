@@ -1,6 +1,6 @@
 # Emenda V0.1 Implementation Plan
 
-> **Frozen implementation plan, version 2.2.0**
+> **Frozen implementation plan, version 2.2.1**
 
 ## 1. Objective boundary
 
@@ -26,7 +26,7 @@ The sequence is binding for the future implementation objective. The six gates r
 
 ## 3. Documentation baseline and Documentation Gate
 
-[`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md) defines the exact v2.2.0 baseline, lineage, classification, and integrity data. The Documentation Gate in [`ACCEPTANCE.md`](ACCEPTANCE.md) verifies that candidate. Passing it completes the documentation objective; product increments begin only under the separate authorization described above.
+[`PACKAGE-MANIFEST.md`](../PACKAGE-MANIFEST.md) defines the exact v2.2.1 baseline, lineage, classification, and integrity data. The Documentation Gate in [`ACCEPTANCE.md`](ACCEPTANCE.md) verifies that candidate. Passing it completes the documentation objective; product increments begin only under the separate authorization described above.
 
 ### Future implementation intake
 
@@ -76,9 +76,9 @@ Run the complete deterministic and browser suites, inspect the production bundle
 
 Commit the final implementation tree, test that exact commit, then push and verify it in the implementation repository. Return to this constitution repository and create a later commit whose sole file change appends the factual result to `docs/EVIDENCE.md`, naming that already-existing tested tree and commit while every frozen file remains unchanged. Push and verify the evidence commit, confirm both tracked worktrees are clean, declare the **V0.1 Conformance Gate** passed, and stop. Any branch or draft-PR action follows the separately supplied implementation objective. The authorized personal unpacked installation into Brave and restart verification belong to this objective; store distribution and other Deferred work require another objective.
 
-### v2.2.0 migration of the existing implementation
+### v2.2.1 continuation of the existing migration
 
-The existing `build/v0.1` baseline remains preserved. Create `build/local-omlx` from the exact authorized baseline, import this freeze’s exact commit/tree and lock, and update audit expectations without weakening inventory, checksums, compiler, dependencies, trust boundaries, or gate enforcement. Reuse existing completed increments and tests where their invariant remains unchanged; reverify affected increments in canonical order. Measure local API compatibility and candidate memory/latency before adopting the frozen provider policy. Select the smallest tested candidate that passes one full 15/15 production-path corpus within the fixed deadline with Brave running, with independent named agent semantic review.
+The existing `build/v0.1` baseline and prior v2.2.0 intake remain preserved. Continue the authorized `build/local-omlx` branch, import this successor freeze’s exact commit/tree and lock before adopting its clarified shared prompt and measured explicit-test startup policy, and update audit expectations without weakening inventory, checksums, compiler, dependencies, trust boundaries, or gate enforcement. The shared prompt adds no corpus examples, schema/result repair, retry, profile/surface expansion or quality exception. Only the existing explicit worker-owned local Settings test uses its fixed 25-second full-processing bound and immutable synthetic fixture; writing, discovery, OpenRouter and all official corpus cases retain 15 seconds, with no automatic/background warm-up, separate preload, caller-configurable deadline or required model pinning. Reuse existing completed increments and tests where their invariant remains unchanged; reverify affected increments in canonical order. Measure local API compatibility and candidate memory/latency before adopting the frozen provider policy. Select the smallest tested candidate that passes one full 15/15 production-path corpus within the preserved 15-second per-case deadline with Brave running, with independent named agent semantic review. Record any explicit startup test as separate preparation and retain the actual cold/warm state and failures.
 
 Publish the exact tested implementation state, append sanitized factual failures and recoveries through the later blueprint ledger-only commit, install the production unpacked build into the writer’s existing Brave profile, and verify daily-use behavior after browser/worker/server restart. Never invent, expose, or commit credentials. User-only OS/browser authorization is the only permitted interruption of otherwise ordinary implementation work.
 
