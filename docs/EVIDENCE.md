@@ -2310,3 +2310,166 @@ evidence labels and limitations: Browser-delivered DOM behavior includes trusted
 resources: 0 real-model requests; 0 oMLX/model configuration changes; 0 added language services/processes. Synthetic intercepted provider routes fail on unexpected live traffic. Owned browser contexts/test fixtures close; temporary clean clone is removed; traces/video/screenshots off by default. Existing cache/dependency sizes are approximately 554/84 MB. One whole-system sample on 16 GiB reported 38% free; no Emenda-only memory or peak guarantee is inferred. No unrelated user process or installed extension path was changed.
 next checkpoint: Sprint 5 Section 8 personal installed Conformance. Use the exact hashed production build, record actual Mac/Brave/Chromium/oMLX/model versions and installed identity, then verify toolbar grants/denials, physical native item selection, native spelling/caret/focus/IME, Dismiss/Apply/one Undo, navigation/revocation/restart/storage, zero ambient traffic and actual resources. One bounded explicit local inference smoke follows inexpensive checks. This Sprint ends with publication and sanitized report/build/SHA-256 inventory; it does not perform personal installation or real-model acceptance.
 ```
+
+
+### Sprint 5 v2.3.1 installed Brave acceptance — native Apply blocked, predecessor restored
+
+The human-authorized Sprint 5 continuation and additional MacBook Air resource
+safety gate authorize controlled browser/server pauses and four exact synthetic
+proposals. An installed insertion proposal was produced; native Apply failed without text mutation. Historical evidence
+and specification/implementation refs remain unchanged. This entry describes
+the existing tested candidate, not its later evidence-ledger commit.
+
+```text
+UTC time: 2026-10-08T10:21:32.657905+00:00 (assembly; execution timestamps below)
+gate or increment: Sprint 5; Acceptance 8 personal installed Conformance
+constitution version: 2.3.1
+constitution commit: f2116e27826642b43f032a70f21afac86bece422
+constitution tree: 181b62ce68991df879feed0d8c4da0afd73741e0
+blueprint baseline commit/tree: 8f45e4971161c0035579b8a6c2430164a2687de9 / aa18de4198eb1e9ba301ff8432a49abb2aef1031
+critical requirement IDs: EM-AUTH-001, EM-AUTH-002, EM-AUTH-003, EM-PERM-001, EM-PERM-002, EM-PERM-003, EM-PRIV-001, EM-PRIV-002, EM-PRIV-003, EM-PROV-001, EM-PROV-002, EM-PROV-003, EM-APPLY-001, EM-APPLY-002, EM-APPLY-003, EM-SEC-001, EM-SEC-002, EM-SEC-003, EM-RES-001, EM-OPS-001, EM-OPS-002, EM-OPS-003, EM-QUAL-001
+tested implementation commit: 17df34772a9631acd0f8796c2ada1c85660d30f6
+tested implementation tree: 9ef02c0ebefeab42242f0113f6aed8781339e623
+imported constitution tree: 181b62ce68991df879feed0d8c4da0afd73741e0 (unchanged)
+commands or actions: Isolated exact-commit no-hardlinks checkout; task-owned Node 20.18.0/npm 11.10.0; npm run audit -- --clean-install --gate browser with matching bundled Chromium; preserve production build; EMENDA_CHROME_EXECUTABLE set to installed Brave for one npm run test:browser. One isolated Playwright rerun of the context-setup-failed case. Verify all 14 rebuilt/installed files against published bytes. Stage predecessor rollback copy; gracefully quit Brave through native controls; privately back up only extension storage, preferences and session material; replace exactly the verified files at the existing path; resume and supported Reload. Native Settings, toolbar denial/grant, revoke, trusted edits, caret/focus/tab/navigation/Settings/browser restart. Stop/start only the existing app/server through /Applications/oMLX.app/Contents/MacOS/omlx-cli. Credential-validating synthetic loopback endpoint records typed counters, never raw headers, credentials or linguistic bodies. Resource snapshots use sysctl/vm_stat and NSProcessInfo thermalState, without changing power/memory policy.
+exact results: Fresh canonical audit PASS: 532 deterministic tests/39 files, 50 surface, 60 shell, 44 production integration. All 14 reconstructed candidate files match the Sprint 4 inventory and preserved production build; installation retains existing path/ID and is enabled after supported reload and restart. Saved local provider/key/model/Auto and no remote key observed. Personal native fresh-origin denial then grant on 8766 succeeds; 8765 activation/revocation observed. Existing unowned 8765 grant history was separated from empty desired origins and absent active permission before explicit activation. Twenty trusted native beforeinput/input pairs on two textareas, 250/700 ms pauses, caret/tab/focus/navigation/Settings changes and graceful browser restart recorded. Whole synthetic run: 0 catalog GET, 0 inference POST, 0 authenticated status GET. Complete recovery attribution remains OPEN: the 07:10:14Z–07:13:42Z ambient window contained 101 unauthenticated status GETs and 62 other GETs, five authenticated other GETs with pre-existing admin referer; unauthenticated monitoring was not positively attributed to a process. No installed deep check occurred in this initial window; the later native resumption is recorded below.
+evidence level: inspected | compiled | deterministic | integration | runtime; preserved qualification is inherited live/agent evidence, not a new live run
+environment: Apple M5 arm64, 16 GiB; macOS 26.6 build 25G72; Brave 1.97.56 executable 155.1.97.56 / Chromium 155.0.8059.40, Personal/Default. Installed Emenda ID kibeihdcbicnmfgabjbihmngegjanogk at /Users/enriquegzbinden/Workspace/Emenda/extension, package 0.1.0, V0.2 milestone. Canonical Chromium 151.0.7922.34/revision 1234. Existing oMLX app 0.7.0.dev4/build 2761, loopback/authenticated/fallback disabled/critical logging/guard unchanged. Separate Homebrew 0.6.4 not substituted.
+toolchain: Node 20.18.0, npm 11.10.0, TypeScript 5.9.2; one browser worker, at most two Vitest workers. Official Node arm64 archive SHA-256 678e062bdae3824aa997bd469580a4dda48fd51f61d3679b6ba06352e6cef38f; npm installed only in task prefix.
+failures: One current-Brave suite returned 153/154: local HTTP-200 error case timed out after 45000 ms while creating context, before its test body. Full-suite log SHA-256 74222e18e65c94652fe342e4797bdb72fefd956463837dca947b23e9a6cebb6e; file interval 06:21:18Z–06:26:00Z. Sandbox bind/telemetry restrictions were recovered through authorized escalation; bundled CLI has no status subcommand (read-only attempt only). An early typed address was partially entered and searched a nonsensitive extension-ID fragment; atomic paste then opened the correct management page. Native screenshot reliability varied. Broad AX read and a close action were rejected by automatic review; dedicated task window allowed scoped native work. Mac subsequently locked and automatic unlock failed. Protected extension-page browser URL access was blocked. Initial fixture access for closing tabs was rejected by automatic review; subsequent explicit human cleanup approval allowed three fixture tabs to close.
+recovery: Canonical audit log SHA-256 3883f8d6aab1819e40a310d3a6092132ebab27fc9674d24fc84faac57d29052f, file interval 06:12:57Z–06:20:57Z. At unchanged source/build, only the setup-failed current-Brave case passed its one isolated rerun at 07:01:19Z–07:01:21Z; log SHA-256 c0c5681158f063c63ff29a5a4a115d61a018b612236a25be0715e8ad808d09ab. The original full suite is not relabeled as an uninterrupted pass. No product repair or second full suite occurred. Original app/server restored through supported start; idle counters all zero, loaded models empty, settings file bytes unchanged. Owned fixture and mock listeners stopped; ports 8765/8766 closed.
+resource safety: Live attempt SKIPPED before any inference POST. Final gate ceiling 4954333952 bytes < exact Gemma residency estimate 8430109010 bytes, unloaded/unpinned. Raw pressure 2 and thermalState nominal; swap used 9402.5 MiB. The requested 10-second safety sample spanned 08:28:22Z–09:00:06Z (1904 seconds actual wall interval); suspension/host delay not causally established, so no 10-second rate/peak is inferred. During the actual ten-second settled-idle sample 07:12:54Z–07:13:04Z, raw level 1, nominal thermalState, 9474.5 MiB swap unchanged and zero swapouts were recorded. Closure snapshot still had raw pressure 2 and 9907.81 MiB swap used. Whole-Brave CPU snapshots 0.2/0.0% and summed RSS 3259760/5721568 KiB across 25/35 processes include shared pages, session restoration and unrelated desktop activity. Same oMLX menu app, AppleSpell and naturallanguaged names appeared before/after; no added model worker was observed. Installed timer enumeration is OPEN; fresh deterministic 599/600 ms proof remains valid. OS thermal indication is not a direct temperature measurement. No full-operation/request/presentation live latency is available. Client 15000-ms timeout cannot prove server-side termination; no request was made, and restored server idle was independently verified.
+qualification preserved: 15/15 sequential qualified run at 5a154ac6d7b19a4fc856a3c460dbae2ba3c31f63/tree 154341857664f7da22560a6cd4980008b0f46609 with two complete named independent semantic reviews remains inherited, through fresh deterministic equivalence. Qualified weights revision 86cc6a8dedbc456dd0e4af01a9d09f396f77e558, 8028675248 bytes, both shard hashes verified. No new human manual semantic review is claimed. Explicit approval of four synthetic pairs is authorization, not executed Apply or independent semantic judgment.
+initial limitations: The pre-resumption assessment was incomplete before native controls recovered; the final native Apply failure below supersedes that assessment. Actual installed native Proofread selection, bounded source capture/focus handoff, second/retired source, all four Apply/Undo cases, Dismiss/stale/literal/keyboard/error cases, successful stopped-server English/German spelling proof and OS IME remain OPEN. English native menu lacked a candidate and screenshots lacked underlines; same absence preceded candidate installation. Browser spelling was enabled/en-US recorded; native toggle cycled twice and restored, cloud spelling disabled. German recovery/indications/candidate proof was unperformed before lock. No configuration failure is attributed to Emenda. Installed storage/payload/isolation/canary/history, in-flight navigation/worker/server recovery, unrelated/adjacent-origin refusal, complete zero-recovery attribution and extension-specific profiling remain OPEN. No canary was delivered to the extension/provider: absence cannot earn fresh canary credit. Integration callbacks and CDP composition retain integration credit only. All 23 Section 3.1 mappings retain their exact coverage; installed runtime additions do not erase earlier valid evidence or earn unobserved higher-level credit. Chrome 140/current Chrome/other-browser/device compatibility and new human review remain unclaimed.
+initial cleanup limitation (resolved during resumption below): Three fixture tabs closed after explicit approval; fixture/mock processes stopped; original provider service/configuration restored. Remaining Emenda writing grant 8766 and task Settings/extension-management diagnostic tabs are not removed because native interaction was unavailable and protected URL access was blocked. Do not claim complete cleanup or unchanged writing-site list. Private 7.7-MiB rollback/storage/session backups remain outside repositories and deliverables. Approximate added tooling/dependencies/browser cache 195/84/554 MiB exceeded the planning estimate because matching revision 1234 was absent. No stress campaign, unrelated application termination, guard relaxation, warm-up, retry or model substitution occurred.
+next checkpoint at initial assembly: Resume available native controls, preserve failures/recovery, publish the final factual ledger append and verify remote identity and clean tracked closure. No manual test fallback is requested.
+```
+
+
+#### Native resumption, required-behavior failure and closure
+
+Final evidence assembly UTC: 2026-10-08T10:56:09.405544+00:00. Native controls became available again after
+the initial lock/capability interruption. Explicit additional human grant-removal
+approval resolved an automatic-review rejection that had treated the preceding
+approval as tab closure only. The original Sprint 5 authority remains the basis
+for synthetic checks, controlled interruptions and rollback.
+
+With the original oMLX app/server stopped and port 8000 unavailable, the native
+spelling panel initially used Automatic by Language and produced no candidates.
+Temporarily selecting U.S. English and Deutsch through the genuine native panel
+recovered visible red underlines and real candidates sentence/sentences for
+sentense, and Feier/Feuer/Fehler for Feler. Automatic by Language was restored and
+verified. No native correction was applied, no word was learned, no cloud spelling
+was enabled, and the preferred browser-language list was not changed. This earns
+native spelling evidence after reversible configuration recovery, not proof of
+automatic language detection. A transient native selection/typing ordering issue
+appended text in the synthetic fixture; native selectText/paste restored the exact
+tokens before the recorded successful candidates.
+
+The existing credential was validated in memory by a synthetic-only endpoint on
+8000. Three separately selected real native Proofread operations at collapsed
+source-A caret [21,21] each made one catalog GET and one inference POST. All three
+POSTs were authenticated, exact-model, predefined insertion case 0, bounded to 21
+scalars, with only profileMode/before/focus/after linguistic fields and empty
+before/after. There was no automatic provider retry or live model operation.
+Native menu observation found one Proofread with Emenda item and selected that
+actual item. The complete before/after insertion proposal appeared, source text
+and caret/focus remained unchanged before Apply, and HTML/Markdown/URL-shaped
+explanation text rendered literally. Later diagnostic polling included 311
+unauthenticated status GETs and 156 other GETs; this is separate from the original
+ambient window and does not establish complete request attribution.
+
+**Final conclusion: BLOCKED.** The authorized insertion did not Apply. At
+10:32:17.376Z an accessibility-driven native Apply action removed the proposal
+without input. A physical click at the visible button repeated this at
+10:34:19.187Z. Passive fixture instrumentation then recorded, without generating
+intent or invoking any extension callback, trusted native pointerdown at
+10:36:47.751Z, client CSS [1125,311.25], retargeted to DIV at the visible Apply
+location; textarea focusout at .753Z with source length 21 and caret [21,21]; and
+pointer release at .801Z retargeted to HTML after the overlay disappeared. No input
+or period insertion occurred; source focus was lost. The approved before/after
+pair was A sentence is concise -> A sentence is concise. The observed text stayed
+unchanged. No Undo was attempted for an unapplied edit.
+
+This fails Acceptance 7.3, 7.5 and 8, affecting EM-APPLY-001/002/003 and the native
+Check/Apply chain of EM-PERM-002. The owning subsystem is installed content
+approval/source-focus handoff (extension/content/source-coordinator.ts and
+extension/content/overlay.ts). The exact internal root cause is not established.
+Acceptance of commit 17df34772a9631acd0f8796c2ada1c85660d30f6 stopped; no product repair,
+manifest/package/dependency change or substituted implementation was made.
+All other unperformed required runtime fields remain OPEN: second/retired source,
+successful editing/Undo and three remaining pairs, Dismiss/stale/keyboard/error
+cases, OS IME, full storage/lifecycle/canary/history/adjacent-origin proof,
+complete ambient attribution/profiling, remaining accessibility/surface checks,
+and the resource-skipped live smoke. Prior valid lower-level evidence remains
+preserved; it does not override this higher-level native failure.
+
+Supported Revoke removed the temporary 8766 writing authority; native Settings
+showed No sites are enabled. After graceful Brave quit at 10:41:46Z, only required
+provider hosts were active. Historical 8765/8766 listings remained separate from
+active grants and desired origins. All task tabs were closed; a new verification
+tab was also closed after rollback. The unrelated remaining browser tab/session
+was preserved. The private predecessor's exact 14 files were restored at
+the existing path while Brave was closed; supported Reload, enablement, same ID,
+saved Local oMLX/key/gemma-3-12b-it-4bit/Auto and no enabled sites were verified.
+Extension storage was not restored because saved settings were preserved.
+No source commit is inferred for the pre-existing installed bytes.
+
+The task's positively identified fixture and mock processes were stopped; both
+fixture ports were closed. Original app/server start restored oMLX 0.7.0.dev4.
+Final read-only verification at 2026-10-08T10:46:06Z found zero active/waiting/loading
+requests, no loaded models and identical server settings-file bytes. Resource
+snapshot: raw pressure 2, nominal thermalState, 9803.81 MiB swap used. No causal
+swap/pressure attribution or full recovery guarantee is claimed. Zero live Gemma
+POSTs, warm-ups, retries, substitutions or guard relaxation occurred. Read-only
+extension-storage scan found the synthetic explanation canary absent while Brave
+ran; the timestamp filter matched zero oMLX log lines. These limited absence
+observations earn no full fresh log/persistence credit, and oMLX was stopped
+during the synthetic provider operations.
+
+Sanitized resumption evidence SHA-256:
+- `fixture-resumed-events.jsonl`: `e01ab54a60189efbfbb113bf0030a2d43bca60ced6f5e329a8c1493737990f21`
+- `synthetic-resumed-provider.jsonl`: `dfd584600438e86109f81d889c08db88b196a0df140f34393bec77de7dcb00cd`
+- `final-closure.json`: `590e2684a86f2d301d208f09a9adf03fa261150eb8926608a967fdf285812b08`
+- `rollback-files.json`: `d1bde7187f1145fde29c093a914ab1439e79ecb811a8899453daed65e2d64846`
+- `rollback-closure.json`: `4d4f9d2d50ca0f7434d07c211bf0131531c8864a608ca472135521c41066ac6d`
+
+Screenshots and machine-readable matrix are local sanitized deliverables, not credentials or profile backups. Final publication must change only this ledger and verify remote commit/tree and clean tracked source closure.
+
+Tested candidate inventory (14 files, exact canonical/published bytes; no longer installed after rollback):
+
+```text
+100f7b1a3a0265e8302eba92ac886431e7ee93d4a7a64b169c2066ab9feaffda  assets/emenda-mark.svg
+693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3  assets/inter/InterVariable.woff2
+262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a  assets/inter/LICENSE.txt
+6c2a185b9e2a6203e8f9c8e27e718013ec94c5efec1cc0991389a0aa9ff7812f  assets/inter/SOURCE.txt
+6f81a830c98fcf01ccc4d83ab2a950c5fdf6f32779c9de061c027e8848944cb5  content.js
+55c3574bf5d1a8bb4a0d6d60c910fd3baa03852c184433234098c711c40ec0f4  icons/emenda-128.png
+f50ff85726e303c843ae035774027f8ec52dcf46da9b8c4c15a64df3246bff51  icons/emenda-16.png
+f7f5155460831ac704f690a986872ea3d68e9eeae1e400ce4a9142418310d61b  icons/emenda-32.png
+55ca4a8c4f18e65829982b621ab052804edc87f3ef1f052ec96c96a634d918cd  icons/emenda-48.png
+e5f6c6194ef0770ccf5c50f91e2470ee72c26c25d234da7b43542d6e3cd87404  manifest.json
+7a78a67c0bca3083f6a811b8adb6de4e967069051c80fed38eab48ffb6b44ac5  options.css
+8a927d8e974fbcc1eac718bffa29250b8844919d59d2a301a2c85bff5e07ca6c  options.html
+028f61575c9301dbe055116388d94671a939954724b1c4a16f7d561cdf5fdec3  options.js
+cda6b8360eb43593d439d81d9643b810c8ef9f8c03cb3986ada851da6d88e103  worker.js
+```
+
+Final installed inventory (14 restored predecessor files, byte-identical to the private pre-sprint copy):
+
+```text
+100f7b1a3a0265e8302eba92ac886431e7ee93d4a7a64b169c2066ab9feaffda  assets/emenda-mark.svg
+693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3  assets/inter/InterVariable.woff2
+262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a  assets/inter/LICENSE.txt
+6c2a185b9e2a6203e8f9c8e27e718013ec94c5efec1cc0991389a0aa9ff7812f  assets/inter/SOURCE.txt
+6772f6e7b8f1f636552464013e51b4a828058c7cd5707f2fdb1a2b70b8a9089e  content.js
+55c3574bf5d1a8bb4a0d6d60c910fd3baa03852c184433234098c711c40ec0f4  icons/emenda-128.png
+f50ff85726e303c843ae035774027f8ec52dcf46da9b8c4c15a64df3246bff51  icons/emenda-16.png
+f7f5155460831ac704f690a986872ea3d68e9eeae1e400ce4a9142418310d61b  icons/emenda-32.png
+55ca4a8c4f18e65829982b621ab052804edc87f3ef1f052ec96c96a634d918cd  icons/emenda-48.png
+0611213b174a6ec2039e0c684ec5aaf17706d884acbac62f79a39922c387cf84  manifest.json
+7a78a67c0bca3083f6a811b8adb6de4e967069051c80fed38eab48ffb6b44ac5  options.css
+2e50b8ea1d7a527aa42e4e56ef91cb3c86667a13738f73d30a52e3c8bb192f86  options.html
+effb4857af716fc124a24674b61faabb956e3e302ea1835300581c4d77390488  options.js
+3cd1208e4c94bd2593705538a4c0cca04b6df6cd9c597cb53134c892f83ba508  worker.js
+```
