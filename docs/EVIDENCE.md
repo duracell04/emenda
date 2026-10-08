@@ -2571,3 +2571,61 @@ e5f6c6194ef0770ccf5c50f91e2470ee72c26c25d234da7b43542d6e3cd87404  manifest.json
 028f61575c9301dbe055116388d94671a939954724b1c4a16f7d561cdf5fdec3  options.js
 cda6b8360eb43593d439d81d9643b810c8ef9f8c03cb3986ada851da6d88e103  worker.js
 ```
+
+
+### V0.2 admission investigation and additional native acceptance — Conformance incomplete
+
+UTC evidence assembly: 2026-10-08. Evidence levels: inspected | runtime. This append preserves the complete previous ledger, qualification, failures and passive-fixture recovery. It records already-tested implementation build/v0.2 commit `17df34772a9631acd0f8796c2ada1c85660d30f6`, tree `9ef02c0ebefeab42242f0113f6aed8781339e623`; specification v2.3.1 commit `f2116e27826642b43f032a70f21afac86bece422`, constitution/import tree `181b62ce68991df879feed0d8c4da0afd73741e0`; previous evidence head `3079b41a6a435b140857e06e26e4a54de706da60`, tree `c8be190db44d57ae803f2f984a5f60062d9786b4`. No implementation, specification, package, model, prompt, schema, generation, API or deadline change occurred. Existing checkouts were preserved and remained clean.
+
+#### Identity and inherited verification
+
+The installed 14-file candidate matches the published Sprint 4 inventory byte-for-byte. Imported provenance and remote branch identities were verified; hosted CI run 37703308122 remains successful on the exact implementation. Existing successful 532 deterministic / 154 Browser Integration checks, clean-install/build/audit evidence, actual-Brave harness, model-facing equivalence, complete historical 15/15 linguistic qualification and native spelling recovery were reused at their recorded owning levels. No complete audit was repeated and no higher-level native/OS evidence was inferred from integration callbacks. Earlier failures and recoveries remain intact.
+
+Fresh full weight-shard SHA-256 checks match qualified revision `86cc6a8dedbc456dd0e4af01a9d09f396f77e558`: `995cbd05b7bfd8f5ab5307b476eb5496b5ec3f5256a9dd26366236ce8816c93f` (5,367,455,313 bytes), and `8b7af7eb5ff32109fc65cbcd0af5b8016ac0de46df17f40705f043f899495333` (2,661,219,935 bytes). Total shard bytes 8,028,675,248; runtime residency estimate 8,430,109,010 bytes. No requalification was needed for unchanged weights and contract.
+
+#### Admission and lifecycle outcome
+
+Runtime: Mac17,4 / Apple M5 / 16 GiB; macOS 26.6 (25G72); Brave 155.1.97.56 / Chromium 155.0.8059.40; installed extension identity unchanged; oMLX 0.7.0.dev4 build 2761, using the app-bundled controller. Saved Local oMLX / gemma-3-12b-it-4bit / Auto was used. Authentication, loopback binding, fallback disabled, critical logging, balanced prefill guard, OS/Metal limits and the product 15-second writing deadline were preserved.
+
+After releasing the task tab and both synthetic listeners and restoring the original oMLX service, one bounded normal-workload observation took seven samples from 2026-10-08T16:24:37Z through 16:25:37Z. Static ceiling 12,884,901,888 bytes; effective Metal ceiling 12,713,115,648 bytes. Authoritative final ceiling varied from 4,971,307,776 to 5,382,882,048 bytes. Dynamic reclaimable memory was binding. oMLX physical footprint varied from 125,567,744 to 126,894,848 bytes. Projected additional headroom deficit, including the existing server footprint, was 3,173,925,202–3,585,646,930 bytes (3.17–3.59 GB), before temporary inference allocations.
+
+Final sample free/inactive/active components: 101,433,344 / 3,371,548,672 / 3,412,000,768 bytes. The installed balanced formula is oMLX footprint + free + inactive + 0.5 × active; speculative/purgeable subsets are not counted again. Dynamic reconstruction 5,305,860,864 bytes and authoritative final ceiling 5,306,860,288 bytes came from adjacent API reads, not an atomic snapshot. All samples had raw OS memory pressure 2 (elevated), nominal thermal state, no loaded/loading models, and no active/waiting requests. Six consecutive ten-second windows recorded zero swap-outs and 5,701,632 bytes of swap-ins. The server's own low-footprint pressure status does not establish normal OS pressure.
+
+The live request was ineligible on OS pressure and projected allocation headroom. Real Gemma inference POSTs: **0**; no warm-up, model search, retry or guard relaxation. Live cold/warm loading cost, token/timing metrics, structured validity, live suggestion/Apply/Undo and actual server completion remain unobserved. Restored server inference counters remained zero. Normal workload was preserved; no unrelated applications/processes were terminated.
+
+Installed idle-LRU eviction and engine-thread pooled-buffer reclamation were inspected. With no loaded engines there was no model residency to release; even the approximately 127 MB server footprint is much smaller than the measured deficit and cannot be eliminated from a running server. No cache/concurrency/guard or OS-limit change had a demonstrated benefit. Authenticated native settings confirmed global `idle_timeout_seconds: null`, no Gemma override and the installed `ttl_seconds` default of null. Installed TTL logic skips pinned/loading engines, protects active requests and refreshes active last_access; expiry depends on a subsequent eligible idle poll. A 300-second candidate was not applied because successful admission and comfortable residency were prerequisites. The original lifecycle configuration and settings-file bytes remain unchanged. Actual expiry release and reuse benefit are unverified.
+
+Optimization conclusion: **quantified normal-workload admission limitation**, with no justified configuration improvement retained. This engineering finding does not establish V0.2 Conformance.
+
+#### Fresh native acceptance on the unchanged installed candidate
+
+The corrected passive fixture recorded events without DOM mutations during capture, manufacturing intent or invoking an extension callback. Five actual native Proofread menu selections produced five authenticated catalog GETs and five authenticated exact-model canonical synthetic inference POSTs. Auto payloads contained only profileMode/before/focus/after linguistic fields, empty surrounding context and predefined bounded synthetic focus. oMLX inference was paused for these operations; these are synthetic-provider runtime observations, not live Gemma evidence.
+
+- Insertion `A sentence is concise` → `A sentence is concise.`: native Apply at 16:03:41.075Z produced trusted insertText with source-A focus; one native Edit → Undo at 16:04:34.481Z restored the exact original.
+- Deletion `A sentence is concise..` → `A sentence is concise.`: native Apply at 16:09:53.764Z and one native Undo at 16:10:07.420Z restored both original punctuation marks exactly.
+- Off-caret supplementary-Unicode replacement `A 😀 sentence are concise.` → `A 😀 sentence is concise.`: Tab focused Apply, native Enter applied at 16:11:12.862Z, source focus returned, and one native Undo at 16:11:27.396Z restored the exact original including the emoji. Replacement and supplementary-Unicode coverage share this case; every off-caret insertion/deletion permutation is not inferred.
+- Source B received its own deletion proposal while A remained unchanged. Tab moved through Apply to Dismiss; Space dismissed with exact unchanged values and B focus restoration. Retiring source A removed its current proposal without mutation or selecting B. Navigation replaced document authority without ambient provider dispatch.
+- Complete original/corrected focus, one marked hunk, category, Apply/Dismiss, polite accessible notification and no autofocus were observed. The delivered HTML/Markdown/URL-shaped explanation canary rendered literally. Six running-profile extension-storage files contained no canary bytes; this is limited byte-absence evidence, not complete persistence/trusted-storage proof.
+- Native input and contenteditable surfaces reported Proofreading unavailable for this editor with no provider work; the readonly textarea menu offered no Emenda item. Remaining refused surfaces, full accessibility/contrast/reduced-motion and qualifying native OS IME remain open. The tested native Option-key sequence produced ordinary euro/letter input and zero composition events; it earns no IME credit. Historical native English/German spelling recovery is retained; this session changed no spelling settings.
+
+From 16:14:17.702Z through 16:16:48.820Z, a 151-second ordinary-writing interval included twenty native edits, paste and 23 trusted input events overall, pauses, focus, navigation and refused-surface activity. It produced zero authenticated requests and zero inference/catalog/readiness/status work attributable to Emenda. There were 111 additional unauthenticated, origin-free local requests; their outside process identity is not established. Full ambient-client attribution and extension-specific idle/CPU profiling remain open. Native browser/worker restart and in-flight server recovery were not performed.
+
+Initial source-B menu refusals before provider work and an interrupted shortcut/navigation attempt affecting disposable fixture state are preserved separately from later successful native B and exact Undo observations. They do not establish a source defect. Invalid-response mode was prepared but never invoked after browser access was interrupted; native invalid/unavailable error controls receive no new credit.
+
+#### Approval interruptions, open conditions and closure
+
+Automatic approval review blocked the adjacent-origin caret interaction, interpreting it as permission expansion even though no grant was attempted or made. Native toolbar text had already shown 8765 Wants access and 8766 Has access. This earns limited exact-port observation, not a complete adjacent-origin refusal test. A later browser policy-check failure blocked further exact-origin fixture access; the retry was rejected because policy recovery was unverified. Extension Settings navigation was rejected because that browser tool allows HTTP(S) protocols only. No workaround, alternate-surface bypass, private page action or adjacent-origin grant followed.
+
+Both fixture/mock processes stopped; ports 8765/8766 are closed; the task tab is closed. Original oMLX is restored with no loaded model/active/waiting/loading work and unchanged settings bytes. Installed identity remains the exact 14-file candidate. Existing implementation/blueprint checkouts remain clean. **Temporary 8766 writing permission still requires manual removal; automated Settings access was blocked and removal has not yet been verified. Cleanup is not claimed complete.** Scoped continuation approval and manual permission cleanup were requested; no response has been treated as approval.
+
+**Conformance: INCOMPLETE**, not PASS and not a demonstrated preventing candidate defect. Open conditions include the ineligible installed live smoke, native invalid/unavailable/error controls, worker/browser/in-flight recovery, full installed storage/lifecycle/privacy/canary/adjacent-origin proof, ambient-client attribution and extension-specific profiling, remaining accessibility/reduced-motion/refused surfaces, qualifying native OS IME and permission cleanup. No focused source handoff is warranted without a demonstrated source defect.
+
+All 23 Section 3.1 mappings retain their exact acceptance coverage and owning levels. The local traceability artifact maps inherited and new evidence separately for EM-AUTH-001/002/003, EM-PERM-001/002/003, EM-PRIV-001/002/003, EM-PROV-001/002/003, EM-APPLY-001/002/003, EM-SEC-001/002/003, EM-RES-001, EM-OPS-001/002/003 and EM-QUAL-001. Unchanged qualification/equivalence retains its prior PASS; unobserved higher-level behavior is not inferred. Direct Chrome 140/current Chrome/other-device compatibility remains unclaimed.
+
+Sanitized local deliverables SHA-256:
+
+- `Emenda-V0.2-report.txt`: `ca9d7484520e4a8ef6e91e5bdde1d31282d03ea633c49288ea3dd91714c90214`
+- `Emenda-V0.2-traceability.json`: `bd33e59917592e332d07d5067ae8a553916bebf70034ae2ebc8d9ac7066a2028`
+- `Emenda-V0.2-admission.json`: `fed6c0ee5e0bc2ed3f8c4dd87109bbb7d730d9011af5aa75cf16fb5074c50be1`
+- `Emenda-V0.2-native-results.json`: `25f1d25c5ed70aabda645ed302ffdd176dd8c57bc13fed797d24f94fe856cf0e`
+- `Emenda-V0.2-installed-inventory.json`: `c6dbebab1bf7d81b102e6a27f5ba5d9f01d83f7ac03ac36975d8b4ee6299f876`
