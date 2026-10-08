@@ -2473,3 +2473,101 @@ f7f5155460831ac704f690a986872ea3d68e9eeae1e400ce4a9142418310d61b  icons/emenda-3
 effb4857af716fc124a24674b61faabb956e3e302ea1835300581c4d77390488  options.js
 3cd1208e4c94bd2593705538a4c0cca04b6df6cd9c597cb53134c892f83ba508  worker.js
 ```
+
+
+### Sprint 5 evidence correction — passive fixture recovery; Conformance incomplete
+
+UTC assembly: 2026-10-08T11:26:16.403126+00:00. This append corrects the product-failure classification in
+ledger commit f3392948e482d10b0576377f16ab2dde9d3905c5 while preserving every earlier
+observation, failure and ref. The previously reported native Apply behavior was
+fixture interference, not a demonstrated candidate defect. No product repair,
+dependency, manifest, package or constitution change occurred.
+
+Tested specification v2.3.1 commit f2116e27826642b43f032a70f21afac86bece422, tree
+181b62ce68991df879feed0d8c4da0afd73741e0. Exact implementation remains build/v0.2 commit
+17df34772a9631acd0f8796c2ada1c85660d30f6, tree 9ef02c0ebefeab42242f0113f6aed8781339e623.
+Package version remains 0.1.0 / V0.2 milestone. Imported constitution remains exact.
+Supplementary recovery evidence level: runtime | inspected. Applicable critical
+IDs: EM-PERM-002, EM-PERM-003, EM-PRIV-001, EM-PROV-002, EM-PROV-003,
+EM-APPLY-001, EM-APPLY-002, EM-APPLY-003, EM-SEC-001, EM-SEC-003, EM-RES-001.
+Each Section 3.1 mapping and inherited owning evidence level remains unchanged;
+this entry does not complete unperformed requirements.
+
+The earlier fixture synchronously assigned observations.textContent during
+capture-phase focusout. Inspection identified this DOM mutation during transient
+textarea/closed-shadow approval handoff as a possible harness effect. The fixture
+was changed to record events only in its array and sanitized file endpoint, with
+no DOM display updates during event dispatch. It neither manufactured intent nor
+called any extension callback. The unchanged 14-file candidate was reinstalled at
+the same personal path/ID with Brave gracefully closed at 11:03:26Z, then supported
+Reload and native exact-origin activation were performed. An initial pre-Reload
+activation produced no Proofread item; supported Reload resolved that setup state.
+There was no factory reset or credential/settings restore.
+
+Selecting the actual native Proofread item for the same unchanged insertion
+source at collapsed [21,21] produced the exact authorized proposal. This quiet
+fixture operation made one authenticated catalog GET and one validated inference
+POST, bounded to 21 scalars and the predefined insertion case; no live Gemma was
+called. At 2026-10-08T11:06:06.899Z, the native Apply button produced a trusted insertText
+input on source A, length 22, selection [22,22], with source focus restored. Native
+AX verified A sentence is concise. exactly. No follow-up inference occurred in
+the subsequent recorded quiet-fixture interval. This establishes successful
+installed insertion Apply with unchanged candidate bytes and invalidates the
+earlier attribution to a product defect. Other editing cases are not inferred.
+
+The attempted native Undo was interrupted when the application/window changed.
+No historyUndo was observed, and no native Undo credit is claimed. Subsequent
+native-binding refresh was rejected by automatic approval review because it
+would read an unrelated active private window and signed-in tab labels. No
+private page action, manual test fallback, screenshot or private content was
+retained/published. Scoped permission for automated cleanup was requested; this
+is an access approval, not a request for manual test operation.
+
+Conformance conclusion: INCOMPLETE. No candidate implementation defect is
+demonstrated after this controlled fixture recovery. OPEN requirements remain:
+native Undo and three remaining editing pairs; second/retired sources;
+Dismiss/stale/keyboard/invalid/unavailable controls; qualifying native OS IME;
+full installed storage/lifecycle/adjacent-origin/canary/history proof; complete
+ambient traffic attribution and extension profiling; remaining accessibility/
+surface coverage; and the resource-skipped installed live smoke. The successful
+insertion does not complete all 23 IDs or Acceptance 8. Earlier clean audit,
+current-Brave integration results including setup recovery, linguistic
+qualification/equivalence and native spelling recovery retain their recorded
+levels. No new human semantic review or other-browser/device claim is made.
+
+The live resource decision remains skipped, with zero live Gemma POSTs, retries,
+warm-ups, substitutions or guard relaxation. The 15-second client deadline is
+not server-termination evidence. Task quiet fixture/mock listeners were stopped
+at 11:11:46Z; ports 8765/8766 are closed. Original supported oMLX start restored
+0.7.0.dev4 and read-only verification at 2026-10-08T11:14:21.313755+00:00 found zero loading,
+active or waiting requests, no loaded models and unchanged settings-file bytes.
+The exact tested candidate is the current installed 14-file set again; all bytes
+match canonical dist/extension and the published Sprint 4 inventory.
+
+Final native cleanup verified at 2026-10-08T11:24:57.799Z: the temporary 8766 writing authority was revoked through supported Settings; no sites enabled, saved Local oMLX/key/model/Auto preserved, and task fixture/diagnostic tabs closed. Unrelated browser work was left untouched and prior window focus restored. Additional scoped human approval resolved the private-window binding rejection for cleanup only. Historical browser grant listings are not desired writing authority; the active-permission host snapshot is an interim closed-Brave inspection, while final revocation is directly verified by native Settings without another restart.
+
+Sanitized recovery evidence SHA-256:
+
+- `fixture-quiet-events.jsonl`: `c79cd5274f1a46aef1d5aee9fe307b3f6c84e74a100afc9e75549ba1205877e4`
+- `synthetic-quiet-provider.jsonl`: `4b6decf97c728723df6b1618466051bd5969933b89d2dd11b3f4e51e88dc4fdc`
+- `provider-final-quiet.json`: `922944550f904672ac0e64e26ce39e3f80fff8d1308388da53a569e1ce1e11e1`
+- `quiet-cleanup.json`: `7e765db5327ca77ae24c25394186aa89bf5b1e0ec42a4060592260fd0300b13e`
+
+Final installed inventory (exact tested candidate, 14 files):
+
+```text
+100f7b1a3a0265e8302eba92ac886431e7ee93d4a7a64b169c2066ab9feaffda  assets/emenda-mark.svg
+693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3  assets/inter/InterVariable.woff2
+262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a  assets/inter/LICENSE.txt
+6c2a185b9e2a6203e8f9c8e27e718013ec94c5efec1cc0991389a0aa9ff7812f  assets/inter/SOURCE.txt
+6f81a830c98fcf01ccc4d83ab2a950c5fdf6f32779c9de061c027e8848944cb5  content.js
+55c3574bf5d1a8bb4a0d6d60c910fd3baa03852c184433234098c711c40ec0f4  icons/emenda-128.png
+f50ff85726e303c843ae035774027f8ec52dcf46da9b8c4c15a64df3246bff51  icons/emenda-16.png
+f7f5155460831ac704f690a986872ea3d68e9eeae1e400ce4a9142418310d61b  icons/emenda-32.png
+55ca4a8c4f18e65829982b621ab052804edc87f3ef1f052ec96c96a634d918cd  icons/emenda-48.png
+e5f6c6194ef0770ccf5c50f91e2470ee72c26c25d234da7b43542d6e3cd87404  manifest.json
+7a78a67c0bca3083f6a811b8adb6de4e967069051c80fed38eab48ffb6b44ac5  options.css
+8a927d8e974fbcc1eac718bffa29250b8844919d59d2a301a2c85bff5e07ca6c  options.html
+028f61575c9301dbe055116388d94671a939954724b1c4a16f7d561cdf5fdec3  options.js
+cda6b8360eb43593d439d81d9643b810c8ef9f8c03cb3986ada851da6d88e103  worker.js
+```
